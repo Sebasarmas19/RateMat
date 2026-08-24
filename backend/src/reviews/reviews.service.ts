@@ -1,8 +1,10 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Review, ReviewStatus } from './review.entity';
+import { ReviewVote, VoteType } from './review-vote.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { VoteReviewDto } from './dto/vote-review.dto';
 import { ProfessorSubject } from '../professor-subjects/professor-subject.entity';
 import Filter from 'bad-words';
 
@@ -15,6 +17,9 @@ export class ReviewsService {
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(ProfessorSubject)
     private readonly professorSubjectRepository: Repository<ProfessorSubject>,
+    @InjectRepository(ReviewVote)
+    private readonly reviewVoteRepository: Repository<ReviewVote>,
+    private readonly dataSource: DataSource,
   ) {
     this.filter = new Filter();
     this.filter.addWords('mierda', 'puto', 'puta', 'coño', 'marico', 'marica', 'huevon', 'pendejo', 'cabron', 'estupido', 'idiota', 'maldito', 'mamaguevo');
@@ -54,5 +59,58 @@ export class ReviewsService {
       }
       throw error;
     }
+  }
+
+  async vote(reviewId: string, voteReviewDto: VoteReviewDto, user: any): Promise<Review> {
+    const { voteType } = voteReviewDto;
+
+    return this.dataSource.transaction(async (manager) => {
+      const review = await manager.findOne(Review, {
+        where: { id: reviewId },
+        relations: ['user'],
+      });
+
+      if (!review) {
+        throw new NotFoundException('Reseña no encontrada');
+      }
+
+      if (review.user?.id === user.id) {
+        throw new BadRequestException('No puedes votar por tu propia reseña'); // Prevents self-voting, though not strictly required it's a good practice
+      }
+
+      let existingVote = await manager.findOne(ReviewVote, {
+        where: { review: { id: reviewId }, user: { id: user.id } },
+      });
+
+      let scoreDiff = 0;
+
+      if (existingVote) {
+        if (existingVote.voteType === voteType) {
+          // If the vote is the same, no changes needed
+          return review;
+        }
+
+        // Changing vote
+        scoreDiff = voteType === VoteType.UP ? 2 : -2;
+        existingVote.voteType = voteType;
+        await manager.save(ReviewVote, existingVote);
+      } else {
+        // New vote
+        scoreDiff = voteType === VoteType.UP ? 1 : -1;
+        const newVote = manager.create(ReviewVote, {
+          review: { id: reviewId },
+          user: { id: user.id },
+          voteType,
+        });
+        await manager.save(ReviewVote, newVote);
+      }
+
+      review.netScore += scoreDiff;
+      
+      // Update weight based on netScore
+      review.weight = review.netScore <= -5 ? 0 : 1.0;
+
+      return await manager.save(Review, review);
+    });
   }
 }
