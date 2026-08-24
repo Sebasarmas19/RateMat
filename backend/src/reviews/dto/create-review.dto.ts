@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, IsBoolean, Min, Max, IsOptional, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsBoolean, Min, Max, IsOptional, IsUUID, ValidateIf } from 'class-validator';
 
 export class CreateReviewDto {
   @IsNotEmpty()
@@ -11,7 +11,8 @@ export class CreateReviewDto {
   @Max(5)
   rating: number;
 
-  @IsOptional()
+  @ValidateIf(o => o.rating === 1 || o.rating === 5 || typeof o.text !== 'undefined')
+  @IsNotEmpty({ message: 'El texto de la reseña es obligatorio si la calificación es de 1 o 5 estrellas.' })
   @IsString()
   text?: string;
 

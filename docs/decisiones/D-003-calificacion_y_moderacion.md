@@ -11,7 +11,7 @@ Teníamos que definir qué parámetros evaluaría un estudiante al dejar una res
 1. **Calificación:** Se usará un enfoque estructurado pero de baja fricción:
    - Calificación general de 1 a 5 estrellas (Obligatorio).
    - "Etiquetas Rápidas" / Tags opcionales (ej: #MuchaLectura, #ExámenesDifíciles).
-   - Campo de texto libre para la opinión general (**Opcional**).
+   - Campo de texto libre para la opinión general (**Opcional en puntuaciones 2, 3 y 4. Obligatorio si la puntuación es 1 o 5**). Esto previene que trolls pongan 1 estrella sin justificación, obligándolos a escribir para que la comunidad pueda votar en su contra si es falso.
 2. **Moderación Condicionada:** Los botones de "Estoy de acuerdo / No estoy de acuerdo" **solo aparecerán en las reseñas que tengan texto**. 
    - *Por qué:* Si un estudiante solo deja 4 estrellas (sin texto), no hay ningún argumento subjetivo con el cual debatir o estar en desacuerdo. Es simple data estadística. Solo las opiniones escritas requieren moderación comunitaria.
 3. **Ordenamiento:** Las reseñas con texto se ordenarán por el "Net Score". Las reseñas sin texto simplemente sumarán al promedio matemático.
