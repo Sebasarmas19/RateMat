@@ -16,3 +16,7 @@ Debes ejecutar el siguiente grupo de tareas correspondientes al Backend, sin des
 2. Lee `docs/CONTROL_SESIONES.md` y `PLAN.md` para entender tu enfoque.
 3. Toma nota de `docs/decisiones/D-005-hub_academico_archivos.md` antes de implementar Multer.
 4. Una vez entiendas este documento, informa qué archivos vas a crear o modificar.
+
+**Reglas Operativas (Commits y Pausas):**
+- **NUNCA hagas commits tú mismo.** Los commits los hace el usuario.
+- **Pausa entre tareas:** Si una sesión abarca múltiples tareas (ej. 2.5, 2.6, 2.7), NO programes todo de corrido. Al terminar una tarea, detente, haz un resumen técnico de lo que se implementó y ofrécele al usuario una recomendación de comando o mensaje para el commit (ej. `git add . && git commit -m "feat(backend): tarea..."`). Espera a que el usuario confirme que hizo el commit antes de avanzar a la siguiente subtarea.
