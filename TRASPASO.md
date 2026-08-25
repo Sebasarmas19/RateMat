@@ -1,22 +1,19 @@
-# Traspaso de Contexto — Hacia la Sesión 4
+# Traspaso de Contexto — Hacia la Sesión 5
 
-**Estado de Proyecto:**
-- Hemos completado con éxito todas las tareas hasta la **2.4 (Algoritmo Anti-Desahogo)**.
-- El backend compila perfectamente y cuenta con el DTO `CreateReviewDto` blindado: Validaciones estrictas de texto condicional, Profanity Filter y Rate Limiting.
-- La lógica de unicidad (1 alumno = 1 reseña por materia/profesor) está controlada de manera óptima mapeando el error `23505` de TypeORM/PostgreSQL.
+**Estado del Proyecto (Fin Sesión 4):**
+- Se completó el Bloque 2 del backend en su totalidad, asegurando la lógica más compleja y crítica.
+- **2.5 Moderación Comunitaria:** Funcional, recalcula `netScore` y penaliza bajando el `weight` a 0 al alcanzar -5 puntos. Transacciones SQL blindadas contra duplicidad.
+- **2.6 Hub Académico:** Completado. Integrado de forma *Serverless* directo a un bucket de Supabase Storage. La URL de la nube se guarda en PostgreSQL.
+- **2.7 Reportes (Botón de Pánico):** Funcional, ocultamiento automático (`status = HIDDEN`) validado al alcanzar 3 reportes por 3 usuarios distintos (D-010).
 
-**Tu Misión (Sesión 4):**
-Debes ejecutar el siguiente grupo de tareas correspondientes al Backend, sin desviarte:
-- **2.5 Moderación Comunitaria (Upvotes y Downvotes):** Implementar endpoint `POST /reviews/:id/vote`. Si un usuario cambia de opinión, su voto se actualiza, no se duplica. Implementar lógica matemática: Si el `netScore` de la reseña baja de un umbral (ej. -5), el `weight` cae a 0.
-- **2.6 Hub Académico (Subida de PDFs):** Implementar `Multer`. Rechazar estrictamente todo lo que no sea `.pdf` y limitar tamaño a 10MB (D-005). Guardar localmente y registrar URL.
-- **2.7 Sistema de Reportes (Botón de Pánico):** Endpoint `POST /reports`. Si una reseña o archivo alcanza 3 reportes distintos, su estado pasa automáticamente a `HIDDEN` (D-010).
+**Tu Misión (Sesión 5):**
+Esta sesión será **EXCLUSIVAMENTE para la 🔍 Revisión A**. 
+- NO toques código de Frontend (Angular). Aún no es el momento.
+- Configurar **Swagger** (OpenAPI) en el proyecto NestJS (`@nestjs/swagger`) y generar la documentación automática.
+- Realizar pruebas de integración, probar las cuotas de Rate Limiting (D-009) y validar que el API sea un muro impenetrable antes de avanzar al Bloque 3.
 
-**Instrucciones Iniciales para el Ejecutor de la Sesión 4:**
-1. Lee `GEMINI.md` para comprender las reglas inquebrantables.
-2. Lee `docs/CONTROL_SESIONES.md` y `PLAN.md` para entender tu enfoque.
-3. Toma nota de `docs/decisiones/D-005-hub_academico_archivos.md` antes de implementar Multer.
-4. Una vez entiendas este documento, informa qué archivos vas a crear o modificar.
-
-**Reglas Operativas (Commits y Pausas):**
+**Reglas Operativas (Recordatorio para el Ejecutor):**
+- Lee `GEMINI.md` para reglas inquebrantables.
+- Revisa siempre `docs/CONTROL_SESIONES.md`.
 - **NUNCA hagas commits tú mismo.** Los commits los hace el usuario.
-- **Pausa entre tareas:** Si una sesión abarca múltiples tareas (ej. 2.5, 2.6, 2.7), NO programes todo de corrido. Al terminar una tarea, detente, haz un resumen técnico de lo que se implementó y ofrécele al usuario una recomendación de comando o mensaje para el commit (ej. `git add . && git commit -m "feat(backend): tarea..."`). Espera a que el usuario confirme que hizo el commit antes de avanzar a la siguiente subtarea.
+- Pausa entre tareas para dar resúmenes técnicos y sugerir comandos de commit.

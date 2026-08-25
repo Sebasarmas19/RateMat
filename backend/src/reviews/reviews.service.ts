@@ -6,7 +6,7 @@ import { ReviewVote, VoteType } from './review-vote.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { VoteReviewDto } from './dto/vote-review.dto';
 import { ProfessorSubject } from '../professor-subjects/professor-subject.entity';
-import Filter from 'bad-words';
+import { Filter } from 'bad-words';
 
 @Injectable()
 export class ReviewsService {

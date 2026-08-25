@@ -6,13 +6,24 @@ import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { memoryStorage } from 'multer';
 import { extname } from 'path';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes, ApiBody, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('academic-files')
+@ApiBearerAuth()
 @Controller('academic-files')
 export class AcademicFilesController {
   constructor(private readonly academicFilesService: AcademicFilesService) {}
 
   @Post()
   @UseGuards(SupabaseAuthGuard)
+  @ApiOperation({ summary: 'Subir un archivo PDF al hub académico' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Archivo PDF y datos del archivo',
+    type: CreateAcademicFileDto,
+  })
+  @ApiResponse({ status: 201, description: 'Archivo subido y registrado exitosamente' })
+  @ApiResponse({ status: 400, description: 'Archivo inválido o de tamaño mayor a 10MB' })
   @UseInterceptors(FileInterceptor('file', {
     storage: memoryStorage(),
     limits: {
