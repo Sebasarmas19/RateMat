@@ -1,19 +1,19 @@
-# Traspaso de Contexto — Hacia la Sesión 5
+# Traspaso de Contexto — Hacia la Sesión 6
 
-**Estado del Proyecto (Fin Sesión 4):**
-- Se completó el Bloque 2 del backend en su totalidad, asegurando la lógica más compleja y crítica.
-- **2.5 Moderación Comunitaria:** Funcional, recalcula `netScore` y penaliza bajando el `weight` a 0 al alcanzar -5 puntos. Transacciones SQL blindadas contra duplicidad.
-- **2.6 Hub Académico:** Completado. Integrado de forma *Serverless* directo a un bucket de Supabase Storage. La URL de la nube se guarda en PostgreSQL.
-- **2.7 Reportes (Botón de Pánico):** Funcional, ocultamiento automático (`status = HIDDEN`) validado al alcanzar 3 reportes por 3 usuarios distintos (D-010).
+**Estado del Proyecto (Fin Sesión 5):**
+- **🔍 Revisión A (Backend) APROBADA:** El backend es formalmente un muro impenetrable. 
+- **Swagger:** Se integró `@nestjs/swagger` y toda la API está documentada y accesible en `/api/docs`.
+- **Auditoría de Seguridad y Lógica:** Las pruebas End-to-End confirmaron que los límites de Rate Limiting (Global y de Negocio), el Filtro de Profanidad, las matemáticas de `netScore` y `weight`, así como el sistema de ocultamiento automático por reportes funcionan a la perfección.
 
-**Tu Misión (Sesión 5):**
-Esta sesión será **EXCLUSIVAMENTE para la 🔍 Revisión A**. 
-- NO toques código de Frontend (Angular). Aún no es el momento.
-- Configurar **Swagger** (OpenAPI) en el proyecto NestJS (`@nestjs/swagger`) y generar la documentación automática.
-- Realizar pruebas de integración, probar las cuotas de Rate Limiting (D-009) y validar que el API sea un muro impenetrable antes de avanzar al Bloque 3.
+**Tu Misión (Sesión 6):**
+Esta sesión iniciará formalmente el **Bloque 3 — Cascarón del Frontend (Angular PWA)**. 
+- **3.1 Proyecto Base:** Crear el andamiaje (`scaffolding`) del proyecto en Angular y configurar TailwindCSS.
+- **3.2 Sistema Visual:** Implementar el Layout Mobile-First (Bottom Bar en móvil / Sidebar en escritorio).
+- **3.3 Autenticación:** Integrar el cliente de Supabase Auth, configurar el Login y crear los *Guards* de rutas en el cliente, junto al interceptor HTTP para inyectar el token en el backend.
+- **3.4 PWA:** Añadir el `manifest.webmanifest` y configurar el Service Worker para capacidades offline.
 
 **Reglas Operativas (Recordatorio para el Ejecutor):**
 - Lee `GEMINI.md` para reglas inquebrantables.
-- Revisa siempre `docs/CONTROL_SESIONES.md`.
+- Todo el contexto detallado está en la carpeta `docs/`.
 - **NUNCA hagas commits tú mismo.** Los commits los hace el usuario.
 - Pausa entre tareas para dar resúmenes técnicos y sugerir comandos de commit.

@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Añadiendo suavidad global como recomienda la skill 'impeccable' */
+html, body {
+  @apply bg-gray-50 text-slate-900;
+  -webkit-font-smoothing: antialiased;
+}
