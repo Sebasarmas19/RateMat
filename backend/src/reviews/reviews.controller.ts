@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Param } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Param, Get } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { VoteReviewDto } from './dto/vote-review.dto';
@@ -13,6 +13,13 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@ne
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
+
+  @Get('recent')
+  @ApiOperation({ summary: 'Obtener las reseñas más recientes' })
+  @ApiResponse({ status: 200, description: 'Lista de reseñas recientes' })
+  async getRecent() {
+    return this.reviewsService.getRecentReviews();
+  }
 
   @Post()
   @UseGuards(SupabaseAuthGuard, DailyLimitGuard(Review, 10, 'user'))

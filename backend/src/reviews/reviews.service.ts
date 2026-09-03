@@ -113,4 +113,13 @@ export class ReviewsService {
       return await manager.save(Review, review);
     });
   }
+
+  async getRecentReviews(limit: number = 15): Promise<Review[]> {
+    return this.reviewRepository.find({
+      where: { status: ReviewStatus.ACTIVE },
+      relations: ['professorSubject', 'professorSubject.professor', 'professorSubject.subject'],
+      order: { createdAt: 'DESC' },
+      take: limit,
+    });
+  }
 }
