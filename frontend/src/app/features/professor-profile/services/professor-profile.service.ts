@@ -18,6 +18,7 @@ export interface ReviewItem {
   netScore: number;
   createdAt: Date;
   isAnonymous: boolean;
+  userVote?: 'up' | 'down' | null;
 }
 
 export interface AcademicFileItem {
@@ -25,6 +26,12 @@ export interface AcademicFileItem {
   fileName: string;
   sizeMB: number;
   uploadedAt: Date;
+}
+
+export interface CreateReviewDto {
+  rating: number;
+  text: string;
+  isAnonymous: boolean;
 }
 
 @Injectable({
@@ -62,7 +69,8 @@ export class ProfessorProfileService {
             rating: 5,
             text: 'Excelente profesor, explica muy bien y los exámenes son justos.',
             netScore: 12,
-            createdAt: new Date(Date.now() - 86400000 * 2)
+            createdAt: new Date(Date.now() - 86400000 * 2),
+            userVote: null
           },
           {
             id: 'r2',
@@ -71,7 +79,8 @@ export class ProfessorProfileService {
             rating: 3,
             text: 'Sabe mucho pero va muy rápido. Si no repasas en casa, te pierdes.',
             netScore: 4,
-            createdAt: new Date(Date.now() - 86400000 * 5)
+            createdAt: new Date(Date.now() - 86400000 * 5),
+            userVote: 'up' as const
           },
           {
             id: 'r3',
@@ -80,7 +89,8 @@ export class ProfessorProfileService {
             rating: 1,
             text: 'Las clases son aburridas y califica muy duro.',
             netScore: -2,
-            createdAt: new Date(Date.now() - 86400000 * 15)
+            createdAt: new Date(Date.now() - 86400000 * 15),
+            userVote: null
           }
         ]).pipe(delay(1000));
       })
@@ -105,6 +115,44 @@ export class ProfessorProfileService {
             uploadedAt: new Date(Date.now() - 86400000 * 30)
           }
         ]).pipe(delay(1200));
+      })
+    );
+  }
+
+  createReview(professorId: string, review: CreateReviewDto): Observable<ReviewItem> {
+    return this.http.post<ReviewItem>(`${this.baseUrl}/professors/${professorId}/reviews`, review).pipe(
+      catchError(err => {
+        // Mocking the backend behavior
+        if (review.text.toLowerCase().includes('mierda') || review.text.toLowerCase().includes('idiota')) {
+          throw { status: 400, error: { message: 'El contenido incluye lenguaje inapropiado y viola nuestras normas comunitarias.' } };
+        }
+        
+        return of({
+          id: 'r_new_' + Date.now(),
+          authorName: review.isAnonymous ? 'Anónimo' : 'Usuario Actual',
+          isAnonymous: review.isAnonymous,
+          rating: review.rating,
+          text: review.text,
+          netScore: 0,
+          createdAt: new Date(),
+          userVote: null
+        }).pipe(delay(800));
+      })
+    );
+  }
+
+  voteReview(reviewId: string, voteType: 'up' | 'down'): Observable<{ netScore: number }> {
+    return this.http.post<{ netScore: number }>(`${this.baseUrl}/reviews/${reviewId}/vote`, { voteType }).pipe(
+      catchError(err => {
+        return of({ netScore: 0 }).pipe(delay(400));
+      })
+    );
+  }
+
+  reportItem(itemId: string, itemType: 'review' | 'file'): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${this.baseUrl}/reports`, { itemId, itemType }).pipe(
+      catchError(err => {
+        return of({ success: true }).pipe(delay(600));
       })
     );
   }
