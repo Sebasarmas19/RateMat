@@ -17,7 +17,8 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'search', component: SearchComponent },
-      { path: 'profile', component: ProfileComponent, canActivate: [authGuard] }
+      { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+      { path: 'professor/:id', loadComponent: () => import('./features/professor-profile/professor-profile.component').then(m => m.ProfessorProfileComponent) }
     ]
   },
   { path: '**', redirectTo: '' }
