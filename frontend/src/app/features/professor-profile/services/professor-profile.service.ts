@@ -15,6 +15,7 @@ export interface ReviewItem {
   authorName: string;
   rating: number;
   text: string;
+  subject: string;
   netScore: number;
   createdAt: Date;
   isAnonymous: boolean;
@@ -24,6 +25,7 @@ export interface ReviewItem {
 export interface AcademicFileItem {
   id: string;
   fileName: string;
+  subject?: string;
   sizeMB: number;
   uploadedAt: Date;
 }
@@ -31,6 +33,7 @@ export interface AcademicFileItem {
 export interface CreateReviewDto {
   rating: number;
   text: string;
+  subject: string;
   isAnonymous: boolean;
 }
 
@@ -67,6 +70,7 @@ export class ProfessorProfileService {
             authorName: 'Anónimo',
             isAnonymous: true,
             rating: 5,
+            subject: 'Cálculo I',
             text: 'Excelente profesor, explica muy bien y los exámenes son justos.',
             netScore: 12,
             createdAt: new Date(Date.now() - 86400000 * 2),
@@ -77,6 +81,7 @@ export class ProfessorProfileService {
             authorName: 'María G.',
             isAnonymous: false,
             rating: 3,
+            subject: 'Álgebra Lineal',
             text: 'Sabe mucho pero va muy rápido. Si no repasas en casa, te pierdes.',
             netScore: 4,
             createdAt: new Date(Date.now() - 86400000 * 5),
@@ -87,6 +92,7 @@ export class ProfessorProfileService {
             authorName: 'Anónimo',
             isAnonymous: true,
             rating: 1,
+            subject: 'Cálculo I',
             text: 'Las clases son aburridas y califica muy duro.',
             netScore: -2,
             createdAt: new Date(Date.now() - 86400000 * 15),
@@ -105,12 +111,14 @@ export class ProfessorProfileService {
           {
             id: 'f1',
             fileName: 'Guia_Derivadas_Parciales.pdf',
+            subject: 'Cálculo I',
             sizeMB: 2.4,
             uploadedAt: new Date(Date.now() - 86400000 * 10)
           },
           {
             id: 'f2',
             fileName: 'Examen_Viejo_2022.pdf',
+            subject: 'Álgebra Lineal',
             sizeMB: 1.1,
             uploadedAt: new Date(Date.now() - 86400000 * 30)
           }
@@ -132,11 +140,26 @@ export class ProfessorProfileService {
           authorName: review.isAnonymous ? 'Anónimo' : 'Usuario Actual',
           isAnonymous: review.isAnonymous,
           rating: review.rating,
+          subject: review.subject,
           text: review.text,
           netScore: 0,
           createdAt: new Date(),
           userVote: null
         }).pipe(delay(800));
+      })
+    );
+  }
+
+  uploadAcademicFile(professorId: string, fileData: { fileName: string; subject?: string; sizeMB: number }): Observable<AcademicFileItem> {
+    return this.http.post<AcademicFileItem>(`${this.baseUrl}/professors/${professorId}/academic-files`, fileData).pipe(
+      catchError(err => {
+        return of({
+          id: 'f_new_' + Date.now(),
+          fileName: fileData.fileName,
+          subject: fileData.subject,
+          sizeMB: fileData.sizeMB,
+          uploadedAt: new Date()
+        }).pipe(delay(600));
       })
     );
   }
