@@ -1,34 +1,33 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
-import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
   private apiService = inject(ApiService);
-  private router = inject(Router);
 
+  // Community Reviews Feed State
   reviews: any[] = [];
+  filteredReviews: any[] = [];
   isLoadingFeed = true;
-
-  // Search logic for desktop overlay
-  searchQuery = '';
-  searchQuery$ = new Subject<string>();
-  searchResults: { subjects: any[], professors: any[] } | null = null;
-  isSearching = false;
-  showOverlay = false;
+  feedFilter = 'all'; // 'all' | 'high_rated' | 'positive' | 'critical'
 
   ngOnInit() {
+    this.loadFeed();
+  }
+
+  loadFeed() {
+    this.isLoadingFeed = true;
     this.apiService.getRecentReviews().subscribe({
       next: (data) => {
         this.reviews = data;
+        this.applyFeedFilter();
         this.isLoadingFeed = false;
       },
       error: (err) => {
@@ -36,39 +35,46 @@ export class HomeComponent implements OnInit {
         this.isLoadingFeed = false;
       }
     });
+  }
 
-    this.searchQuery$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(query => {
-        if (query.length < 2) {
-          return of(null);
-        }
-        this.isSearching = true;
-        return this.apiService.search(query);
-      })
-    ).subscribe({
-      next: (results) => {
-        this.searchResults = results;
-        this.isSearching = false;
-      },
-      error: (err) => {
-        console.error('Error searching', err);
-        this.isSearching = false;
-        this.searchResults = null;
+  setFeedFilter(filterId: string) {
+    this.feedFilter = filterId;
+    this.applyFeedFilter();
+  }
+
+  applyFeedFilter() {
+    if (this.feedFilter === 'all') {
+      this.filteredReviews = [...this.reviews];
+    } else if (this.feedFilter === 'high_rated') {
+      this.filteredReviews = this.reviews.filter(r => r.rating >= 4.5);
+    } else if (this.feedFilter === 'positive') {
+      this.filteredReviews = this.reviews.filter(r => r.rating >= 4.0);
+    } else if (this.feedFilter === 'critical') {
+      this.filteredReviews = this.reviews.filter(r => r.rating <= 2.5);
+    }
+  }
+
+  voteReview(review: any, voteType: 'up' | 'down') {
+    const prevVote = review.userVote;
+    let netChange = 0;
+
+    if (prevVote === voteType) {
+      review.userVote = null;
+      netChange = voteType === 'up' ? -1 : 1;
+    } else {
+      review.userVote = voteType;
+      if (prevVote === 'up') netChange = -2;
+      else if (prevVote === 'down') netChange = 2;
+      else netChange = voteType === 'up' ? 1 : -1;
+    }
+
+    review.netScore = (review.netScore || 0) + netChange;
+
+    this.apiService.voteReview(review.id, voteType).subscribe({
+      error: () => {
+        review.userVote = prevVote;
+        review.netScore -= netChange;
       }
     });
-  }
-
-  onSearchChange(query: string) {
-    this.searchQuery = query;
-    this.showOverlay = query.length >= 2;
-    this.searchQuery$.next(query);
-  }
-
-  closeSearch() {
-    this.showOverlay = false;
-    this.searchQuery = '';
-    this.searchResults = null;
   }
 }
