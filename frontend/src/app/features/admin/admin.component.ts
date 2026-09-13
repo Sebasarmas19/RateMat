@@ -32,9 +32,10 @@ export class AdminComponent {
   // Admin Queue Filter
   activeFilter: 'all' | 'suggestions' | 'reports' = 'all';
 
-  // Feedback Toast State
+  // Feedback Toast & Action Animations State
   toastMessage: string | null = null;
   private toastTimer: any = null;
+  isResetting = false;
 
   // 1. Pending Suggestions Queue (D-004 & D-011 Cold Start)
   pendingSuggestions: PendingSuggestion[] = [
@@ -130,6 +131,9 @@ export class AdminComponent {
 
   // Reset sample items for testing
   resetSampleData(): void {
+    this.isResetting = true;
+    setTimeout(() => { this.isResetting = false; }, 600);
+
     this.pendingSuggestions = [
       {
         id: 'sug-1',
