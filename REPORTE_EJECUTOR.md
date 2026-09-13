@@ -158,9 +158,162 @@ La sesión del Arquitecto evaluó y **aprobó con distinción** la propuesta de 
 
 ---
 
-## 9. Commit Sugerido para Git
+## 9. Commits Realizados
 ```bash
-git add .
-git commit -m "feat(ui): pulido estetico, dimensional layering, craft audit y adaptabilidad movil aprobada por arquitectura"
+# 1. Rediseño arquitectónico bajo D-007
+git commit -m "feat(ui): rediseño modular D-007, catalogo de carreras UCAB, feed comunitario independiente y hub academico"
+
+# 2. Pulido UI y adaptabilidad móvil
+git commit -m "feat(ui): dimensional layering, feedback tactil 5 estrellas, bottom sheets y pulido visual responsive"
+
+# 3. Auditoría de craft con suites instaladas
+git commit -m "chore(craft): calibracion de micro-interacciones tactiles, tabular-nums y optimizaciones de hardware acceleration"
 ```
+
+---
+
+## 10. Implementación de Brechas Funcionales y Panel de Moderación (D-003, D-004, D-010 y D-011)
+
+Se completaron satisfactoriamente las 6 brechas funcionales especificadas en `PROMPT_BRECHAS_Y_ADMIN.md` y `docs/decisiones/D-011-rol_administrador_y_moderacion.md`:
+
+### 1. Brecha 1: Cold Start & Sugerencia de Profesores y Materias (D-004 & D-011)
+* **Puntos de Activación en `/search` (`search.component.html` & `.ts`):**
+  * En el modal de materias (`selectedSubject`), cuando una cátedra no tiene profesores registrados (`subjectProfessors.length === 0`), se reemplazó el texto estático por el botón `+ Sugerir Profesor para esta Cátedra` que precarga la materia.
+  * En el catálogo general y en la búsqueda activa sin resultados, se añadió el botón `+ Proponer nuevo profesor` que precarga el término ingresado.
+* **Modal de Sugerencia de Profesor:**
+  * Bottom sheet en móviles (`<sm`, `animate-sheet-up`, drag indicator pull bar, backdrop tap-to-close) y diálogo centrado en escritorio (`≥sm`, `sm:animate-modal-in`).
+  * Formulario reactivo con `name`, `institutionEmailOrSchool` y `subject`.
+  * Mensaje de éxito al enviar: *"¡Gracias por tu aporte! Tu sugerencia ha sido enviada a la cola de moderación de los administradores estudiantiles (D-004 & D-011)."*
+* **Sugerencia de Cátedra en `/professor/:id` (`professor-profile.component.html` & `.ts`):**
+  * Botón interactivo `+ Sugerir Cátedra` en la barra horizontal de filtros por materia.
+  * Modal ligero para proponer cátedras adicionales que dicta el profesor con confirmación inmediata.
+
+### 2. Brecha 2: Colapso Visual de Reseñas por Votos Negativos (D-003 & D-008)
+* Implementado de forma unificada en el feed de `/home` y en el perfil de profesor `/professor/:id`.
+* Si una reseña con texto tiene `netScore <= -3`:
+  * Por defecto, el cuerpo del comentario permanece oculto (`review.isCollapsed = true`).
+  * Se despliega la barra de aviso comunitaria:
+    *"Esta opinión recibió múltiples votos negativos de la comunidad."* junto al botón `"Mostrar opinión"` / `"Ocultar"`.
+  * Al expandir, el texto se muestra con opacidad sutil (`opacity-75 text-slate-600`).
+
+### 3. Brecha 3: Botón de Reporte en el Feed Comunitario `/home` (D-010)
+* En la cabecera de cada tarjeta de reseña de `/home` (junto al rating badge), se integró el botón de reporte con icono de bandera `M4 15s1-1...`.
+* Al pulsar el botón, se marca como reportada (icono rojo), se desactiva para evitar duplicados y se despliega un toast de retroalimentación flotante: *"Reseña reportada para revisión de moderadores (D-010)"*.
+
+### 4. Brecha 4: Modo "Editar mi Reseña" (D-003)
+* En `professor-profile.component.ts` se verifica si el usuario autenticado ya posee una reseña registrada para la materia seleccionada (`checkExistingReview`).
+* Si existe una reseña previa:
+  * El botón principal de cabecera adopta el estado: `✏️ Editar mi reseña`.
+  * Al abrir el modal, los campos (`rating`, `subject`, `text`, `tags`, `isAnonymous`) se precargan automáticamente con los valores previos del estudiante.
+  * El botón de submit cambia dinámicamente a `Guardar Cambios`.
+  * La actualización se realiza de forma optimista in-place sin duplicar la reseña en la lista.
+
+### 5. Brecha 5: Panel de Moderación para Administradores en `/profile` (D-011)
+* En `profile.component.ts` y `profile.component.html`, se incorporó un selector de pestañas entre **"Mi Reputación y Aportes"** y **"Panel de Moderación (Admin)"** con insignia numérica del total de solicitudes pendientes.
+* Se agregó el badge de estatus `🛡️ Moderador Admin (D-011)` en la tarjeta de perfil.
+* **Cola 1 — Profesores y Materias Pendientes (Cold Start D-004):**
+  * Visualización de propuestas comunitarias con nombre de profesor/cátedra, escuela y correo del estudiante proponente.
+  * Acciones operativas: `✅ Aprobar` (agrega al catálogo) y `❌ Rechazar` (descarta de la cola).
+* **Cola 2 — Contenido Reportado (Sistema de Pánico D-010):**
+  * Visualización de reseñas y archivos en Hub que alcanzaron 3 o más denuncias comunitarias.
+  * Muestra el motivo registrado (lenguaje soez, difamación, violación de derechos de autor) y el extracto del contenido denunciado.
+  * Acciones operativas: `🗑️ Eliminar Definitivamente` y `🔄 Desestimar Denuncias / Restaurar`.
+* Todas las acciones ofrecen retroalimentación reactiva mediante toasts flotantes y estados vacíos con gráficos SVG minimalistas. Se incluyó además un botón para reiniciar los datos de muestra de moderación.
+
+### 6. Brecha 6: Límite de Longitud y Contador en Reseñas (D-009)
+* En `reviewForm` de `professor-profile.component.ts`, se aplicó la validación estricta `Validators.maxLength(1000)`.
+* En el formulario modal debajo del `textarea`, se configuró `maxlength="1000"` y un contador con cifras tabulares suizas:
+  `<span class="tabular-nums font-semibold">{{ reviewForm.get('text')?.value?.length || 0 }} / 1000 caracteres</span>`
+  con alerta cromática si se aproxima o excede el umbral.
+
+---
+
+## 13. Ronda de Refinamiento UI/UX y Flujos Comunitarios (Puntos 1 a 5)
+
+A partir de la retroalimentación de la sesión y la referencia visual suministrada, se implementaron los siguientes refinamientos clave:
+
+1. **Sugerencia Permanente de Profesores en Materias (`/search` - D-004):**
+   * Ya no está restringido exclusivamente a materias vacías.
+   * Se incorporó el botón `+ Sugerir Profesor` de forma permanente en la cabecera del modal de materia.
+   * Se agregó una tarjeta persistente al final del listado de profesores: *"¿Cursaste esta materia con otro profesor? + Proponer otro profesor"*, facilitando el registro de docentes recién incorporados a la cátedra.
+
+2. **Rediseño Visual Humanista de las Reseñas (`/home` y `/professor/:id`):**
+   * **Tipografía:** Se incorporó Google Font *Plus Jakarta Sans* con curvas abiertas, alta legibilidad y jerarquía equilibrada.
+   * **Avatares Circulares:** `rounded-full` de 44x44px con gradiente sutil y sombra delicada en lugar de esquinas cuadradas.
+   * **Sistema de 5 Estrellas Individuales:** Fila de 5 estrellas vectoriales doradas (`#f59e0b`) que sustituyen a los antiguos badges rectangulares saturados.
+   * **Metadatos y Aire:** Cátedra vinculada en píldora sobria con enlace al profesor, fecha formateada y tipografía espaciada.
+
+3. **Advertencia de Opinión Replegada de Alta Visibilidad (Brecha 2 - D-003):**
+   * El banner anterior fue reemplazado por un contenedor de contraste calibrado en ámbar (`bg-amber-50 border-amber-300`).
+   * Incluye icono de alerta, insignia destacada `Opinión Replegada`, explicación comunitaria y botón directo `👁️ Ver opinión` / `Ocultar opinión`.
+
+4. **Modal de Motivos de Reporte y Opción de Deshacer Denuncia (Brecha 3 - D-010):**
+   * Al hacer clic en la bandera de reporte, se despliega un modal con 4 causales precisas:
+     1. Lenguaje inapropiado, insultos o difamación personal.
+     2. Información falsa o engañosa sobre evaluaciones.
+     3. Spam, publicidad no autorizada o contenido sin relación académica.
+     4. Violación de derechos de autor o examen activo filtrado.
+   * **Deshacer Denuncia:** Si el usuario hace clic nuevamente en una reseña ya denunciada, el sistema solicita confirmación y retira la denuncia inmediatamente en 1 clic.
+
+5. **Acceso Directo al Módulo de Admin desde la Navegación (D-011):**
+   * Se registró la ruta `/admin` en `app.routes.ts`, cargando automáticamente el `ProfileComponent` con la pestaña activa en moderación.
+   * Se añadió el enlace **"Panel Admin"** con insignia `D-011` en el Sidebar de escritorio y la pestaña **"Admin"** en la barra inferior móvil.
+
+## 16. Desacoplamiento de Vista Admin, Signito Reicon Sutil y Morphicons
+
+Se aplicaron los ajustes finales solicitados por el usuario:
+
+1. **Vista Propia e Independiente para el Panel de Administración (`AdminComponent`):**
+   * Se creó `frontend/src/app/features/admin/admin.component.ts` y `.html`.
+   * `/admin` ya **NO** reutiliza ni redirige a la vista del perfil de estudiante. Es una vista ejecutiva dedicada con métricas KPI, colas separadas de cold-start (D-004) y denuncias de pánico (D-010), filtros rápidos y retroalimentación reactiva.
+   * `ProfileComponent` (`/profile`) quedó 100% enfocado en la reputación, puntos y gamificación del estudiante, con un enlace directo al panel si cuenta con permisos de moderador.
+
+2. **Advertencia de Opinión Replegada Sobria y con Opacity (Reicon `alert-circle`):**
+   * Se eliminó el banner voluminoso de alto impacto visual.
+   * Se calibró una barra compacta de una sola línea con fondo sutil y opacidad (`bg-amber-500/[0.06] border-amber-500/20`), acompañada del signito SVG `alert-circle` obtenido de la biblioteca de iconos `reicon`.
+
+3. **Eliminación del Botón Duplicado de Sugerir Profesor en `/search`:**
+   * Se retiró el botón redundantemente ubicado en el subheader del modal de materias (`search.component.html`), conservando exclusivamente la tarjeta con mensaje al fondo del listado: *«¿Cursaste esta materia con otro profesor? + Proponer otro profesor»*.
+
+4. **Skill Global `morphicons` e Integración en el Proyecto:**
+   * Se descargó e instaló la skill `morphicons` en `$HOME/.agents/skills/morphicons/SKILL.md` (disponible globalmente para Antigravity y Claude Code) y localmente en `.agents/skills/morphicons/SKILL.md`.
+   * Se instaló la dependencia `morphicons` y `lucide` en `frontend/package.json`.
+   * Se creó el componente reutilizable [`MorphIconComponent`](file:///C:/Users/sebastian/Desktop/Proyectos/Personales/RateMat/RateMat_code/frontend/src/app/shared/components/morph-icon/morph-icon.component.ts) con físicas de resorte (spring physics `snappy`) y se integró en los botones interactivos de mostrar/ocultar opinión (`Eye` ↔ `EyeOff`).
+
+---
+
+## 17. Verificación de Compilación
+* `npm run build` en `frontend/`: **Exit Code 0** (Comprobado sin errores de TypeScript ni directivas faltantes).
+* Servidores activos: Frontend en `http://localhost:4200`, Backend en `http://localhost:3000/api/docs`.
+
+---
+
+## 18. Refinamiento Sensorial: Modales Redondeados y Micro-interacciones Morphicons
+
+En respuesta a la última revisión visual con el usuario:
+
+1. **Bordes Redondeados Orgánicos y Backdrop Blur en Modales (`/search`):**
+   * En el modal de detalle de cátedra/profesores y en el modal de sugerir profesor, se aplicó `sm:rounded-3xl` para escritorio (evitando esquinas rectas y toscas) y `bg-slate-950/40 backdrop-blur-md` en el backdrop exterior, logrando un desenfoque de cristal moderno y de alto contraste.
+   
+2. **Micro-interacciones Morphicons en Votos y Reportes (`/home` y `/professor/:id`):**
+   * **Voto Útil (👍):** Al hacer clic para marcar una reseña como útil, el icono muta orgánicamente mediante físicas de resorte (`snappy`) hacia una marca de verificación (`Check` ✓) y activa el estado índigo (`bg-indigo-50 font-bold border-indigo-200`). Al desmarcar, realiza un morph inverso elástico de vuelta a `ThumbsUp`.
+   * **Voto Negativo (👎):** Al votar en contra, muta con resorte elástico hacia `Check` (✓) y resalta en rojo.
+   * **Reporte / Denuncia (🚩):** La bandera muta elásticamente hacia `Check` (✓) al enviar el reporte y se revierte al deshacerlo.
+   * **Respuesta Táctil:** Se añadió `active:scale-90 transition-all duration-150` a los botones interactivos para proporcionar una sensación de click háptico suave.
+
+---
+
+## 19. Registro de Commits Realizados en Git
+
+Los cambios se agruparon en commits atómicos y ordenados, excluyendo las carpetas locales de skills (`.agents/` ignorada por `.gitignore`):
+
+1. `feat(admin): vista dedicada para panel de moderacion y colas de aprobacion (D-011)`
+2. `feat(reviews): brechas funcionales de edicion, reporte con motivos tipificados, colapso visual y contador (D-003, D-009, D-010)`
+3. `feat(search): flujo persistente de sugerencia de profesores y catedras (D-004, D-011)`
+4. `feat(ui-ux): bordes redondeados sm:rounded-3xl, backdrop-blur-md y micro-animaciones morphicons en votos y reportes`
+5. `docs: actualizar REPORTE_EJECUTOR.md con implementacion completa de brechas y feedback visual`
+
+
+
+
 
