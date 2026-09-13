@@ -20,6 +20,11 @@ export interface ReviewItem {
   createdAt: Date;
   isAnonymous: boolean;
   userVote?: 'up' | 'down' | null;
+  isCollapsed?: boolean;
+  isCurrentUser?: boolean;
+  tags?: string[];
+  reported?: boolean;
+  reportReason?: string | null;
 }
 
 export interface AcademicFileItem {
@@ -97,6 +102,17 @@ export class ProfessorProfileService {
             netScore: -2,
             createdAt: new Date(Date.now() - 86400000 * 15),
             userVote: null
+          },
+          {
+            id: 'r4',
+            authorName: 'Anónimo',
+            isAnonymous: true,
+            rating: 1,
+            subject: 'Cálculo I',
+            text: 'No asiste a clase y asigna evaluaciones de temas que nunca se explicaron.',
+            netScore: -4,
+            createdAt: new Date(Date.now() - 86400000 * 20),
+            userVote: 'down' as const
           }
         ]).pipe(delay(1000));
       })

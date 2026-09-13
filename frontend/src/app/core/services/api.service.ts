@@ -920,6 +920,21 @@ export class ApiService {
             },
             tags: ['#ClasesDinamicas', '#GranCriterio', '#TopUCAB'],
             userVote: null
+          },
+          {
+            id: 'rev-5',
+            rating: 1.5,
+            text: 'Mala disposición para aclarar dudas en clase. Las preguntas en el examen no tienen relación con la guía de ejercicios entregada.',
+            netScore: -4,
+            isAnonymous: true,
+            createdAt: new Date(Date.now() - 1000 * 60 * 60 * 180),
+            user: null,
+            professorSubject: {
+              professor: { id: 'prof-3', name: 'Prof. Elena Briceño' },
+              subject: { id: 'sub-3', name: 'Derecho Constitucional', code: 'DER-104', faculty: 'Derecho' }
+            },
+            tags: ['#Exigente', '#MuchaLectura'],
+            userVote: 'down'
           }
         ]).pipe(delay(400));
       })
@@ -968,6 +983,12 @@ export class ApiService {
   voteReview(reviewId: string, voteType: 'up' | 'down'): Observable<{ netScore: number }> {
     return this.http.post<{ netScore: number }>(`${this.apiUrl}/reviews/${reviewId}/vote`, { voteType }).pipe(
       catchError(() => of({ netScore: 0 }).pipe(delay(300)))
+    );
+  }
+
+  reportItem(id: string, type: 'review' | 'file'): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(`${this.apiUrl}/moderation/report`, { id, type }).pipe(
+      catchError(() => of({ success: true, message: 'Reporte registrado para moderación estudiantil (D-010).' }).pipe(delay(300)))
     );
   }
 }

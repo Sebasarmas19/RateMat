@@ -10,7 +10,7 @@
       Muro de Reseñas
     </h1>
     <p class="text-xs sm:text-sm text-slate-500 max-w-xl">
-      Opiniones y valoraciones recientes de estudiantes sobre profesores y materias cursadas en la universidad.
+      Opiniones verificadas y experiencias compartidas sobre profesores y materias de la universidad.
     </p>
   </div>
 
@@ -65,18 +65,18 @@
 
   <!-- Skeletons durante la carga -->
   <div *ngIf="isLoadingFeed" class="space-y-4">
-    <div *ngFor="let i of [1,2,3]" class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.03)] animate-pulse space-y-4">
+    <div *ngFor="let i of [1,2,3]" class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)] animate-pulse space-y-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-slate-200 rounded-xl"></div>
+          <div class="w-11 h-11 bg-slate-200 rounded-full"></div>
           <div class="space-y-2">
             <div class="h-4 bg-slate-200 rounded w-36"></div>
             <div class="h-3 bg-slate-200 rounded w-24"></div>
           </div>
         </div>
-        <div class="w-12 h-6 bg-slate-200 rounded-lg"></div>
+        <div class="w-24 h-5 bg-slate-200 rounded-lg"></div>
       </div>
-      <div class="space-y-2">
+      <div class="space-y-2 pt-2">
         <div class="h-3 bg-slate-200 rounded w-full"></div>
         <div class="h-3 bg-slate-200 rounded w-4/5"></div>
       </div>
@@ -97,87 +97,277 @@
       <p class="text-xs text-slate-400 max-w-xs mx-auto">Intenta seleccionar otro filtro para ver más experiencias compartidas.</p>
     </div>
 
-    <!-- Tarjeta de Reseña (SaaS Minimalista con Dimensional Layering y Hover Elevado) -->
+    <!-- Tarjeta de Reseña (Inspirada en el estilo limpio y humanista de la captura) -->
     <article 
       *ngFor="let review of filteredReviews" 
-      class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-md hover:border-slate-300 hover:-translate-y-0.5 transition-[transform,box-shadow,border-color] duration-200 ease-out space-y-4">
+      class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-200 transition-all duration-200 space-y-3.5">
       
+      <!-- Top Row: Avatar + Name/Date (Left) & 5-Stars + Report Flag (Right) -->
       <div class="flex items-start justify-between gap-3">
+        
+        <!-- User Identity -->
         <div class="flex items-center space-x-3.5 min-w-0">
-          <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-extrabold text-sm border border-indigo-100 flex-shrink-0">
+          <div class="w-11 h-11 rounded-full flex items-center justify-center font-black text-sm flex-shrink-0 shadow-2xs border border-white"
+               [ngClass]="review.isAnonymous ? 'bg-slate-100 text-slate-500' : 'bg-gradient-to-tr from-indigo-600 to-indigo-700 text-white'">
             {{ review.isAnonymous ? '?' : (review.user?.name ? review.user.name.charAt(0) : 'U') }}
           </div>
+
           <div class="min-w-0">
-            <a [routerLink]="['/professor', review.professorSubject?.professor?.id || 'prof-1']" 
-               class="font-bold text-slate-900 text-sm sm:text-base hover:text-indigo-600 transition-colors block truncate">
-              {{ review.professorSubject?.professor?.name }}
-            </a>
-            <div class="flex items-center space-x-2 text-xs text-slate-500 truncate mt-0.5">
-              <span class="font-medium text-slate-600">{{ review.professorSubject?.subject?.name }}</span>
-              <span class="text-slate-300">•</span>
-              <span class="text-[11px] uppercase font-semibold text-slate-400">{{ review.professorSubject?.subject?.code }}</span>
-            </div>
+            <h4 class="font-bold text-slate-900 text-sm sm:text-base leading-tight truncate">
+              {{ review.isAnonymous ? 'Estudiante anónimo' : review.user?.name || 'Estudiante verificado' }}
+            </h4>
+            <p class="text-xs text-slate-400 font-normal mt-0.5">
+              {{ review.createdAt | date:'d MMM, y' }}
+            </p>
           </div>
         </div>
 
-        <!-- Rating Badge -->
-        <div [ngClass]="review.rating >= 4 ? 'bg-emerald-700 text-white' : 'bg-amber-400 text-slate-950'"
-             class="flex-shrink-0 flex items-center space-x-1 text-xs font-bold px-2.5 py-1 rounded-lg shadow-2xs tabular-nums">
-          <span>{{ review.rating | number:'1.1-1' }}</span>
-          <span class="text-white">★</span>
+        <!-- Rating 5-Star Row + Report Flag -->
+        <div class="flex items-center space-x-2.5 flex-shrink-0">
+          
+          <!-- 5 individual golden stars -->
+          <div class="flex items-center space-x-0.5 text-amber-400" [title]="review.rating + ' de 5 estrellas'">
+            <svg *ngFor="let star of [1,2,3,4,5]" 
+                 class="w-4 h-4 fill-current transition-colors" 
+                 [ngClass]="star <= review.rating ? 'text-amber-400' : 'text-slate-200'"
+                 viewBox="0 0 24 24">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+
+          <!-- Report Button with undo support (Point 4 & D-010) -->
+          <button 
+            (click)="onReportClick(review)" 
+            [title]="review.reported ? 'Denuncia registrada (clic para deshacer)' : 'Reportar contenido indebido (D-010)'" 
+            [class.text-red-500]="review.reported"
+            [class.bg-red-50]="review.reported"
+            [class.text-slate-300]="!review.reported"
+            class="hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 transition-all active:scale-90 ml-1 flex items-center justify-center">
+            <app-morph-icon 
+              [icon]="review.reported ? iconCheck : iconFlag" 
+              [size]="14" 
+              [strokeWidth]="2" 
+              [svgClass]="review.reported ? 'text-red-500' : 'text-slate-400 hover:text-red-500'" 
+              spring="snappy">
+            </app-morph-icon>
+          </button>
+
         </div>
       </div>
 
-      <!-- Texto de la reseña -->
-      <p class="text-slate-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+      <!-- Professor & Course Link Badge -->
+      <div class="flex items-center space-x-2 pt-0.5">
+        <a [routerLink]="['/professor', review.professorSubject?.professor?.id || 'prof-1']" 
+           class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-indigo-50/70 border border-slate-200/60 text-xs text-slate-700 hover:text-indigo-700 font-medium transition-colors truncate max-w-full">
+          <span class="font-bold text-slate-900 truncate">👨‍🏫 {{ review.professorSubject?.professor?.name }}</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-indigo-600 font-semibold truncate">{{ review.professorSubject?.subject?.name }}</span>
+          <span class="text-slate-400 text-[11px] uppercase truncate">({{ review.professorSubject?.subject?.code }})</span>
+        </a>
+      </div>
+
+      <!-- Advertencia sutil con opacity y signito de reicon (alert-circle) -->
+      <div *ngIf="review.text && (review.netScore || 0) <= -3" 
+           class="px-3.5 py-2.5 bg-amber-500/[0.06] rounded-xl border border-amber-500/20 text-xs text-slate-600 flex items-center justify-between gap-2 transition-all">
+        <div class="flex items-center space-x-2 min-w-0">
+          <svg class="w-4 h-4 text-amber-600 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+            <path d="M12 6.25C12.4142 6.25 12.75 6.58579 12.75 7V13C12.75 13.4142 12.4142 13.75 12 13.75C11.5858 13.75 11.25 13.4142 11.25 13V7C11.25 6.58579 11.5858 6.25 12 6.25Z" fill="currentColor"/>
+            <path d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z" fill="currentColor"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.25 12C1.25 6.06294 6.06294 1.25 12 1.25C17.9371 1.25 22.75 6.06294 22.75 12C22.75 17.9371 17.9371 22.75 12 22.75C6.06294 22.75 1.25 17.9371 1.25 12ZM12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 6.89137 17.1086 2.75 12 2.75Z" fill="currentColor"/>
+          </svg>
+          <span class="truncate font-medium text-slate-600">Esta opinión recibió múltiples votos negativos de la comunidad.</span>
+        </div>
+        <button 
+          (click)="toggleCollapse(review)" 
+          class="inline-flex items-center space-x-1.5 text-xs font-bold text-amber-700 hover:text-amber-800 underline underline-offset-2 whitespace-nowrap ml-2 active:scale-95 transition-all flex-shrink-0">
+          <app-morph-icon 
+            [icon]="review.isCollapsed ? iconEye : iconEyeOff" 
+            [size]="14" 
+            [strokeWidth]="2" 
+            svgClass="text-amber-700" 
+            spring="snappy">
+          </app-morph-icon>
+          <span>{{ review.isCollapsed ? 'Mostrar opinión' : 'Ocultar' }}</span>
+        </button>
+      </div>
+
+      <!-- Texto de la reseña (Indented and Airy Typography) -->
+      <p *ngIf="!review.isCollapsed && review.text" 
+         [class.text-slate-500]="(review.netScore || 0) <= -3"
+         [class.opacity-75]="(review.netScore || 0) <= -3"
+         [class.text-slate-600]="(review.netScore || 0) > -3"
+         class="text-[13.5px] sm:text-sm leading-relaxed whitespace-pre-line font-normal">
         {{ review.text }}
       </p>
 
-      <!-- Tags si existen -->
-      <div *ngIf="review.tags && review.tags.length > 0" class="flex flex-wrap gap-1.5 pt-1">
+      <!-- Tags en píldoras sobrias -->
+      <div *ngIf="review.tags && review.tags.length > 0" class="flex flex-wrap gap-1.5 pt-0.5">
         <span *ngFor="let tag of review.tags" 
-              class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200/60">
+              class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-50 text-slate-600 border border-slate-200/70">
           {{ tag }}
         </span>
       </div>
 
-      <!-- Footer Inset con Votación Comunitaria (D-003: Solo en reseñas con texto) -->
-      <div class="flex items-center justify-between -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 p-3.5 sm:px-6 rounded-b-2xl bg-slate-50/80 border-t border-slate-100 text-xs text-slate-400">
+      <!-- Footer Row: Secondary metadata & Thumbs Up/Down Rating (Style inspired by screenshot) -->
+      <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-400">
+        
         <div class="flex items-center space-x-2">
-          <span class="font-medium text-slate-500 truncate max-w-[140px] sm:max-w-none">
-            {{ review.isAnonymous ? 'Estudiante anónimo' : review.user?.name || 'Estudiante verificado' }}
+          <span class="text-[11px] text-slate-400 flex items-center space-x-1 font-medium">
+            <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Experiencia de Cátedra</span>
           </span>
-          <span>•</span>
-          <span>{{ review.createdAt | date:'mediumDate' }}</span>
+          <span *ngIf="review.reported" class="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-md">
+            Reportada por ti
+          </span>
         </div>
 
-        <div *ngIf="review.text" class="flex items-center space-x-2">
+        <!-- Lightweight Thumbs Interaction with Morphicons spring animation -->
+        <div *ngIf="review.text" class="flex items-center space-x-1.5">
           <button 
             (click)="voteReview(review, 'up')" 
-            [ngClass]="review.userVote === 'up' ? 'text-indigo-600 bg-indigo-50 border-indigo-200 font-bold' : 'text-slate-500 bg-white hover:bg-indigo-50/80 hover:text-indigo-700 hover:border-indigo-300 border-slate-200/80'"
-            class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border text-xs font-semibold active:scale-[0.97] active:bg-indigo-100 transition-[transform,background-color,border-color,color] duration-150 ease-out">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
-            </svg>
-            <span>Útil</span>
+            [ngClass]="review.userVote === 'up' ? 'text-indigo-600 font-bold bg-indigo-50 border-indigo-200 shadow-2xs' : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-50 border-transparent'"
+            title="Voto positivo (útil)"
+            class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border text-xs active:scale-90 transition-all duration-150">
+            <span class="font-bold tabular-nums">{{ review.netScore > 0 ? review.netScore : 0 }}</span>
+            <app-morph-icon 
+              [icon]="review.userVote === 'up' ? iconCheck : iconThumbsUp" 
+              [size]="14" 
+              [strokeWidth]="2" 
+              [svgClass]="review.userVote === 'up' ? 'text-indigo-600' : 'text-slate-500'" 
+              spring="snappy">
+            </app-morph-icon>
           </button>
 
           <button 
             (click)="voteReview(review, 'down')" 
-            [ngClass]="review.userVote === 'down' ? 'text-red-600 bg-red-50 border-red-200' : 'text-slate-500 bg-white hover:bg-red-50/80 hover:text-red-600 hover:border-red-300 border-slate-200/80'"
-            class="p-1 rounded-lg border text-xs font-semibold active:scale-[0.97] active:bg-red-100 transition-[transform,background-color,border-color,color] duration-150 ease-out">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/>
-            </svg>
+            [ngClass]="review.userVote === 'down' ? 'text-red-600 font-bold bg-red-50 border-red-200 shadow-2xs' : 'text-slate-400 hover:text-red-500 hover:bg-slate-50 border-transparent'"
+            title="Voto negativo (no útil)"
+            class="p-1.5 rounded-lg border text-xs active:scale-90 transition-all duration-150 flex items-center justify-center">
+            <app-morph-icon 
+              [icon]="review.userVote === 'down' ? iconCheck : iconThumbsDown" 
+              [size]="14" 
+              [strokeWidth]="2" 
+              [svgClass]="review.userVote === 'down' ? 'text-red-600' : 'text-slate-400'" 
+              spring="snappy">
+            </app-morph-icon>
           </button>
-
-          <span class="font-bold text-xs pl-1 tabular-nums" [ngClass]="review.netScore >= 0 ? 'text-slate-600' : 'text-red-500'">
-            {{ review.netScore > 0 ? '+' + review.netScore : review.netScore }}
-          </span>
         </div>
+
       </div>
 
     </article>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL DE SELECCIÓN DE MOTIVO DE REPORTE (Point 4 & D-010)                 -->
+  <!-- ========================================================================= -->
+  <div *ngIf="showReportModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-backdrop-in">
+    <!-- Backdrop: click to close -->
+    <div 
+      class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity cursor-pointer"
+      (click)="closeReportModal()"
+      title="Toca fuera para cancelar">
+    </div>
+
+    <!-- Modal Box -->
+    <div class="w-full sm:max-w-md max-sm:fixed max-sm:bottom-0 max-sm:inset-x-0 max-sm:rounded-b-none max-sm:rounded-t-3xl max-sm:max-h-[90vh] bg-white flex flex-col shadow-2xl border-t sm:border border-slate-200 overflow-hidden relative z-10 animate-sheet-up sm:animate-modal-in">
+      
+      <!-- Mobile Pull Bar -->
+      <div 
+        (click)="closeReportModal()"
+        class="sm:hidden py-3 px-6 flex items-center justify-center cursor-pointer flex-shrink-0"
+        title="Toca para cancelar">
+        <div class="w-12 h-1.5 bg-slate-300 hover:bg-slate-400 rounded-full transition-colors"></div>
+      </div>
+
+      <!-- Header -->
+      <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/60 flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 border border-red-200">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+              <line x1="4" y1="22" x2="4" y2="15"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">Reportar Reseña</h3>
+            <p class="text-xs text-slate-400">Protección comunitaria estudiantil (D-010)</p>
+          </div>
+        </div>
+
+        <button 
+          (click)="closeReportModal()"
+          class="min-w-[40px] min-h-[40px] p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center active:scale-95 transition-all">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form Body -->
+      <div class="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1">
+        <p class="text-xs text-slate-600 font-medium leading-relaxed">
+          Selecciona la razón principal por la cual este contenido vulnera las pautas de RateMat:
+        </p>
+
+        <div class="space-y-2">
+          <label 
+            *ngFor="let reason of availableReportReasons"
+            class="flex items-start space-x-3 p-3 rounded-xl border cursor-pointer transition-all active:scale-[0.99]"
+            [ngClass]="selectedReportReason === reason ? 'bg-red-50/80 border-red-300 text-red-900 font-semibold' : 'bg-slate-50/50 hover:bg-slate-100 border-slate-200/80 text-slate-700'">
+            <input 
+              type="radio" 
+              name="reportReason" 
+              [value]="reason" 
+              [(ngModel)]="selectedReportReason" 
+              class="mt-0.5 text-red-600 focus:ring-red-500">
+            <span class="text-xs leading-snug">{{ reason }}</span>
+          </label>
+        </div>
+
+        <div class="p-3 bg-slate-50 border border-slate-200/70 rounded-xl text-[11px] text-slate-500 leading-relaxed">
+          <strong>Regla Comunitaria D-010:</strong> Al acumular 3 reportes independientes, la reseña se ocultará de inmediato y pasará al Panel de Moderación para revisión definitiva.
+        </div>
+
+        <!-- Actions -->
+        <div class="pt-2 flex items-center justify-end space-x-2.5">
+          <button 
+            type="button"
+            (click)="closeReportModal()"
+            class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 active:scale-95 transition-all">
+            Cancelar
+          </button>
+
+          <button 
+            type="button"
+            (click)="confirmReport()"
+            class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-xs hover:shadow transition-all active:scale-95 flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+              <line x1="4" y1="22" x2="4" y2="15"/>
+            </svg>
+            <span>Confirmar Denuncia</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Brecha 3: Floating Report Feedback Toast (D-010) -->
+  <div *ngIf="reportToastMessage" 
+       class="fixed bottom-6 right-6 z-50 max-w-sm p-4 bg-slate-900 text-white rounded-2xl shadow-2xl border border-slate-700 flex items-center space-x-3 animate-sheet-up">
+    <div class="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <div class="text-xs font-medium leading-snug">
+      {{ reportToastMessage }}
+    </div>
   </div>
 
 </div>
