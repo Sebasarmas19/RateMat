@@ -1,0 +1,301 @@
+<div class="max-w-6xl mx-auto space-y-6 animate-fade-in pb-12">
+
+  <!-- Executive Header -->
+  <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      
+      <div class="space-y-1.5 min-w-0">
+        <div class="flex items-center space-x-2">
+          <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">
+            <svg class="w-3.5 h-3.5 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Panel de Control D-011</span>
+          </span>
+          <span class="text-xs text-slate-400 font-medium">UCAB Guayana</span>
+        </div>
+
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          Administración y Moderación
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-2xl">
+          Supervisión descentralizada del catálogo de profesores y cátedras (D-004 Cold Start) y resolución de denuncias comunitarias bajo la regla de pánico (D-010).
+        </p>
+      </div>
+
+      <!-- Action Tools -->
+      <div class="flex items-center space-x-2 flex-shrink-0 self-start sm:self-center">
+        <button 
+          (click)="resetSampleData()" 
+          title="Restablecer datos de muestra para pruebas"
+          class="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold active:scale-95 transition-all flex items-center space-x-1.5 shadow-2xs">
+          <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+            <path d="M21 3v5h-5"/>
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+            <path d="M8 16H3v5"/>
+          </svg>
+          <span>Reiniciar datos</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-slate-100">
+      
+      <div class="p-3.5 bg-slate-50/70 rounded-2xl border border-slate-200/70">
+        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Pendientes</div>
+        <div class="text-2xl font-black text-slate-900 mt-0.5 tabular-nums">{{ totalPendingCount }}</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">Tareas en cola</div>
+      </div>
+
+      <div class="p-3.5 bg-indigo-50/50 rounded-2xl border border-indigo-100/80">
+        <div class="text-[11px] font-bold text-indigo-500 uppercase tracking-wider">Propuestas Docentes</div>
+        <div class="text-2xl font-black text-indigo-700 mt-0.5 tabular-nums">{{ pendingSuggestions.length }}</div>
+        <div class="text-[11px] text-indigo-600/80 mt-0.5">Cold Start (D-004)</div>
+      </div>
+
+      <div class="p-3.5 bg-red-50/50 rounded-2xl border border-red-100/80">
+        <div class="text-[11px] font-bold text-red-500 uppercase tracking-wider">Contenido Reportado</div>
+        <div class="text-2xl font-black text-red-700 mt-0.5 tabular-nums">{{ pendingReports.length }}</div>
+        <div class="text-[11px] text-red-600/80 mt-0.5">≥ 3 denuncias (D-010)</div>
+      </div>
+
+      <div class="p-3.5 bg-emerald-50/50 rounded-2xl border border-emerald-100/80">
+        <div class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Estado del Sistema</div>
+        <div class="text-sm font-black text-emerald-800 mt-1 flex items-center space-x-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Operativo</span>
+        </div>
+        <div class="text-[11px] text-emerald-700/80 mt-0.5">Moderación activa</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="flex items-center space-x-2 border-b border-slate-200/80 pb-3">
+    <button 
+      (click)="setFilter('all')" 
+      [ngClass]="activeFilter === 'all' ? 'bg-slate-900 text-white font-bold shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'"
+      class="px-4 py-2 rounded-xl text-xs transition-all active:scale-95 flex items-center space-x-1.5">
+      <span>Todas las tareas</span>
+      <span class="px-1.5 py-0.2 rounded-full text-[10px] tabular-nums" [ngClass]="activeFilter === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'">
+        {{ totalPendingCount }}
+      </span>
+    </button>
+
+    <button 
+      (click)="setFilter('suggestions')" 
+      [ngClass]="activeFilter === 'suggestions' ? 'bg-indigo-600 text-white font-bold shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'"
+      class="px-4 py-2 rounded-xl text-xs transition-all active:scale-95 flex items-center space-x-1.5">
+      <span>Propuestas Cold Start</span>
+      <span class="px-1.5 py-0.2 rounded-full text-[10px] tabular-nums" [ngClass]="activeFilter === 'suggestions' ? 'bg-white/20 text-white' : 'bg-indigo-50 text-indigo-700'">
+        {{ pendingSuggestions.length }}
+      </span>
+    </button>
+
+    <button 
+      (click)="setFilter('reports')" 
+      [ngClass]="activeFilter === 'reports' ? 'bg-red-600 text-white font-bold shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'"
+      class="px-4 py-2 rounded-xl text-xs transition-all active:scale-95 flex items-center space-x-1.5">
+      <span>Denuncias de Contenido</span>
+      <span class="px-1.5 py-0.2 rounded-full text-[10px] tabular-nums" [ngClass]="activeFilter === 'reports' ? 'bg-white/20 text-white' : 'bg-red-50 text-red-700'">
+        {{ pendingReports.length }}
+      </span>
+    </button>
+  </div>
+
+  <!-- Queue 1: Pending Suggestions (D-004 & D-011) -->
+  <section *ngIf="activeFilter === 'all' || activeFilter === 'suggestions'" class="space-y-3">
+    
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <h2 class="text-base font-extrabold text-slate-900">
+          Sugerencias de Profesores y Cátedras (D-004)
+        </h2>
+        <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 tabular-nums">
+          {{ pendingSuggestions.length }}
+        </span>
+      </div>
+      <p class="text-xs text-slate-400 hidden sm:block">Aprobación para el catálogo público</p>
+    </div>
+
+    <!-- Empty State Suggestions -->
+    <div *ngIf="pendingSuggestions.length === 0" 
+         class="p-8 bg-white rounded-3xl border border-slate-200/80 text-center space-y-2 shadow-2xs">
+      <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h3 class="text-sm font-bold text-slate-800">No hay profesores ni cátedras pendientes de aprobación</h3>
+      <p class="text-xs text-slate-400">Todas las propuestas comunitarias han sido procesadas con éxito.</p>
+    </div>
+
+    <!-- Suggestions List -->
+    <div *ngIf="pendingSuggestions.length > 0" class="space-y-3">
+      <article *ngFor="let item of pendingSuggestions" 
+               class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+        
+        <div class="flex items-start space-x-3.5 min-w-0">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm flex-shrink-0"
+               [ngClass]="item.type === 'professor' ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 'bg-amber-50 text-amber-700 border border-amber-100'">
+            {{ item.type === 'professor' ? '👨‍🏫' : '📚' }}
+          </div>
+
+          <div class="min-w-0 space-y-0.5">
+            <div class="flex items-center space-x-2 flex-wrap">
+              <h4 class="font-extrabold text-slate-900 text-sm sm:text-base">
+                {{ item.name }}
+              </h4>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
+                    [ngClass]="item.type === 'professor' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-800'">
+                {{ item.type === 'professor' ? 'Nuevo Profesor' : 'Nueva Cátedra' }}
+              </span>
+            </div>
+
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">
+              {{ item.detail }}
+            </p>
+
+            <div class="flex items-center space-x-2 text-[11px] text-slate-400 pt-0.5">
+              <span>Sugerido por: <strong class="text-slate-600">{{ item.suggestedBy }}</strong></span>
+              <span>•</span>
+              <span>{{ item.date }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Moderation Actions -->
+        <div class="flex items-center space-x-2 self-end sm:self-center flex-shrink-0">
+          <button 
+            (click)="rejectSuggestion(item)"
+            class="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-red-700 border border-slate-200 text-slate-600 text-xs font-bold active:scale-95 transition-all">
+            ✕ Descartar
+          </button>
+          
+          <button 
+            (click)="approveSuggestion(item)"
+            class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs hover:shadow active:scale-95 transition-all flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Aprobar e Incorporar</span>
+          </button>
+        </div>
+
+      </article>
+    </div>
+
+  </section>
+
+  <!-- Queue 2: Reported Content (D-010 & D-011 Panic System) -->
+  <section *ngIf="activeFilter === 'all' || activeFilter === 'reports'" class="space-y-3 pt-4">
+    
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <h2 class="text-base font-extrabold text-slate-900">
+          Contenido Reportado & Sistema de Pánico (D-010)
+        </h2>
+        <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 tabular-nums">
+          {{ pendingReports.length }}
+        </span>
+      </div>
+      <p class="text-xs text-slate-400 hidden sm:block">Alcanzaron el umbral de 3 denuncias comunitarias</p>
+    </div>
+
+    <!-- Empty State Reports -->
+    <div *ngIf="pendingReports.length === 0" 
+         class="p-8 bg-white rounded-3xl border border-slate-200/80 text-center space-y-2 shadow-2xs">
+      <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <h3 class="text-sm font-bold text-slate-800">Bandeja de denuncias completamente limpia</h3>
+      <p class="text-xs text-slate-400">No hay contenido con reportes activos en la plataforma.</p>
+    </div>
+
+    <!-- Reports List -->
+    <div *ngIf="pendingReports.length > 0" class="space-y-3">
+      <article *ngFor="let report of pendingReports" 
+               class="bg-white p-5 rounded-3xl border border-red-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-md transition-all space-y-3.5">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2.5">
+            <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+              ⚠️
+            </span>
+            <div>
+              <div class="flex items-center space-x-2">
+                <h4 class="font-extrabold text-slate-900 text-sm">
+                  {{ report.title }}
+                </h4>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-red-100 text-red-800">
+                  {{ report.itemType === 'review' ? 'Reseña Estudiantil' : 'Archivo en Hub PDF' }}
+                </span>
+              </div>
+              <p class="text-xs text-slate-400">En: <strong>{{ report.targetName }}</strong></p>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-red-50 text-red-700 border border-red-200">
+              <svg class="w-3.5 h-3.5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                <line x1="4" y1="22" x2="4" y2="15"/>
+              </svg>
+              <span>{{ report.reportsCount }} reportes independientes</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Reason -->
+        <div class="p-3 bg-red-50/60 border border-red-100 rounded-2xl text-xs text-red-900 leading-relaxed">
+          <strong>Causa denunciada:</strong> {{ report.reason }}
+        </div>
+
+        <!-- Content Snippet -->
+        <div class="p-3.5 bg-slate-50 border border-slate-200/70 rounded-2xl text-xs text-slate-700 font-mono leading-relaxed">
+          {{ report.contentPreview }}
+        </div>
+
+        <!-- Moderation Actions -->
+        <div class="flex items-center justify-between pt-1">
+          <span class="text-[11px] text-slate-400">{{ report.date }}</span>
+
+          <div class="flex items-center space-x-2">
+            <button 
+              (click)="dismissReports(report)"
+              class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold active:scale-95 transition-all">
+              🔄 Desestimar y Restaurar
+            </button>
+            <button 
+              (click)="deleteReportedItem(report)"
+              class="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-xs active:scale-95 transition-all">
+              🗑️ Eliminar Definitivamente
+            </button>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+  </section>
+
+  <!-- Floating Feedback Toast -->
+  <div *ngIf="toastMessage" 
+       class="fixed bottom-6 right-6 z-50 max-w-sm p-4 bg-slate-900 text-white rounded-2xl shadow-2xl border border-slate-700 flex items-center space-x-3 animate-sheet-up">
+    <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <div class="text-xs font-medium leading-snug">
+      {{ toastMessage }}
+    </div>
+  </div>
+
+</div>
