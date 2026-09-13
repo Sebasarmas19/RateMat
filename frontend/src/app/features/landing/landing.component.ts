@@ -16,7 +16,7 @@ export class LandingComponent {
   constructor() {
     effect(() => {
       if (this.authService.currentUser()) {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/search']);
       }
     });
   }

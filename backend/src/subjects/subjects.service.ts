@@ -23,4 +23,8 @@ export class SubjectsService {
   async findOne(id: string): Promise<Subject | null> {
     return this.subjectsRepository.findOneBy({ id });
   }
+
+  async findAll(): Promise<Subject[]> {
+    return this.subjectsRepository.find();
+  }
 }

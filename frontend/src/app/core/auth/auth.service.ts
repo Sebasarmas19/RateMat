@@ -6,29 +6,62 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient | null = null;
   
   // Usamos Signals (Angular 16+) para reactividad premium
   currentUser = signal<User | null>(null);
   session = signal<Session | null>(null);
 
   constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
-    this.initSession();
+    const isConfigured = environment.supabaseUrl && 
+      environment.supabaseUrl.startsWith('http') && 
+      !environment.supabaseUrl.includes('YOUR_SUPABASE');
+
+    if (isConfigured) {
+      try {
+        this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+        this.initSession();
+      } catch (e) {
+        console.warn('No se pudo inicializar Supabase:', e);
+      }
+    } else {
+      console.warn('⚠️ Supabase no está configurado aún en environment.ts. Modo demo activo para previsualización.');
+    }
   }
 
   private async initSession() {
-    const { data: { session } } = await this.supabase.auth.getSession();
-    this.session.set(session);
-    this.currentUser.set(session?.user ?? null);
-
-    this.supabase.auth.onAuthStateChange((_event, session) => {
+    if (!this.supabase) return;
+    try {
+      const { data: { session } } = await this.supabase.auth.getSession();
       this.session.set(session);
       this.currentUser.set(session?.user ?? null);
-    });
+
+      this.supabase.auth.onAuthStateChange((_event, session) => {
+        this.session.set(session);
+        this.currentUser.set(session?.user ?? null);
+      });
+    } catch (err) {
+      console.error('Error al obtener sesión de Supabase:', err);
+    }
   }
 
   async signInWithGoogle() {
+    if (!this.supabase) {
+      // Modo demo sin credenciales de Supabase para probar la app en desarrollo
+      const mockUser: any = {
+        id: 'd3b07384-d113-4f4c-9f0e-36798547372a',
+        email: 'estudiante.demo@est.ucab.edu.ve',
+        user_metadata: { full_name: 'Estudiante Demo' }
+      };
+      const mockSession: any = {
+        access_token: 'mock-jwt-token-for-dev',
+        user: mockUser
+      };
+      this.session.set(mockSession);
+      this.currentUser.set(mockUser);
+      return { data: { user: mockUser, session: mockSession }, error: null };
+    }
+
     const { data, error } = await this.supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -40,8 +73,12 @@ export class AuthService {
   }
 
   async signOut() {
-    const { error } = await this.supabase.auth.signOut();
-    if (error) throw error;
+    if (this.supabase) {
+      const { error } = await this.supabase.auth.signOut();
+      if (error) throw error;
+    }
+    this.session.set(null);
+    this.currentUser.set(null);
   }
 
   get token(): string | undefined {

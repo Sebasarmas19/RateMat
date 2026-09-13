@@ -125,3 +125,6 @@ dist/
 
 # Antigravity/Gemini IDE files
 .gemini/
+
+# Agent skills & local harness configs
+.agents/

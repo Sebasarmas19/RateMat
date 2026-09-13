@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "reicon": {
-      "command": "npx",
-      "args": ["-y", "reicon-mcp"]
-    }
-  }
-}

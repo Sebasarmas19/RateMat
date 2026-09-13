@@ -11,6 +11,13 @@ export class SubjectsController {
     private readonly professorSubjectsService: ProfessorSubjectsService,
   ) {}
 
+  @Get()
+  @ApiOperation({ summary: 'Obtener todas las materias' })
+  @ApiResponse({ status: 200, description: 'Lista de materias devuelta exitosamente' })
+  async getAll() {
+    return this.subjectsService.findAll();
+  }
+
   @Get(':id/professors')
   @ApiOperation({ summary: 'Obtener profesores aprobados de una materia' })
   @ApiParam({ name: 'id', description: 'ID de la materia', type: 'string' })

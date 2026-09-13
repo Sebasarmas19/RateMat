@@ -1,36 +1,51 @@
 <div *ngIf="isVisible()" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
   <!-- Backdrop -->
-  <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"></div>
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
 
   <!-- Modal content -->
-  <div class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl p-6 md:p-8 transform transition-all flex flex-col max-h-[90vh]">
+  <div class="relative w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 transform transition-all flex flex-col max-h-[90vh] border border-slate-100">
     
-    <div class="mb-6 flex items-center space-x-3">
-      <div class="bg-amber-100 text-amber-600 p-2 rounded-xl">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div class="mb-5 flex items-center space-x-3.5">
+      <div class="w-11 h-11 bg-indigo-50 text-indigo-600 p-2.5 rounded-xl border border-indigo-100 flex items-center justify-center flex-shrink-0">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
       </div>
-      <h2 class="text-2xl font-bold text-slate-900">Políticas Comunitarias</h2>
+      <div>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Políticas de la Comunidad</h2>
+        <p class="text-xs text-slate-400">Compromiso obligatorio para estudiantes UCAB</p>
+      </div>
     </div>
 
-    <div class="text-slate-600 mb-6 flex-1 overflow-y-auto space-y-4 pr-2">
-      <p class="text-sm">
-        Para mantener a RateMat como un espacio seguro y útil para todos, necesitamos que te comprometas a cumplir con nuestras reglas básicas antes de continuar.
+    <div class="text-slate-600 mb-6 flex-1 overflow-y-auto space-y-3.5 pr-1">
+      <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+        Para mantener a RateMat como un espacio seguro, verídico y constructivo, debes aceptar las 3 cláusulas obligatorias antes de interactuar:
       </p>
 
-      <div class="space-y-3 mt-4">
-        <label class="flex items-start space-x-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-          <input type="checkbox" [(ngModel)]="check1" class="mt-1 w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-          <span class="text-sm">Soy el único responsable de mis comentarios. Acepto no usar lenguaje difamatorio ni insultos hacia profesores o alumnos.</span>
+      <div class="space-y-2.5 mt-2">
+        <label class="flex items-start space-x-3 p-3.5 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-50/80 transition-colors group">
+          <input type="checkbox" [(ngModel)]="check1" class="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
+          <span class="text-xs text-slate-700 leading-relaxed select-none">
+            <strong class="font-semibold text-slate-900 block mb-0.5">1. Responsabilidad de Opinión:</strong>
+            Soy el único responsable de mis comentarios. Acepto no usar lenguaje difamatorio ni insultos hacia profesores o alumnos.
+          </span>
         </label>
 
-        <label class="flex items-start space-x-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-          <input type="checkbox" [(ngModel)]="check2" class="mt-1 w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-          <span class="text-sm">Todo archivo subido queda registrado con mi correo institucional. Subir material inapropiado (desnudos, burlas) resultará en la eliminación permanente de mi cuenta.</span>
+        <label class="flex items-start space-x-3 p-3.5 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-50/80 transition-colors group">
+          <input type="checkbox" [(ngModel)]="check2" class="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
+          <span class="text-xs text-slate-700 leading-relaxed select-none">
+            <strong class="font-semibold text-slate-900 block mb-0.5">2. Identidad Institucional:</strong>
+            Todo archivo subido queda registrado con mi correo institucional. Subir material indebido resultará en la baja permanente de mi cuenta.
+          </span>
         </label>
 
-        <label class="flex items-start space-x-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-          <input type="checkbox" [(ngModel)]="check3" class="mt-1 w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-          <span class="text-sm">Solo subiré resúmenes propios, guías públicas o exámenes pasados. No subiré libros comerciales o presentaciones privadas del profesor (Copyright).</span>
+        <label class="flex items-start space-x-3 p-3.5 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-50/80 transition-colors group">
+          <input type="checkbox" [(ngModel)]="check3" class="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
+          <span class="text-xs text-slate-700 leading-relaxed select-none">
+            <strong class="font-semibold text-slate-900 block mb-0.5">3. Propiedad Intelectual:</strong>
+            Solo subiré resúmenes propios, guías públicas o exámenes pasados. No subiré libros comerciales ni material protegido por Copyright.
+          </span>
         </label>
       </div>
     </div>
@@ -41,8 +56,8 @@
         [disabled]="!canAccept"
         [class.opacity-50]="!canAccept"
         [class.cursor-not-allowed]="!canAccept"
-        class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 active:scale-95 shadow-lg shadow-blue-600/20">
-        Acepto los términos y quiero continuar
+        class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all duration-200 active:scale-[0.98] shadow-lg shadow-indigo-600/20 disabled:hover:bg-indigo-600">
+        Acepto las políticas y deseo continuar
       </button>
     </div>
     
