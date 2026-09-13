@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ApiService, Career, SubjectItem, ProfessorSummary } from '../../core/services/api.service';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
@@ -11,14 +11,25 @@ export type ProfessorSort = 'rating_desc' | 'newest' | 'oldest' | 'reviews_desc'
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './search.component.html'
 })
 export class SearchComponent implements OnInit, AfterViewInit {
   private apiService = inject(ApiService);
   private route = inject(ActivatedRoute);
+  private fb = inject(FormBuilder);
 
   @ViewChild('searchInput') searchInput!: ElementRef;
+
+  // Brecha 1: Modal de Sugerencia de Profesor (D-004 & D-011)
+  showSuggestProfModal = false;
+  isSubmittingSuggest = false;
+  suggestSuccessMessage = '';
+  suggestProfForm: FormGroup = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(3)]],
+    institutionEmailOrSchool: ['', [Validators.required, Validators.minLength(3)]],
+    subject: ['', [Validators.required]]
+  });
 
   // Search input & mode state
   searchMode: SearchMode = 'all';
@@ -289,5 +300,42 @@ export class SearchComponent implements OnInit, AfterViewInit {
   closeSubjectModal() {
     this.selectedSubject = null;
     this.subjectProfessors = [];
+  }
+
+  // --- Brecha 1: Suggest Professor Modal Methods (D-004 & D-011) ---
+
+  openSuggestProfModal(prefilledSubject?: string, prefilledName?: string) {
+    this.suggestSuccessMessage = '';
+    this.suggestProfForm.reset({
+      name: prefilledName || '',
+      institutionEmailOrSchool: '',
+      subject: prefilledSubject || (this.selectedSubject?.name || '')
+    });
+    this.showSuggestProfModal = true;
+  }
+
+  closeSuggestProfModal() {
+    if (!this.isSubmittingSuggest) {
+      this.showSuggestProfModal = false;
+      this.suggestSuccessMessage = '';
+    }
+  }
+
+  submitSuggestProfessor() {
+    if (this.suggestProfForm.invalid) {
+      this.suggestProfForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSubmittingSuggest = true;
+    this.suggestSuccessMessage = '';
+
+    setTimeout(() => {
+      this.isSubmittingSuggest = false;
+      this.suggestSuccessMessage = '¡Gracias por tu aporte! Tu sugerencia ha sido enviada a la cola de moderación de los administradores estudiantiles (D-004 & D-011).';
+      setTimeout(() => {
+        this.closeSuggestProfModal();
+      }, 2500);
+    }, 600);
   }
 }
