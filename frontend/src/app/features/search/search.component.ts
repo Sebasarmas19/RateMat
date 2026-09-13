@@ -42,10 +42,13 @@ export class SearchComponent implements OnInit, AfterViewInit {
   careers: Career[] = [];
   isLoadingCareers = true;
 
-  // Selected Career view (Level 2: materias de la carrera)
+  // Selected Career view (Level 2: materias y profesores de la carrera)
   selectedCareer: Career | null = null;
-  careerSubjectFilter = '';
+  careerActiveTab: 'subjects' | 'professors' = 'subjects';
+  careerSearchQuery = '';
   filteredCareerSubjects: SubjectItem[] = [];
+  careerProfessors: ProfessorSummary[] = [];
+  filteredCareerProfessors: ProfessorSummary[] = [];
 
   // Selected Subject view / modal (Level 3: profesores que dan esa materia)
   selectedSubject: SubjectItem | null = null;
@@ -247,32 +250,87 @@ export class SearchComponent implements OnInit, AfterViewInit {
     return list;
   }
 
-  // --- Career selection (Level 2: Subjects) ---
+  // --- Career selection (Level 2: Subjects & Professors) ---
 
   selectCareer(career: Career) {
     this.selectedCareer = career;
-    this.careerSubjectFilter = '';
+    this.careerActiveTab = 'subjects';
+    this.careerSearchQuery = '';
     this.filteredCareerSubjects = [...career.subjects];
+
+    // Aggregate all unique professors teaching in this career
+    const profMap = new Map<string, ProfessorSummary>();
+    if (career.subjects) {
+      career.subjects.forEach(subj => {
+        if (subj.professors) {
+          subj.professors.forEach(p => profMap.set(p.id, p));
+        }
+      });
+    }
+
+    // Also include professors from allProfessors matching career or faculty
+    this.allProfessors.forEach(p => {
+      const dept = (p.department || '').toLowerCase();
+      if (
+        dept.includes(career.shortName.toLowerCase()) ||
+        dept.includes(career.name.toLowerCase()) ||
+        (career.facultyCategory === 'ingenieria' && (dept.includes('ingeniería') || dept.includes('informática') || dept.includes('matemáticas') || dept.includes('ciencias básicas'))) ||
+        (career.facultyCategory === 'derecho' && dept.includes('derecho')) ||
+        (career.facultyCategory === 'faces' && (dept.includes('económicas') || dept.includes('sociales') || dept.includes('administración') || dept.includes('contaduría')))
+      ) {
+        profMap.set(p.id, p);
+      }
+    });
+
+    this.careerProfessors = Array.from(profMap.values());
+    this.filteredCareerProfessors = [...this.careerProfessors];
   }
 
   clearSelectedCareer() {
     this.selectedCareer = null;
-    this.careerSubjectFilter = '';
+    this.careerActiveTab = 'subjects';
+    this.careerSearchQuery = '';
     this.filteredCareerSubjects = [];
+    this.careerProfessors = [];
+    this.filteredCareerProfessors = [];
   }
 
-  onCareerSubjectFilterChange(text: string) {
-    this.careerSubjectFilter = text;
-    if (!this.selectedCareer) return;
+  setCareerActiveTab(tab: 'subjects' | 'professors') {
+    this.careerActiveTab = tab;
+    this.applyCareerSearch();
+  }
 
-    if (!text || text.trim().length === 0) {
+  onCareerSearchChange(text: string) {
+    this.careerSearchQuery = text;
+    this.applyCareerSearch();
+  }
+
+  // Backwards compatibility for existing template calls
+  onCareerSubjectFilterChange(text: string) {
+    this.onCareerSearchChange(text);
+  }
+
+  private applyCareerSearch() {
+    if (!this.selectedCareer) return;
+    const term = (this.careerSearchQuery || '').toLowerCase().trim();
+
+    if (!term) {
       this.filteredCareerSubjects = [...this.selectedCareer.subjects];
-    } else {
-      const term = text.toLowerCase().trim();
+      this.filteredCareerProfessors = [...this.careerProfessors];
+      return;
+    }
+
+    if (this.careerActiveTab === 'subjects') {
       this.filteredCareerSubjects = this.selectedCareer.subjects.filter(s =>
         s.name.toLowerCase().includes(term) ||
         s.code.toLowerCase().includes(term) ||
         (s.semester && s.semester.toLowerCase().includes(term))
+      );
+    } else {
+      this.filteredCareerProfessors = this.careerProfessors.filter(p =>
+        p.name.toLowerCase().includes(term) ||
+        p.department.toLowerCase().includes(term) ||
+        (p.tags && p.tags.some(t => t.toLowerCase().includes(term)))
       );
     }
   }

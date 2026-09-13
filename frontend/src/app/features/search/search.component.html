@@ -3,7 +3,7 @@
   <!-- ========================================================================= -->
   <!-- 1. SEARCH HEADER & TYPE SELECTOR (Materia vs Profesor)                    -->
   <!-- ========================================================================= -->
-  <div class="space-y-3">
+  <div *ngIf="!selectedCareer" class="space-y-3">
     
     <!-- Mode Toggle: Todo | Materias | Profesores -->
     <div class="flex items-center space-x-1 p-1 bg-slate-100/90 rounded-2xl max-w-sm">
@@ -353,7 +353,7 @@
   <div *ngIf="searchMode !== 'professors' && !isSearching && (!searchResults || searchQuery.length < 2)" class="space-y-6">
 
     <!-- --------------------------------------------------------------------- -->
-    <!-- VIEW A: DRILL-DOWN INTO SELECTED CAREER (Materias de esa carrera)     -->
+    <!-- VIEW A: DRILL-DOWN INTO SELECTED CAREER (Materias y Profesores)       -->
     <!-- --------------------------------------------------------------------- -->
     <div *ngIf="selectedCareer" class="space-y-5 animate-fade-in">
       
@@ -369,16 +369,17 @@
         </button>
 
         <span class="text-xs font-medium text-slate-400">
-          {{ filteredCareerSubjects.length }} de {{ selectedCareer.subjects.length }} materias
+          {{ careerActiveTab === 'subjects' ? (filteredCareerSubjects.length + ' de ' + selectedCareer.subjects.length + ' materias') : (filteredCareerProfessors.length + ' de ' + careerProfessors.length + ' profesores') }}
         </span>
       </div>
 
       <!-- Career Hero Header Banner (SaaS Minimalist) -->
-      <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-2">
-        <div class="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200/60">
-          <span>{{ selectedCareer.faculty }}</span>
-          <span>•</span>
-          <span>UCAB Guayana</span>
+      <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-3">
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-100">
+            {{ selectedCareer.faculty }}
+          </span>
+          <span class="text-xs text-slate-400 font-medium">• UCAB Guayana</span>
         </div>
         <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
           {{ selectedCareer.name }}
@@ -388,40 +389,67 @@
         </p>
       </div>
 
-      <!-- Search / Filter within this Career -->
-      <div class="flex items-center justify-between gap-3">
-        <div class="relative flex-1 bg-white rounded-xl border border-slate-200/80 shadow-2xs focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/10 transition-all">
-          <div class="flex items-center px-3.5 py-2.5">
-            <svg class="w-4 h-4 text-slate-400 mr-2.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      <!-- Mini Filter Toggle: [ Materias del Pensum ] vs [ Profesores de la Escuela ] -->
+      <div class="flex items-center space-x-1.5 p-1 bg-slate-100/90 rounded-2xl max-w-sm">
+        <button 
+          (click)="setCareerActiveTab('subjects')" 
+          [class.bg-white]="careerActiveTab === 'subjects'"
+          [class.text-slate-900]="careerActiveTab === 'subjects'"
+          [class.shadow-xs]="careerActiveTab === 'subjects'"
+          [class.text-slate-500]="careerActiveTab !== 'subjects'"
+          class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all active:scale-95 text-center flex items-center justify-center space-x-1.5">
+          <span>📚 Materias</span>
+          <span class="px-1.5 py-0.5 rounded-full text-[10px] tabular-nums" [ngClass]="careerActiveTab === 'subjects' ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-200/70 text-slate-600'">
+            {{ selectedCareer.subjects.length }}
+          </span>
+        </button>
+
+        <button 
+          (click)="setCareerActiveTab('professors')" 
+          [class.bg-white]="careerActiveTab === 'professors'"
+          [class.text-slate-900]="careerActiveTab === 'professors'"
+          [class.shadow-xs]="careerActiveTab === 'professors'"
+          [class.text-slate-500]="careerActiveTab !== 'professors'"
+          class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all active:scale-95 text-center flex items-center justify-center space-x-1.5">
+          <span>👨‍🏫 Profesores</span>
+          <span class="px-1.5 py-0.5 rounded-full text-[10px] tabular-nums" [ngClass]="careerActiveTab === 'professors' ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-200/70 text-slate-600'">
+            {{ careerProfessors.length }}
+          </span>
+        </button>
+      </div>
+
+      <!-- Single Search / Filter Input for this Career -->
+      <div class="relative bg-white rounded-2xl border border-slate-200/80 shadow-sm focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:shadow-md transition-all duration-200">
+        <div class="flex items-center pl-4 pr-3 py-3">
+          <svg class="w-5 h-5 text-slate-400 mr-3 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input 
+            type="text" 
+            [ngModel]="careerSearchQuery" 
+            (ngModelChange)="onCareerSearchChange($event)"
+            [placeholder]="careerActiveTab === 'subjects' ? ('Buscar materias en ' + selectedCareer.shortName + ' por nombre, código o semestre...') : ('Buscar profesores de ' + selectedCareer.shortName + ' por nombre o departamento...')"
+            class="w-full bg-transparent border-0 p-0 text-slate-900 placeholder:text-slate-400 font-medium text-xs sm:text-sm focus:ring-0 focus:outline-none"
+          >
+          <button *ngIf="careerSearchQuery" (click)="onCareerSearchChange('')" class="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
-            <input 
-              type="text" 
-              [ngModel]="careerSubjectFilter" 
-              (ngModelChange)="onCareerSubjectFilterChange($event)"
-              placeholder="Filtrar materias de {{ selectedCareer.shortName }} (ej: Cálculo, Algoritmos, 3er Semestre)..."
-              class="w-full bg-transparent border-0 p-0 text-slate-900 placeholder:text-slate-400 text-xs sm:text-sm focus:ring-0 focus:outline-none"
-            >
-            <button *ngIf="careerSubjectFilter" (click)="onCareerSubjectFilterChange('')" class="text-slate-400 hover:text-slate-600">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          </div>
+          </button>
         </div>
       </div>
 
-      <!-- Grid of Subjects for this Career -->
-      <div class="space-y-3">
+      <!-- TAB 1: Grid of Subjects for this Career -->
+      <div *ngIf="careerActiveTab === 'subjects'" class="space-y-3">
         <div class="flex items-center justify-between px-1">
           <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Materias del Pensum</h3>
           <span class="text-xs text-slate-500">Haz click en una materia para ver quién la dicta</span>
         </div>
 
         <div *ngIf="filteredCareerSubjects.length === 0" class="p-8 text-center bg-white rounded-2xl border border-slate-200/70 border-dashed text-slate-500">
-          <p class="text-xs">No encontramos materias con el término "{{ careerSubjectFilter }}".</p>
+          <p class="text-xs">No encontramos materias con el término "{{ careerSearchQuery }}".</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -463,6 +491,69 @@
                 </svg>
               </span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: Grid of Professors for this Career -->
+      <div *ngIf="careerActiveTab === 'professors'" class="space-y-3">
+        <div class="flex items-center justify-between px-1">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Profesores de {{ selectedCareer.name }}</h3>
+          <span class="text-xs text-slate-500">{{ filteredCareerProfessors.length }} docentes</span>
+        </div>
+
+        <div *ngIf="filteredCareerProfessors.length === 0" class="p-8 text-center bg-white rounded-2xl border border-slate-200/70 border-dashed text-slate-500 space-y-3">
+          <p class="text-xs text-slate-600">No encontramos profesores con el término "{{ careerSearchQuery }}".</p>
+          <button (click)="openSuggestProfModal(selectedCareer.name)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs active:scale-95">
+            + Proponer profesor para esta escuela
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <div 
+            *ngFor="let prof of filteredCareerProfessors"
+            class="p-5 bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group">
+            
+            <div>
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-black text-sm border flex-shrink-0"
+                     [ngClass]="prof.avatarBg || 'bg-indigo-50 text-indigo-700 border-indigo-200'">
+                  {{ prof.avatarInitial || prof.name.charAt(prof.name.startsWith('Prof.') ? 6 : 0) }}
+                </div>
+
+                <div class="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-emerald-700 text-white text-xs font-bold shadow-2xs">
+                  <span>{{ prof.rating }}</span>
+                  <svg class="w-3 h-3 fill-current text-white" viewBox="0 0 24 24">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                </div>
+              </div>
+
+              <h4 class="font-extrabold text-slate-900 text-base group-hover:text-indigo-600 transition-colors">
+                {{ prof.name }}
+              </h4>
+              <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                {{ prof.department || ('Profesor de ' + selectedCareer.shortName) }}
+              </p>
+
+              <div *ngIf="prof.tags && prof.tags.length > 0" class="flex flex-wrap gap-1 mt-2.5">
+                <span *ngFor="let tag of prof.tags" class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md">
+                  {{ tag }}
+                </span>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs text-slate-400 font-medium">{{ prof.reviewCount }} evaluaciones</span>
+              <a [routerLink]="['/professor', prof.id]" 
+                 class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs active:scale-95 transition-all">
+                <span>Ver perfil</span>
+                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </a>
+            </div>
+
           </div>
         </div>
       </div>
