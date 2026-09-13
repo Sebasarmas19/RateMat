@@ -311,9 +311,49 @@ Los cambios se agruparon en commits atómicos y ordenados, excluyendo las carpet
 2. `feat(reviews): brechas funcionales de edicion, reporte con motivos tipificados, colapso visual y contador (D-003, D-009, D-010)`
 3. `feat(search): flujo persistente de sugerencia de profesores y catedras (D-004, D-011)`
 4. `feat(ui-ux): bordes redondeados sm:rounded-3xl, backdrop-blur-md y micro-animaciones morphicons en votos y reportes`
-5. `docs: actualizar REPORTE_EJECUTOR.md con implementacion completa de brechas y feedback visual`
 
+---
 
+## 20. Rediseño de Vista de Carrera en `/search` y Estandarización Reicon en `/admin`
 
+En respuesta al feedback de experiencia de usuario sobre duplicidad de elementos y consistencia iconográfica:
 
+### A. Eliminación de Doble Barra de Búsqueda y Navegación de Carrera (`/search`)
+1. **Ocultamiento de Barra Global Superior:**
+   * Al hacer clic y seleccionar una carrera (ej. *Ingeniería Informática*), la barra de búsqueda global superior se oculta dinámicamente (`*ngIf="!selectedCareer"`), evitando la confusión de tener dos inputs simultáneos en pantalla.
+2. **Encabezado y Mini-Filtro de Dos Botones:**
+   * En la parte superior de la vista de carrera se ubica el nombre de la carrera y el botón de retorno `← Volver a carreras`.
+   * Justo debajo se integró un mini-filtro segmentado de dos botones interactivos:
+     * **`📚 Materias (X)`:** Despliega el pensum organizado por semestres con créditos y acceso al modal de cátedra.
+     * **`👨‍🏫 Profesores (Y)`:** Despliega una cuadrícula de tarjetas de los profesores adscritos a dicha carrera y sus departamentos, con su foto/iniciales, calificación promedio, tags de enseñanza y enlace directo a su perfil.
+3. **Buscador Único y Contextual:**
+   * Debajo del mini-filtro se encuentra una única barra de búsqueda reactiva (`careerSearchQuery`).
+   * Cuando la pestaña activa es **Materias**, filtra en tiempo real las asignaturas del pensum por nombre o código.
+   * Cuando la pestaña activa es **Profesores**, filtra en tiempo real los docentes de la carrera por nombre o departamento.
 
+### B. Estandarización Completa de Iconos con `reicon` y Micro-animaciones en `/admin`
+1. **Iconografía Reicon Oficial:**
+   * Se reemplazaron todos los SVGs genéricos del panel de administración por iconos oficiales de `reicon` (Outline, geometría 24x24):
+     * `shield`: Insignia de moderación y toast de confirmación.
+     * `refresh`: Acción de reiniciar datos de muestra y desestimar reportes.
+     * `check`: Aprobación de docentes y cátedras propuestas, y estado vacío de bandeja limpia.
+     * `x`: Descarte/rechazo de propuestas de estudiantes.
+     * `flag`: Insignia de denuncias comunitarias de reseñas.
+     * `trash`: Eliminación definitiva de reseñas tóxicas.
+     * `user`: Propuestas de nuevo profesor.
+     * `book`: Propuestas de nueva cátedra.
+     * `alert-circle`: Indicador de reseñas bajo advertencia o reporte.
+     * `arrow-left`: Retorno a la aplicación.
+2. **Micro-animaciones Táctiles e Interactivas:**
+   * Todos los botones de acción administrativa cuentan con retroalimentación háptica táctil `active:scale-90 transition-all duration-150`.
+   * El botón de **Reiniciar Datos** ejecuta una rotación suave de 180° (`rotate-180 duration-500`) sobre el icono de refresco al ser presionado.
+
+---
+
+## 21. Estado Final de Verificación y Compilación
+* **Build Frontend:** `npm run build` -> **Exit Code 0** (14.8s, sin errores ni advertencias de sintaxis).
+* **Rutas Operativas:**
+  * `http://localhost:4200/search` -> Buscador universal, carreras, pensums y nuevo filtro dual materias/profesores.
+  * `http://localhost:4200/home` -> Feed comunitario con morphicons y reporte tipificado.
+  * `http://localhost:4200/profile` -> Reputación de estudiante y gamificación D-002.
+  * `http://localhost:4200/admin` -> Panel de moderación independiente con iconos Reicon.
