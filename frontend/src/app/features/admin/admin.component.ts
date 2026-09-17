@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import gsap from 'gsap';
 
 export interface PendingSuggestion {
   id: string;
@@ -95,6 +96,15 @@ export class AdminComponent {
 
   setFilter(filter: 'all' | 'suggestions' | 'reports'): void {
     this.activeFilter = filter;
+    setTimeout(() => {
+      if (typeof window !== 'undefined') {
+        gsap.fromTo(
+          '.admin-card-item',
+          { y: 8, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: 0.22, stagger: 0.03, ease: 'power2.out' }
+        );
+      }
+    }, 20);
   }
 
   showToast(message: string): void {
@@ -105,28 +115,54 @@ export class AdminComponent {
     }, 3500);
   }
 
+  private dismissCard(elementId: string, onDone: () => void): void {
+    if (typeof window !== 'undefined') {
+      const el = document.getElementById(elementId);
+      if (el) {
+        gsap.to(el, {
+          x: 24,
+          autoAlpha: 0,
+          scale: 0.96,
+          duration: 0.2,
+          ease: 'power2.in',
+          onComplete: onDone
+        });
+        return;
+      }
+    }
+    onDone();
+  }
+
   // --- D-004 Cold Start Moderation Actions ---
 
   approveSuggestion(item: PendingSuggestion): void {
-    this.pendingSuggestions = this.pendingSuggestions.filter(s => s.id !== item.id);
-    this.showToast(`✅ "${item.name}" ha sido aprobado e incorporado al catálogo docente activo (D-004).`);
+    this.dismissCard(`suggestion-${item.id}`, () => {
+      this.pendingSuggestions = this.pendingSuggestions.filter(s => s.id !== item.id);
+      this.showToast(`"${item.name}" ha sido aprobado e incorporado al catálogo docente activo (D-004).`);
+    });
   }
 
   rejectSuggestion(item: PendingSuggestion): void {
-    this.pendingSuggestions = this.pendingSuggestions.filter(s => s.id !== item.id);
-    this.showToast(`❌ Propuesta de "${item.name}" descartada de la cola.`);
+    this.dismissCard(`suggestion-${item.id}`, () => {
+      this.pendingSuggestions = this.pendingSuggestions.filter(s => s.id !== item.id);
+      this.showToast(`Propuesta de "${item.name}" descartada de la cola.`);
+    });
   }
 
   // --- D-010 Content Report Moderation Actions ---
 
   deleteReportedItem(item: ReportedItem): void {
-    this.pendingReports = this.pendingReports.filter(r => r.id !== item.id);
-    this.showToast(`🗑️ Contenido eliminado definitivamente por violar las normas comunitarias (D-010).`);
+    this.dismissCard(`report-${item.id}`, () => {
+      this.pendingReports = this.pendingReports.filter(r => r.id !== item.id);
+      this.showToast(`Contenido eliminado definitivamente por violar las normas comunitarias (D-010).`);
+    });
   }
 
   dismissReports(item: ReportedItem): void {
-    this.pendingReports = this.pendingReports.filter(r => r.id !== item.id);
-    this.showToast(`🔄 Denuncias desestimadas. El contenido vuelve a ser visible públicamente.`);
+    this.dismissCard(`report-${item.id}`, () => {
+      this.pendingReports = this.pendingReports.filter(r => r.id !== item.id);
+      this.showToast(`Denuncias desestimadas. El contenido vuelve a ser visible públicamente.`);
+    });
   }
 
   // Reset sample items for testing

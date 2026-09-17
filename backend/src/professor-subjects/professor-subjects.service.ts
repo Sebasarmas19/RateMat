@@ -12,6 +12,11 @@ export class ProfessorSubjectsService {
   ) {}
 
   async getApprovedProfessorsForSubject(subjectId: string) {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(subjectId);
+    if (!isUuid) {
+      return [];
+    }
+
     const relations = await this.professorSubjectRepository.find({
       where: {
         subject: { id: subjectId },

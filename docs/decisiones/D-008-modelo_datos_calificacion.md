@@ -16,4 +16,11 @@ Teníamos que definir cómo se calcula la nota del profesor y si el "peso acadé
    - *Por qué:* Esto soluciona de raíz el problema de los alumnos que califican con 1 estrella por desquite personal al reprobar. La comunidad identifica el "berrinche", lo vota negativo, y el sistema automáticamente le quita el poder destructivo a esa calificación falsa.
    - **(Funcionalidad Post-MVP) Caducidad (Time Decay):** En versiones futuras, las reseñas de más de 2 años de antigüedad perderán peso matemático automáticamente, para reflejar la calidad actual del profesor y no su pasado.
 3. **Entidades Principales para el Ejecutor:**
-   - `User`, `Professor`, `Subject`, `ProfessorSubject`, `Review` (con FK a Professor y Subject), `ReviewTag`, `AcademicFile`.
+   - `User` (con `terms_accepted: boolean`, `terms_accepted_at: timestamp`, `role: 'student' | 'admin'`).
+   - `Professor` (con `is_active: boolean` para soporte de exclusión/Habeas Data).
+   - `Subject`, `ProfessorSubject`.
+   - `Review` (con FK a Professor y Subject, `netScore`, `isAnonymous`, `text`, `rating`).
+   - `ReviewTag`.
+   - `ReviewReport` (para gestión de denuncias en D-010 y D-011).
+   - `ProfessorSuggestion` (para gestión de cold-start en D-004 y D-011).
+   *(Nota: Se eliminó la entidad `AcademicFile` tras descartar el Hub Académico por razones legales en D-005).*

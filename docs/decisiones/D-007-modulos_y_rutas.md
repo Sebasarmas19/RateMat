@@ -7,7 +7,7 @@
 El sistema no gira únicamente en torno al profesor, sino en la **relación Materia -> Profesor**. El caso de uso más importante es: "Voy a cursar Materia X, ¿quién la da y cuál es el mejor?".
 
 1. **Landing Page (Página Pública de Presentación - `/`):** 
-   - Pantalla pública de bienvenida que explica qué es RateMat, sus beneficios (reseñas anónimas, hub académico) y botón de acceso con Google Workspace UCAB (`@est.ucab.edu.ve`).
+   - Pantalla pública de bienvenida que explica qué es RateMat, sus beneficios (reseñas honestas y anónimas, catálogo de pensums) y botón de acceso con Google Workspace UCAB (`@est.ucab.edu.ve`).
 2. **Módulo Buscador & Catálogo de Carreras (`/search` — Entrada Post-Login):**
    - **Es el centro neurálgico de búsqueda y descubrimiento:** Destino por defecto tras iniciar sesión.
    - Combina el buscador universal omni (por materia o profesor) con el catálogo sobrio y minimalista de Carreras y Facultades UCAB Guayana.
@@ -18,8 +18,8 @@ El sistema no gira únicamente en torno al profesor, sino en la **relación Mate
    - Incluye filtros por valoración (`Todas`, `4.5+ ★`, `Positivas`, `Críticas`) y botones de votación útil con Net Score comunitario (D-003).
 4. **Módulo del Perfil de Profesor (`/professor/:id`):**
    - Promedio global ponderado y métricas de claridad/dificultad.
-   - **Pestañas interactivas por cátedra:** Filtro para segmentar reseñas y material por materia dictada.
-   - Hub Académico de PDFs asociados al profesor con botón para subir nuevo material (D-005) y reporte de infracciones (D-010).
+   - **Pestañas interactivas por cátedra:** Filtro para segmentar reseñas por materia dictada.
+   - Muro de opiniones con votación útil, botón de reporte por difamación (D-010) y opción de sugerir nuevas cátedras (D-004).
 5. **Módulo de Calificación (Regla de Oro):**
    - **Un profesor NUNCA se califica solo por su cuenta:** En el modal de reseña es **OBLIGATORIO seleccionar la materia** que el alumno cursó con ese profesor. No existen calificaciones globales en el aire.
    - Estrellas (1-5) con hover preview dinámico + Selector de Materia + Tags + Justificación obligatoria en 1★ y 5★ + Switch de Privacidad Híbrida (D-002).

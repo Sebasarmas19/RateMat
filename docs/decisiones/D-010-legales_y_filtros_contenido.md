@@ -1,36 +1,49 @@
-# D-010 — Riesgos Legales y Filtros de Contenido
+# D-010 — Blindaje Legal, Filtros Preventivos y Términos de Servicio
 
-**Estado:** Tomada
-**Decide:** Arquitecto y Usuario
+**Estado:** Tomada (Actualizada con Blindaje Legal Definitivo)  
+**Fecha de Modificación:** 2026-09-16  
+**Decide:** Arquitecto y Usuario  
 
 ## Contexto
-Debido a que la plataforma maneja contenido generado por usuarios (UGC) sobre figuras de autoridad (profesores) y material académico, existen riesgos de difamación y derechos de autor. 
+Debido a que la plataforma maneja contenido generado por usuarios (UGC) sobre docentes y la comunidad universitaria, se requiere una arquitectura legal y técnica que neutralice cualquier riesgo de difamación, acusaciones penales infundadas, conflictos con normativas de la UCAB o reclamos de datos personales.
 
-## Análisis de Riesgos Legales
-1. **Difamación e Injurias (El mayor riesgo):** Si un estudiante usa la plataforma para insultar gravemente a un profesor o acusarlo de un delito (ej. acoso, sobornos), el profesor podría intentar acciones legales o pedir a la universidad que intervenga. 
-2. **Derechos de Autor (Copyright):** En el Hub Académico, los estudiantes podrían subir libros enteros piratas o material con copyright de la universidad.
-3. **Normativas Internas de la UCAB:** Si la app facilita hacer trampa masiva o "ciberacoso", la universidad podría bloquear el dominio en su red Wi-Fi o iniciar procesos disciplinarios.
+---
 
-## Soluciones Técnicas Obligatorias (Mitigación de Riesgos)
+## Soluciones Técnicas Obligatorias de Blindaje
 
-Para protegernos legalmente, el Ejecutor deberá implementar lo siguiente:
+### 1. Filtro Preventivo contra Imputaciones Delictivas (Acoso / Soborno)
+* **Riesgo:** Que un estudiante use una reseña pública para imputar delitos penales graves (ej. acoso sexual, cobro de dinero por notas, abusos físicos), lo cual tipifica como difamación penal (Art. 442 Código Penal) y compromete la integridad del canal.
+* **Implementación en Backend (`ReviewsService`):**
+  * Lista negra de palabras y patrones de imputación delictiva:  
+    `['acoso', 'acosador', 'acosó', 'soborno', 'cobró', 'cobro', 'plata por nota', 'dólares para pasar', 'tocó', 'abuso', 'violó', 'extorsión']`.
+  * Si la reseña contiene alguna de estas acusaciones, la API rechaza la publicación y devuelve un código específico (`422 Unprocessable Entity`).
+* **Respuesta en Frontend:** Se despliega un modal educativo y orientador:  
+  > *"⚠️ En RateMat evaluamos exclusivamente el desempeño pedagógico y académico de las cátedras. Si has sido víctima o testigo de acoso, sobornos o faltas graves, debes formalizar tu denuncia a través de los canales institucionales de la UCAB (Protocolo 2.83 de la Comisión Disciplinaria y Defensoría Universitaria). La imputación de delitos en foros públicos constituye difamación legal."*
 
-1. **Filtro Automático de Groserías (Profanity Filter):**
-   - En el Backend, la API de crear reseñas debe pasar el texto por una librería de filtrado de palabras malsonantes (ej. `bad-words` adaptada al español/jerga local). 
-   - Si detecta un insulto, la petición se rechaza con un mensaje: *"Tu reseña contiene lenguaje inapropiado y viola las normas de la comunidad"*.
+### 2. Filtro Automático de Groserías e Injurias (Profanity Filter)
+* En el backend, el texto de la reseña pasa por un diccionario estricto de vocabulario obsceno y descalificaciones personales locales.
+* Si se detecta lenguaje ofensivo, la solicitud se rechaza con error 400 sin borrar el borrador del estudiante para que pueda corregir su redacción.
 
-2. **Botón de Pánico (Sistema de Reportes):**
-   - Toda reseña y todo archivo PDF debe tener un botón de "Reportar".
-   - **Regla de Ocultamiento Automático:** Si una reseña (o archivo) recibe **3 reportes distintos**, se oculta automáticamente del público y pasa al panel del Administrador para su revisión manual. Esto nos exime de responsabilidad por inacción.
+### 3. Mecanismo de Takedown y Habeas Data Docente (Art. 28 CRBV)
+* **Legalidad de los Nombres:** Publicar el nombre profesional del docente y sus materias asignadas es 100% legal (información profesional pública de servicio educativo). Queda terminantemente prohibido publicar datos íntimos (cédula, teléfonos privados, domicilios, redes personales).
+* **Canal de Exclusión (Habeas Data):**  
+  * La entidad `Professor` en la base de datos incluye el campo `is_active: boolean (default true)`.
+  * En el pie de página de la aplicación se incluye el enlace:  
+    `"Contacto y Reclamos Docentes"` que apunta a `legal@ratemat.app` o a un formulario de contacto.
+  * Si un profesor solicita formalmente no figurar en la plataforma, su perfil se desactiva (`is_active = false`) en un plazo máximo de 48 horas sin confrontación.
 
-3. **Términos y Condiciones (El Onboarding Modal):**
-   - Para no arruinar la experiencia de usuario (UX) llenando las pantallas de advertencias, todos los textos legales se mostrarán **una sola vez** cuando el estudiante inicie sesión por primera vez. 
-   - Deberán aceptar un manifiesto que incluya los tres textos clave:
-     1. *"Soy el único responsable de mis comentarios. Acepto no usar lenguaje difamatorio ni insultos."*
-     2. *"Todo archivo subido queda registrado con mi correo institucional. Subir material inapropiado (desnudos, burlas) resultará en la eliminación permanente de mi cuenta."*
-     3. *"Solo subiré resúmenes propios, guías públicas o exámenes pasados. No subiré libros comerciales o presentaciones privadas del profesor."*
+### 4. Protección de Marca y Disclaimer de Independencia
+* **Prohibición de Simbología Oficial:** RateMat utiliza exclusivamente su identidad gráfica independiente (isotipo índigo 'R'). Queda prohibido el uso del escudo oficial de la UCAB, sus lemas o tipografías registradas.
+* **Disclaimer en el Footer (Obligatorio en todas las pantallas):**  
+  > *"RateMat es una iniciativa tecnológica independiente desarrollada por estudiantes. No posee vinculación oficial, patrocinio ni aval institucional de la Universidad Católica Andrés Bello (UCAB)."*
 
-4. **Control del Hub Académico (Filtro de Archivos):**
-   - **Técnico:** Restricción estricta en el Backend: solo se aceptan archivos tipo `application/pdf` (nada de imágenes JPG/PNG sueltas).
-   - **Límite de tamaño:** El límite de 10MB corta de raíz el 90% de los problemas de Copyright (libros completos de editoriales pesan mucho más).
-   - **UX de Subida:** En la pantalla de subir PDF, solo habrá un texto gris muy pequeño y sutil debajo del botón que diga *"Al subir, confirmas que cumples con las Políticas Comunitarias"*. Cero fricción visual.
+### 5. Registro Digital de Términos y Condiciones
+* Al iniciar sesión por primera vez, el estudiante debe aceptar obligatoriamente el Onboarding Modal con sus 3 cláusulas de responsabilidad civil e indemnidad.
+* En la tabla `users` (PostgreSQL) se almacena:
+  * `terms_accepted: boolean (default false)`
+  * `terms_accepted_at: timestamp with time zone`
+* El backend no permite crear reseñas ni interactuar si el usuario no tiene registrado `terms_accepted: true`.
+
+### 6. Botón de Pánico y Reportes Comunitarios
+* Toda reseña cuenta con un botón de reportar tipificado (lenguaje ofensivo, falsedad, spam).
+* Si una reseña acumula 3 reportes comunitarios, se oculta automáticamente del público y pasa a la cola del Panel de Moderación de Administradores (D-011).

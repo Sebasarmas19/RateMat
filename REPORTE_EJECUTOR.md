@@ -350,10 +350,46 @@ En respuesta al feedback de experiencia de usuario sobre duplicidad de elementos
 
 ---
 
-## 21. Estado Final de Verificación y Compilación
+## 21. Estado de Verificación Previo
 * **Build Frontend:** `npm run build` -> **Exit Code 0** (14.8s, sin errores ni advertencias de sintaxis).
-* **Rutas Operativas:**
-  * `http://localhost:4200/search` -> Buscador universal, carreras, pensums y nuevo filtro dual materias/profesores.
-  * `http://localhost:4200/home` -> Feed comunitario con morphicons y reporte tipificado.
-  * `http://localhost:4200/profile` -> Reputación de estudiante y gamificación D-002.
-  * `http://localhost:4200/admin` -> Panel de moderación independiente con iconos Reicon.
+
+---
+
+## 22. Blindaje Legal Definitivo y Retiro del Hub Académico (D-005, D-010)
+
+En cumplimiento estricto de las directrices de `PROMPT_BLINDAJE_LEGAL.md` y las decisiones actualizadas por el Arquitecto (`D-005` y `D-010`), se implementó el blindaje legal integral del frontend de RateMat:
+
+### A. Erradicación Total del Hub Académico y Archivos PDF (D-005 Descartada)
+1. **Neutralización del Riesgo Legal y Disciplinario:**
+   * Se eliminó el 100% de la funcionalidad de subida, almacenamiento y descarga de archivos PDF.
+   * Esto suprime de raíz el riesgo de sanciones por **fraude académico en evaluaciones** (Art. 5, Num. 1 del Reglamento Disciplinario 5.05 de la UCAB) y **violación de derechos de autor** (Ley sobre el Derecho de Autor venezolana).
+2. **Rebalanceo de Columnas en `/professor/:id`:**
+   * Se eliminó la Columna 3 (`lg:col-span-3`) y el modal de subida de PDFs (`showUploadModal`).
+   * **Nuevo Layout de 2 Columnas:**
+     * **Columna Izquierda (`lg:col-span-5`):** Identidad del docente (Avatar, nombre, estado activo UCAB, cátedras asignadas, promedio global), métricas cuantitativas (Claridad, Dificultad, Recomiendan), distribución de estrellas con barras animadas y tags rápidos de comunidad.
+     * **Columna Derecha (`lg:col-span-7`):** Pestañas de filtrado de cátedras, botón principal de acción `Calificar Profesor / ✏️ Editar mi reseña` y muro de opiniones ordenadas por Net Score con colapso de votos negativos y botón de reportar.
+3. **Limpieza de Código Huérfano:**
+   * En `professor-profile.component.ts`: Se removieron las variables `files`, `isLoadingFiles`, `errorFiles`, `showUploadModal`, `uploadForm`, `selectedFileObj`, `selectedFileSizeMB`, `isUploadingFile`, `uploadError`, `onFileSelected`, `submitUpload`, `reportFile` y `filteredFiles`.
+   * En `professor-profile.service.ts`: Se removió la interfaz `AcademicFileItem` y los métodos `getProfessorFiles` y `uploadAcademicFile`.
+
+### B. Disclaimer de No Afiliación y Canal de Habeas Data Docente (D-010)
+1. **Footer de Deslinde Institucional (`layout.component.ts`):**
+   * Se integró un pie de página minimalista visible en todas las vistas dentro del `<main>`:
+     > *"RateMat es una iniciativa tecnológica independiente desarrollada por y para estudiantes. No posee vinculación oficial, patrocinio ni aval institucional de la Universidad Católica Andrés Bello (UCAB)."*
+2. **Modal Ligero de Takedown y Habeas Data:**
+   * Los docentes disponen del enlace *"Docentes: Solicitud de Exclusión (Habeas Data)"*.
+   * Despliega un diálogo accesible que garantiza el derecho constitucional de autodeterminación informativa (Art. 28 y 60 CRBV), ofreciendo el canal `legal@ratemat.app` con compromiso de atención y desactivación de perfil en menos de 48 horas.
+
+### C. Filtro Preventivo contra Imputaciones Delictivas (Protocolo 2.83 UCAB)
+1. **Detección Algorítmica Preventiva:**
+   * En `professor-profile.component.ts`, antes de enviar cualquier reseña, el texto se normaliza (minúsculas y remoción de acentos diacríticos) y se valida contra una lista de términos de acusación penal:
+     `['acoso', 'acosador', 'acosó', 'soborno', 'cobró', 'cobro', 'plata por nota', 'dólares para pasar', 'tocó', 'abuso', 'violó', 'extorsión']`.
+2. **Modal Educativo e Institucional:**
+   * Si se detecta algún término de acusación delictiva, se bloquea el envío y se despliega el modal informativo con insignia ámbar de escudo (`shield`).
+   * Orienta al alumno a formalizar denuncias de delitos graves o acoso exclusivamente a través de los canales oficiales de la UCAB (**Protocolo 2.83 de la Comisión Disciplinaria y Defensoría Universitaria**), recordando que la imputación de delitos en foros públicos constituye difamación penal (Art. 442 Código Penal).
+   * Al pulsar *"Entendido, modificaré mi opinión"*, el modal se cierra y el texto se mantiene en el formulario para que el alumno pueda reformularlo en términos pedagógicos y constructivos.
+
+### D. Estado Final de Compilación
+* **Build de Producción:** `npm run build` en `frontend/` finalizó con **Exit Code 0** (0 errores de TypeScript, 0 errores de plantilla).
+* **Servidor en Vivo:** `http://localhost:4200` respondiendo fluidamente con el nuevo diseño de 2 columnas y footer legal.
+

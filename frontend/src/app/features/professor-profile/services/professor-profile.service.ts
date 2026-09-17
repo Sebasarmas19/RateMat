@@ -27,14 +27,6 @@ export interface ReviewItem {
   reportReason?: string | null;
 }
 
-export interface AcademicFileItem {
-  id: string;
-  fileName: string;
-  subject?: string;
-  sizeMB: number;
-  uploadedAt: Date;
-}
-
 export interface CreateReviewDto {
   rating: number;
   text: string;
@@ -46,7 +38,7 @@ export interface CreateReviewDto {
   providedIn: 'root'
 })
 export class ProfessorProfileService {
-  private readonly baseUrl = 'http://localhost:3000/api'; // Or use environment file
+  private readonly baseUrl = 'http://localhost:3001/api'; // Or use environment file
 
   constructor(private http: HttpClient) { }
 
@@ -119,30 +111,6 @@ export class ProfessorProfileService {
     );
   }
 
-  getProfessorFiles(id: string): Observable<AcademicFileItem[]> {
-    return this.http.get<AcademicFileItem[]>(`${this.baseUrl}/professors/${id}/academic-files`).pipe(
-      catchError(err => {
-        console.warn('API getProfessorFiles failed, returning mock data', err);
-        return of([
-          {
-            id: 'f1',
-            fileName: 'Guia_Derivadas_Parciales.pdf',
-            subject: 'Cálculo I',
-            sizeMB: 2.4,
-            uploadedAt: new Date(Date.now() - 86400000 * 10)
-          },
-          {
-            id: 'f2',
-            fileName: 'Examen_Viejo_2022.pdf',
-            subject: 'Álgebra Lineal',
-            sizeMB: 1.1,
-            uploadedAt: new Date(Date.now() - 86400000 * 30)
-          }
-        ]).pipe(delay(1200));
-      })
-    );
-  }
-
   createReview(professorId: string, review: CreateReviewDto): Observable<ReviewItem> {
     return this.http.post<ReviewItem>(`${this.baseUrl}/professors/${professorId}/reviews`, review).pipe(
       catchError(err => {
@@ -166,20 +134,6 @@ export class ProfessorProfileService {
     );
   }
 
-  uploadAcademicFile(professorId: string, fileData: { fileName: string; subject?: string; sizeMB: number }): Observable<AcademicFileItem> {
-    return this.http.post<AcademicFileItem>(`${this.baseUrl}/professors/${professorId}/academic-files`, fileData).pipe(
-      catchError(err => {
-        return of({
-          id: 'f_new_' + Date.now(),
-          fileName: fileData.fileName,
-          subject: fileData.subject,
-          sizeMB: fileData.sizeMB,
-          uploadedAt: new Date()
-        }).pipe(delay(600));
-      })
-    );
-  }
-
   voteReview(reviewId: string, voteType: 'up' | 'down'): Observable<{ netScore: number }> {
     return this.http.post<{ netScore: number }>(`${this.baseUrl}/reviews/${reviewId}/vote`, { voteType }).pipe(
       catchError(err => {
@@ -188,7 +142,7 @@ export class ProfessorProfileService {
     );
   }
 
-  reportItem(itemId: string, itemType: 'review' | 'file'): Observable<{ success: boolean }> {
+  reportItem(itemId: string, itemType: 'review' = 'review'): Observable<{ success: boolean }> {
     return this.http.post<{ success: boolean }>(`${this.baseUrl}/reports`, { itemId, itemType }).pipe(
       catchError(err => {
         return of({ success: true }).pipe(delay(600));
