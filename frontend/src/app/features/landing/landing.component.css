@@ -1,0 +1,19 @@
+/* Grid blueprint pattern and smooth container masks */
+.bg-grid-pattern {
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(226, 232, 240, 0.7) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(226, 232, 240, 0.7) 1px, transparent 1px);
+}
+
+.bg-radial-mask {
+  mask-image: radial-gradient(ellipse 85% 65% at 50% 15%, #000 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 65% at 50% 15%, #000 60%, transparent 100%);
+}
+
+.dark-grid-pattern {
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
