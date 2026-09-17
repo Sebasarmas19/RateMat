@@ -94,12 +94,16 @@ import { LegalModalComponent } from '../../shared/components/legal-modal/legal-m
         <!-- D-010: Disclaimer de No Afiliación y Footer Legal -->
         <footer class="mt-16 pt-8 pb-12 border-t border-slate-200/80 text-center space-y-2 text-xs text-slate-400 max-w-4xl mx-auto px-4 w-full">
           <p class="font-medium text-slate-500 leading-relaxed">
-            RateMat es una iniciativa tecnológica independiente desarrollada por y para estudiantes. No posee vinculación oficial, patrocinio ni aval institucional de la Universidad Católica Andrés Bello (UCAB).
+            RateMat es una iniciativa tecnológica independiente desarrollada por estudiantes. No posee vinculación oficial, patrocinio ni aval institucional de la Universidad Católica Andrés Bello (UCAB).
           </p>
           <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] pt-1">
-            <button (click)="openTakedownModal()" class="hover:text-indigo-600 hover:underline transition-colors cursor-pointer font-semibold text-slate-500">
-              Docentes: Solicitud de Exclusión (Habeas Data)
+            <button (click)="openTakedownModal()" class="hover:text-indigo-600 hover:underline transition-colors cursor-pointer font-semibold text-slate-600">
+              Docentes: Solicitud de Información / Exclusión (Habeas Data)
             </button>
+            <span class="text-slate-300">•</span>
+            <a href="mailto:legal@ratemat.app" class="hover:text-indigo-600 hover:underline transition-colors font-medium text-slate-500">
+              legal&#64;ratemat.app
+            </a>
             <span class="text-slate-300">•</span>
             <a routerLink="/admin" class="hover:text-slate-600 hover:underline transition-colors">
               Moderación

@@ -12,6 +12,12 @@ export class User {
   @Column({ default: 0 })
   reputation: number;
 
+  @Column({ default: false })
+  terms_accepted: boolean;
+
+  @Column({ type: 'timestamp with time zone', nullable: true })
+  terms_accepted_at: Date | null;
+
   @CreateDateColumn()
   createdAt: Date;
 }

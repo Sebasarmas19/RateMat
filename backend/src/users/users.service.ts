@@ -22,4 +22,11 @@ export class UsersService {
   async findOne(id: string): Promise<User | null> {
     return this.usersRepository.findOneBy({ id });
   }
+
+  async acceptTerms(id: string, email = ''): Promise<User> {
+    const user = await this.findOrCreate(id, email);
+    user.terms_accepted = true;
+    user.terms_accepted_at = new Date();
+    return this.usersRepository.save(user);
+  }
 }

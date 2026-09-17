@@ -393,3 +393,35 @@ En cumplimiento estricto de las directrices de `PROMPT_BLINDAJE_LEGAL.md` y las 
 * **Build de Producción:** `npm run build` en `frontend/` finalizó con **Exit Code 0** (0 errores de TypeScript, 0 errores de plantilla).
 * **Servidor en Vivo:** `http://localhost:4200` respondiendo fluidamente con el nuevo diseño de 2 columnas y footer legal.
 
+---
+
+## 23. Adecuación Estructural del Blindaje Legal y Registro Probatorio Digital (D-010)
+
+A partir del análisis legal exhaustivo y las decisiones conjuntas entre Arquitecto, Ejecutor y Comité Legal:
+
+1. **Retiro Total de Promesas de Archivos / Exámenes (D-005 Descartada):**
+   * En `landing.component.html`, se reemplazó la sección oscura del "Hub de Parciales" por **"Transparencia por Cátedra (D-003)"**, sustituyendo los mockups de descarga de exámenes por tarjetas comparativas de métricas docentes (claridad, dificultad, recomendación).
+   * Se ajustaron los textos del hero y del CTA final para eliminar cualquier mención a descargas de evaluaciones pasadas.
+
+2. **Soporte de Exclusión Docente en Base de Datos (Habeas Data):**
+   * En la entidad `Professor` (`backend/src/professors/professor.entity.ts`), se incorporó el atributo `@Column({ name: 'is_active', default: true }) isActive: boolean`.
+   * En `ProfessorsService.search()` y `ProfessorSubjectsService.getApprovedProfessorsForSubject()`, se agregó la condición estricta `isActive: true` para que los profesores desactivados queden automáticamente ocultos del catálogo y del buscador.
+
+3. **Registro Digital Probatorio de Aceptación de Términos (D-010):**
+   * En la entidad `User` (`backend/src/users/user.entity.ts`), se incorporaron los atributos:
+     * `terms_accepted: boolean (default false)`
+     * `terms_accepted_at: timestamp with time zone (nullable)`
+   * En `UsersController` y `UsersService`, se creó el endpoint `POST /api/users/accept-terms` protegido con `SupabaseAuthGuard`.
+   * En `LegalModalComponent` (`frontend/src/app/shared/components/legal-modal/legal-modal.component.ts`), al marcar los 3 checkboxes obligatorios y pulsar *"Acepto las políticas"*, se despacha la petición `POST` autenticada al backend para persistir la trazabilidad probatoria digital.
+
+4. **Footer de Deslinde Institucional (`layout.component.ts`):**
+   * Se ajustó el texto exacto: *"RateMat es una iniciativa tecnológica independiente desarrollada por estudiantes. No posee vinculación oficial, patrocinio ni aval institucional de la Universidad Católica Andrés Bello (UCAB)."*
+   * Se añadió el correo de contacto visible `legal@ratemat.app` junto al botón interactivo *"Docentes: Solicitud de Información / Exclusión (Habeas Data)"*.
+
+5. **Estado de Compilación y Validación:**
+   * **Backend NestJS:** `nest build` -> **Exit Code 0** (Compilación limpia).
+   * **Frontend Angular:** `ng build` -> **Exit Code 0** (Compilación limpia).
+   * **Servidores Activos:**
+     * API Backend: `http://localhost:3001`
+     * SPA Frontend: `http://localhost:4200`
+

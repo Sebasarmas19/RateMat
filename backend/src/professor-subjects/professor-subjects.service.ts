@@ -21,7 +21,7 @@ export class ProfessorSubjectsService {
       where: {
         subject: { id: subjectId },
         status: PivotStatus.APPROVED,
-        professor: { status: ProfessorStatus.APPROVED },
+        professor: { status: ProfessorStatus.APPROVED, isActive: true },
       },
       relations: ['professor'],
     });

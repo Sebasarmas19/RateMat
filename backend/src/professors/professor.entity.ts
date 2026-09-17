@@ -21,6 +21,9 @@ export class Professor {
   })
   status: ProfessorStatus;
 
+  @Column({ name: 'is_active', default: true })
+  isActive: boolean;
+
   @ManyToOne(() => User)
   @JoinColumn({ name: 'created_by' })
   createdBy: User;

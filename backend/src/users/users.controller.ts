@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Req } from '@nestjs/common';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { UsersService } from './users.service';
@@ -18,5 +18,13 @@ export class UsersController {
     // Busca o crea al usuario en nuestra BD local la primera vez que hace login
     const dbUser = await this.usersService.findOrCreate(user.id, user.email);
     return dbUser;
+  }
+
+  @UseGuards(SupabaseAuthGuard)
+  @Post('accept-terms')
+  @ApiOperation({ summary: 'Registrar la aceptación de términos y políticas (D-010)' })
+  @ApiResponse({ status: 200, description: 'Términos aceptados y registrados con timestamp' })
+  async acceptTerms(@CurrentUser() user: any) {
+    return this.usersService.acceptTerms(user.id, user.email);
   }
 }

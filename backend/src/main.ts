@@ -12,6 +12,8 @@ async function bootstrap() {
   // Habilitamos CORS según reglas de seguridad D-009
   app.enableCors();
 
+  app.setGlobalPrefix('api');
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

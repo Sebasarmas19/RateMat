@@ -23,7 +23,7 @@ export class ProfessorsService {
 
   async search(query: string): Promise<Professor[]> {
     return this.professorRepository.find({
-      where: { name: ILike(`%${query}%`), status: ProfessorStatus.APPROVED },
+      where: { name: ILike(`%${query}%`), status: ProfessorStatus.APPROVED, isActive: true },
       take: 10,
     });
   }
