@@ -100,7 +100,7 @@
     <!-- Tarjeta de Reseña (Inspirada en el estilo limpio y humanista de la captura) -->
     <article 
       *ngFor="let review of filteredReviews" 
-      class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-200 transition-all duration-200 space-y-3.5">
+      class="review-feed-card bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-200 transition-all duration-200 space-y-3.5">
       
       <!-- Top Row: Avatar + Name/Date (Left) & 5-Stars + Report Flag (Right) -->
       <div class="flex items-start justify-between gap-3">
@@ -159,7 +159,13 @@
       <div class="flex items-center space-x-2 pt-0.5">
         <a [routerLink]="['/professor', review.professorSubject?.professor?.id || 'prof-1']" 
            class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-indigo-50/70 border border-slate-200/60 text-xs text-slate-700 hover:text-indigo-700 font-medium transition-colors truncate max-w-full">
-          <span class="font-bold text-slate-900 truncate">👨‍🏫 {{ review.professorSubject?.professor?.name }}</span>
+          <span class="inline-flex items-center gap-1.5 font-bold text-slate-900 truncate">
+            <svg class="w-3.5 h-3.5 text-indigo-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            {{ review.professorSubject?.professor?.name }}
+          </span>
           <span class="text-slate-300">•</span>
           <span class="text-indigo-600 font-semibold truncate">{{ review.professorSubject?.subject?.name }}</span>
           <span class="text-slate-400 text-[11px] uppercase truncate">({{ review.professorSubject?.subject?.code }})</span>
@@ -226,7 +232,7 @@
         <!-- Lightweight Thumbs Interaction with Morphicons spring animation -->
         <div *ngIf="review.text" class="flex items-center space-x-1.5">
           <button 
-            (click)="voteReview(review, 'up')" 
+            (click)="voteReview(review, 'up', $event)" 
             [ngClass]="review.userVote === 'up' ? 'text-indigo-600 font-bold bg-indigo-50 border-indigo-200 shadow-2xs' : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-50 border-transparent'"
             title="Voto positivo (útil)"
             class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border text-xs active:scale-90 transition-all duration-150">
@@ -241,7 +247,7 @@
           </button>
 
           <button 
-            (click)="voteReview(review, 'down')" 
+            (click)="voteReview(review, 'down', $event)" 
             [ngClass]="review.userVote === 'down' ? 'text-red-600 font-bold bg-red-50 border-red-200 shadow-2xs' : 'text-slate-400 hover:text-red-500 hover:bg-slate-50 border-transparent'"
             title="Voto negativo (no útil)"
             class="p-1.5 rounded-lg border text-xs active:scale-90 transition-all duration-150 flex items-center justify-center">

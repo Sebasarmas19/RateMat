@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ApiService, Career, SubjectItem, ProfessorSummary } from '../../core/services/api.service';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
+import { gsap } from 'gsap';
 
 export type SearchMode = 'all' | 'subjects' | 'professors';
 export type ProfessorSort = 'rating_desc' | 'newest' | 'oldest' | 'reviews_desc';
@@ -284,6 +285,28 @@ export class SearchComponent implements OnInit, AfterViewInit {
 
     this.careerProfessors = Array.from(profMap.values());
     this.filteredCareerProfessors = [...this.careerProfessors];
+    this.animateCards('.career-subject-card');
+  }
+
+  private animateCards(selector: string) {
+    setTimeout(() => {
+      if (typeof window !== 'undefined') {
+        requestAnimationFrame(() => {
+          gsap.fromTo(
+            selector,
+            { y: 22, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.40,
+              stagger: 0.045,
+              ease: 'power2.out',
+              clearProps: 'transform,opacity'
+            }
+          );
+        });
+      }
+    }, 40);
   }
 
   clearSelectedCareer() {
@@ -298,6 +321,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
   setCareerActiveTab(tab: 'subjects' | 'professors') {
     this.careerActiveTab = tab;
     this.applyCareerSearch();
+    this.animateCards(tab === 'subjects' ? '.career-subject-card' : '.career-prof-card');
   }
 
   onCareerSearchChange(text: string) {

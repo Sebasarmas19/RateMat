@@ -2,9 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProfessorProfileService, ProfessorProfile, ReviewItem, AcademicFileItem } from './services/professor-profile.service';
+import { ProfessorProfileService, ProfessorProfile, ReviewItem } from './services/professor-profile.service';
 import { MorphIconComponent } from '../../shared/components/morph-icon/morph-icon.component';
-import { Eye, EyeOff, ThumbsUp, ThumbsDown, Check, Flag } from 'lucide';
+import { Eye, EyeOff, ThumbsUp, ThumbsDown, Check, Flag, Shield, AlertCircle } from 'lucide';
+import gsap from 'gsap';
 
 @Component({
   selector: 'app-professor-profile',
@@ -25,26 +26,28 @@ export class ProfessorProfileComponent implements OnInit {
   iconThumbsDown = ThumbsDown;
   iconCheck = Check;
   iconFlag = Flag;
+  iconShield = Shield;
+  iconAlertCircle = AlertCircle;
 
   professorId: string | null = null;
   
   profile: ProfessorProfile | null = null;
   reviews: ReviewItem[] = [];
-  files: AcademicFileItem[] = [];
 
   isLoadingProfile = true;
   isLoadingReviews = true;
-  isLoadingFiles = true;
 
   errorProfile = false;
   errorReviews = false;
-  errorFiles = false;
 
   // Review Form State
   showReviewModal = false;
   isSubmittingReview = false;
   reviewSubmitError: string | null = null;
   reviewForm: FormGroup;
+
+  // D-010: Modal Educativo e Institucional (Protocolo 2.83 UCAB)
+  showCrimeAlertModal = false;
 
   // Brecha 4: Edit Review Mode State (D-003)
   isEditingReview = false;
@@ -57,8 +60,7 @@ export class ProfessorProfileComponent implements OnInit {
   availableReportReasons = [
     'Lenguaje inapropiado, insultos o difamación personal (D-010)',
     'Información falsa o engañosa sobre evaluaciones o exigencias',
-    'Spam, publicidad no autorizada o contenido sin relación académica',
-    'Violación de derechos de autor o examen activo filtrado'
+    'Spam, publicidad no autorizada o contenido sin relación académica'
   ];
   reportToastMessage: string | null = null;
   private reportToastTimer: any = null;
@@ -71,14 +73,6 @@ export class ProfessorProfileComponent implements OnInit {
 
   // D-007 Subject Filter Tabs (Rating & Filter by Course)
   selectedSubjectTab = 'all';
-
-  // D-005 Hub Académico Upload Modal State
-  showUploadModal = false;
-  isUploadingFile = false;
-  uploadError: string | null = null;
-  selectedFileObj: File | null = null;
-  selectedFileSizeMB = 0;
-  uploadForm: FormGroup;
 
   // Quick Tags for Reviews (D-003)
   availableTags = [
@@ -127,11 +121,6 @@ export class ProfessorProfileComponent implements OnInit {
       subjectName: ['', [Validators.required, Validators.minLength(3)]],
       career: ['Ingeniería Informática', [Validators.required]]
     });
-
-    this.uploadForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(3)]],
-      subject: ['', [Validators.required]]
-    });
   }
 
   ngOnInit(): void {
@@ -153,6 +142,7 @@ export class ProfessorProfileComponent implements OnInit {
       next: (data) => {
         this.profile = data;
         this.isLoadingProfile = false;
+        setTimeout(() => this.animateRatingBars(), 60);
       },
       error: () => {
         this.errorProfile = true;
@@ -174,24 +164,11 @@ export class ProfessorProfileComponent implements OnInit {
         }));
         this.checkExistingReview();
         this.isLoadingReviews = false;
+        setTimeout(() => this.animateReviewCards(), 60);
       },
       error: () => {
         this.errorReviews = true;
         this.isLoadingReviews = false;
-      }
-    });
-
-    // Load Files
-    this.isLoadingFiles = true;
-    this.errorFiles = false;
-    this.profileService.getProfessorFiles(this.professorId).subscribe({
-      next: (data) => {
-        this.files = data;
-        this.isLoadingFiles = false;
-      },
-      error: () => {
-        this.errorFiles = true;
-        this.isLoadingFiles = false;
       }
     });
   }
@@ -204,6 +181,7 @@ export class ProfessorProfileComponent implements OnInit {
   selectSubjectTab(subject: string): void {
     this.selectedSubjectTab = subject;
     this.checkExistingReview();
+    setTimeout(() => this.animateReviewCards(), 40);
   }
 
   checkExistingReview(): void {
@@ -220,13 +198,6 @@ export class ProfessorProfileComponent implements OnInit {
       return this.reviews;
     }
     return this.reviews.filter(r => r.subject === this.selectedSubjectTab);
-  }
-
-  get filteredFiles(): AcademicFileItem[] {
-    if (this.selectedSubjectTab === 'all') {
-      return this.files;
-    }
-    return this.files.filter(f => !f.subject || f.subject === this.selectedSubjectTab);
   }
 
   // --- Brecha 1.B: Sugerir Nueva Materia / Cátedra (D-004 & D-011) ---
@@ -372,6 +343,13 @@ export class ProfessorProfileComponent implements OnInit {
       isAnonymous: !!formValue.isAnonymous
     };
 
+    // D-010: Filtro Preventivo contra Imputaciones Delictivas (Protocolo 2.83 UCAB)
+    if (payload.text && this.containsCrimeKeywords(payload.text)) {
+      this.isSubmittingReview = false;
+      this.showCrimeAlertModal = true;
+      return;
+    }
+
     // Brecha 4: If editing an existing review, update in-place optimistically
     if (this.isEditingReview && this.existingUserReview) {
       this.existingUserReview.rating = payload.rating;
@@ -410,85 +388,70 @@ export class ProfessorProfileComponent implements OnInit {
     });
   }
 
-  // --- D-005 Hub Académico File Upload ---
+  // --- D-010 Protocolo 2.83 UCAB Crime Prevention Logic ---
 
-  openUploadModal(): void {
-    this.showUploadModal = true;
-    this.uploadError = null;
-    this.selectedFileObj = null;
-    this.selectedFileSizeMB = 0;
-    const subj = this.selectedSubjectTab !== 'all' ? this.selectedSubjectTab : (this.profile?.subjects?.[0] || '');
-    this.uploadForm.reset({
-      title: '',
-      subject: subj
-    });
+  containsCrimeKeywords(text: string): boolean {
+    if (!text) return false;
+    const normalized = text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    const keywords = [
+      'acoso', 'acosador', 'acoso', 'soborno', 'cobro', 
+      'plata por nota', 'dolares para pasar', 'toco', 'abuso', 'violo', 'extorsion'
+    ];
+
+    return keywords.some(keyword => normalized.includes(keyword));
   }
 
-  closeUploadModal(): void {
-    if (!this.isUploadingFile) {
-      this.showUploadModal = false;
-    }
-  }
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
-        this.uploadError = 'Únicamente se permiten documentos en formato PDF.';
-        this.selectedFileObj = null;
-        return;
-      }
-      const sizeMB = file.size / (1024 * 1024);
-      if (sizeMB > 10) {
-        this.uploadError = 'El archivo supera el límite máximo de 10 MB.';
-        this.selectedFileObj = null;
-        return;
-      }
-      this.uploadError = null;
-      this.selectedFileObj = file;
-      this.selectedFileSizeMB = Math.round(sizeMB * 10) / 10;
-      if (!this.uploadForm.get('title')?.value) {
-        this.uploadForm.patchValue({ title: file.name.replace(/\.pdf$/i, '') });
-      }
-    }
-  }
-
-  submitUpload(): void {
-    if (this.uploadForm.invalid || !this.selectedFileObj || !this.professorId) {
-      this.uploadForm.markAllAsTouched();
-      if (!this.selectedFileObj) {
-        this.uploadError = 'Por favor selecciona un archivo PDF para subir.';
-      }
-      return;
-    }
-
-    this.isUploadingFile = true;
-    this.uploadError = null;
-
-    const { title, subject } = this.uploadForm.value;
-    const fileName = title.endsWith('.pdf') ? title : `${title}.pdf`;
-
-    this.profileService.uploadAcademicFile(this.professorId, {
-      fileName,
-      subject,
-      sizeMB: this.selectedFileSizeMB || 1.0
-    }).subscribe({
-      next: (newFile) => {
-        this.files.unshift(newFile);
-        this.isUploadingFile = false;
-        this.showUploadModal = false;
-      },
-      error: () => {
-        this.isUploadingFile = false;
-        this.uploadError = 'Hubo un error al subir el archivo. Inténtalo de nuevo.';
-      }
-    });
+  closeCrimeAlertModal(): void {
+    this.showCrimeAlertModal = false;
   }
 
   // --- D-003 Community Interaction (Optimistic) ---
 
-  voteReview(review: ReviewItem, voteType: 'up' | 'down'): void {
+  animateRatingBars(): void {
+    if (typeof window !== 'undefined') {
+      gsap.fromTo(
+        '.rating-bar-fill',
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          transformOrigin: 'left center',
+          duration: 0.55,
+          ease: 'power2.out',
+          stagger: 0.05
+        }
+      );
+    }
+  }
+
+  animateReviewCards(): void {
+    if (typeof window !== 'undefined') {
+      requestAnimationFrame(() => {
+        gsap.fromTo(
+          '.review-item-card',
+          { y: 22, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.42,
+            stagger: 0.05,
+            ease: 'power2.out',
+            clearProps: 'transform,opacity'
+          }
+        );
+      });
+    }
+  }
+
+  voteReview(review: ReviewItem, voteType: 'up' | 'down', event?: MouseEvent): void {
+    if (event?.currentTarget) {
+      const btn = event.currentTarget as HTMLElement;
+      gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.18, ease: 'back.out(1.6)' });
+    }
+
     const previousVote = review.userVote;
     let netChange = 0;
 
@@ -552,18 +515,5 @@ export class ProfessorProfileComponent implements OnInit {
     this.reportToastTimer = setTimeout(() => {
       this.reportToastMessage = null;
     }, 3500);
-  }
-
-  reportFile(fileId: string): void {
-    if (window.confirm('¿Deseas reportar este archivo por violación de Copyright o contenido indebido?')) {
-      this.profileService.reportItem(fileId, 'file').subscribe({
-        next: () => {
-          this.showToast('Archivo reportado. Se revisará ante los estándares de derechos de autor.');
-        },
-        error: () => {
-          this.showToast('No se pudo reportar el archivo.');
-        }
-      });
-    }
   }
 }

@@ -94,10 +94,10 @@
             [ngModel]="profSortBy" 
             (ngModelChange)="setProfSortBy($event)"
             class="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-slate-700 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
-            <option value="rating_desc">⭐ Mayor Calificación</option>
-            <option value="newest">✨ Más Nuevos</option>
-            <option value="oldest">🏛️ Más Viejos (Mayor Trayectoria)</option>
-            <option value="reviews_desc">💬 Más Evaluados (Reseñas)</option>
+            <option value="rating_desc">Mayor Calificación</option>
+            <option value="newest">Más Nuevos</option>
+            <option value="oldest">Mayor Trayectoria</option>
+            <option value="reviews_desc">Más Evaluados (Reseñas)</option>
           </select>
         </div>
 
@@ -468,7 +468,7 @@
           <div 
             *ngFor="let subject of filteredCareerSubjects"
             (click)="selectSubject(subject)"
-            class="p-4 bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-lg hover:shadow-slate-200/50 hover:border-indigo-300 hover:-translate-y-1 transition-all duration-200 ease-out flex flex-col justify-between cursor-pointer group active:scale-[0.98] active:bg-indigo-50/30">
+            class="career-subject-card p-4 bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-lg hover:shadow-slate-200/50 hover:border-indigo-300 hover:-translate-y-1 transition-all duration-200 ease-out flex flex-col justify-between cursor-pointer group active:scale-[0.98] active:bg-indigo-50/30">
             
             <div>
               <div class="flex items-center justify-between mb-2">
@@ -524,7 +524,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <div 
             *ngFor="let prof of filteredCareerProfessors"
-            class="p-5 bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group">
+            class="career-prof-card p-5 bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group">
             
             <div>
               <div class="flex items-start justify-between gap-3 mb-3">
@@ -615,7 +615,12 @@
 
           <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500 w-full">
             <span>{{ career.subjectsCount || career.subjects.length || 0 }} materias</span>
-            <span class="font-semibold text-indigo-600 group-hover:translate-x-1.5 transition-transform duration-200">Ver Pensum →</span>
+            <span class="inline-flex items-center gap-1 font-semibold text-indigo-600 group-hover:translate-x-1 transition-transform duration-200">
+              <span>Ver Pensum</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </span>
           </div>
         </button>
       </div>

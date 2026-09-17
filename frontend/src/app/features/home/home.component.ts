@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { MorphIconComponent } from '../../shared/components/morph-icon/morph-icon.component';
 import { Eye, EyeOff, ThumbsUp, ThumbsDown, Check, Flag } from 'lucide';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-home',
@@ -72,6 +73,16 @@ export class HomeComponent implements OnInit {
   setFeedFilter(filterId: string) {
     this.feedFilter = filterId;
     this.applyFeedFilter();
+    setTimeout(() => {
+      gsap.from('.review-feed-card', {
+        y: 8,
+        autoAlpha: 0,
+        duration: 0.22,
+        stagger: 0.03,
+        ease: 'power2.out',
+        clearProps: 'all'
+      });
+    }, 15);
   }
 
   applyFeedFilter() {
@@ -137,7 +148,14 @@ export class HomeComponent implements OnInit {
     }, 3500);
   }
 
-  voteReview(review: any, voteType: 'up' | 'down') {
+  voteReview(review: any, voteType: 'up' | 'down', event?: Event) {
+    if (event?.currentTarget) {
+      gsap.fromTo(event.currentTarget,
+        { scale: 0.95 },
+        { scale: 1, duration: 0.18, ease: 'back.out(1.6)' }
+      );
+    }
+
     const prevVote = review.userVote;
     let netChange = 0;
 
