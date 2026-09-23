@@ -4,7 +4,6 @@ import { Repository, DataSource } from 'typeorm';
 import { Report, ReportEntityType } from './report.entity';
 import { CreateReportDto } from './dto/create-report.dto';
 import { Review, ReviewStatus } from '../reviews/review.entity';
-import { AcademicFile, FileStatus } from '../academic-files/academic-file.entity';
 
 @Injectable()
 export class ReportsService {
@@ -22,9 +21,6 @@ export class ReportsService {
       if (entityType === ReportEntityType.REVIEW) {
         const review = await manager.findOne(Review, { where: { id: entityId } });
         if (!review) throw new NotFoundException('Reseña no encontrada');
-      } else if (entityType === ReportEntityType.FILE) {
-        const file = await manager.findOne(AcademicFile, { where: { id: entityId } });
-        if (!file) throw new NotFoundException('Archivo no encontrado');
       }
 
       // Crear el reporte
@@ -49,16 +45,10 @@ export class ReportsService {
         where: { entityType, entityId },
       });
 
-      // Si llega a 3, ocultar automáticamente (D-010)
+      // Si llega a 3, ocultar automáticamente (D-010 regla de pánico)
       if (count >= 3) {
         if (entityType === ReportEntityType.REVIEW) {
           await manager.update(Review, entityId, { status: ReviewStatus.HIDDEN });
-        } else if (entityType === ReportEntityType.FILE) {
-          await manager.update(AcademicFile, entityId, { status: FileStatus.HIDDEN, reportCount: count });
-        }
-      } else {
-        if (entityType === ReportEntityType.FILE) {
-          await manager.update(AcademicFile, entityId, { reportCount: count });
         }
       }
 

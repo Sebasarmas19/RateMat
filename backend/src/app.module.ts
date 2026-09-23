@@ -9,7 +9,6 @@ import { SubjectsModule } from './subjects/subjects.module';
 import { ProfessorsModule } from './professors/professors.module';
 import { ProfessorSubjectsModule } from './professor-subjects/professor-subjects.module';
 import { ReviewsModule } from './reviews/reviews.module';
-import { AcademicFilesModule } from './academic-files/academic-files.module';
 import { ReportsModule } from './reports/reports.module';
 import { AuthModule } from './auth/auth.module';
 
@@ -36,7 +35,6 @@ import { AuthModule } from './auth/auth.module';
     ProfessorsModule,
     ProfessorSubjectsModule,
     ReviewsModule,
-    AcademicFilesModule,
     ReportsModule,
   ],
   controllers: [AppController],

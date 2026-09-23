@@ -3,7 +3,6 @@ import { User } from '../users/user.entity';
 
 export enum ReportEntityType {
   REVIEW = 'REVIEW',
-  FILE = 'FILE',
 }
 
 @Entity('reports')
