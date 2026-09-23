@@ -56,6 +56,11 @@ export class HomeComponent implements OnInit {
         // Brecha 2: Initialize isCollapsed = true if netScore <= -3 (D-003 & D-008)
         this.reviews = data.map(r => ({
           ...r,
+          user: r.user ? {
+            ...r.user,
+            name: r.user.name || (r.user.email ? r.user.email.split('@')[0] : 'Estudiante verificado')
+          } : null,
+          tags: Array.isArray(r.tags) ? r.tags.map((t: any) => typeof t === 'string' ? t : (t.tagName || '')) : [],
           isCollapsed: (r.netScore !== undefined && r.netScore <= -3) ? true : false,
           reported: false,
           reportReason: null

@@ -827,7 +827,15 @@ export class ApiService {
   }
 
   getAllProfessors(): Observable<ProfessorSummary[]> {
-    return of(Object.values(this.masterProfessors)).pipe(delay(100));
+    return this.http.get<ProfessorSummary[]>(`${this.apiUrl}/professors`).pipe(
+      map(backendProfs => {
+        if (backendProfs && backendProfs.length > 0) {
+          return backendProfs;
+        }
+        return Object.values(this.masterProfessors);
+      }),
+      catchError(() => of(Object.values(this.masterProfessors)).pipe(delay(100)))
+    );
   }
 
   getProfessorsForSubject(subjectId: string): Observable<ProfessorSummary[]> {
