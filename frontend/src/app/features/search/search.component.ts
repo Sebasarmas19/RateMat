@@ -6,7 +6,7 @@ import { ApiService, Career, SubjectItem, ProfessorSummary } from '../../core/se
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { gsap } from 'gsap';
 
-export type SearchMode = 'all' | 'subjects' | 'professors';
+export type SearchMode = 'subjects' | 'professors';
 export type ProfessorSort = 'rating_desc' | 'newest' | 'oldest' | 'reviews_desc';
 
 @Component({
@@ -32,8 +32,8 @@ export class SearchComponent implements OnInit, AfterViewInit {
     subject: ['', [Validators.required]]
   });
 
-  // Search input & mode state
-  searchMode: SearchMode = 'all';
+  // Search input & mode state (Dual mode: materias vs profesores)
+  searchMode: SearchMode = 'subjects';
   searchQuery = '';
   searchQuery$ = new Subject<string>();
   searchResults: { subjects: SubjectItem[], professors: ProfessorSummary[] } | null = null;
@@ -126,7 +126,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
         this.searchQuery$.next(q);
       }
       const mode = params['mode'] as SearchMode;
-      if (mode && ['all', 'subjects', 'professors'].includes(mode)) {
+      if (mode && ['subjects', 'professors'].includes(mode)) {
         this.searchMode = mode;
       }
       const careerId = params['career'];
