@@ -117,7 +117,7 @@ export class ReviewsService {
   async getRecentReviews(limit: number = 15): Promise<Review[]> {
     return this.reviewRepository.find({
       where: { status: ReviewStatus.ACTIVE },
-      relations: ['professorSubject', 'professorSubject.professor', 'professorSubject.subject'],
+      relations: ['professorSubject', 'professorSubject.professor', 'professorSubject.subject', 'user', 'tags'],
       order: { createdAt: 'DESC' },
       take: limit,
     });

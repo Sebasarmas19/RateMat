@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, Unique } from 'typeorm';
 import { User } from '../users/user.entity';
 import { ProfessorSubject } from '../professor-subjects/professor-subject.entity';
+import { ReviewTag } from './review-tag.entity';
 
 export enum ReviewStatus {
   ACTIVE = 'ACTIVE',
@@ -42,6 +43,9 @@ export class Review {
     default: ReviewStatus.ACTIVE,
   })
   status: ReviewStatus;
+
+  @OneToMany(() => ReviewTag, (tag) => tag.review, { cascade: true })
+  tags: ReviewTag[];
 
   @CreateDateColumn()
   createdAt: Date;
