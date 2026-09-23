@@ -84,7 +84,7 @@ import { AuthService } from '../auth/auth.service';
             </div>
           </div>
 
-          <button (click)="logout()"
+          <button (click)="openLogoutModal()"
                   class="w-full py-1.5 px-2.5 rounded-xl border border-slate-200/90 hover:border-red-200 hover:bg-red-50 text-slate-600 hover:text-red-600 text-xs font-semibold flex items-center justify-center space-x-2 transition-all active:scale-[0.98] cursor-pointer">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -132,7 +132,7 @@ import { AuthService } from '../auth/auth.service';
               <span class="text-[11px] font-bold truncate max-w-[90px]">{{ userName.split(' ')[0] }}</span>
             </a>
 
-            <button (click)="logout()" 
+            <button (click)="openLogoutModal()" 
                     title="Cerrar sesión"
                     class="p-1.5 rounded-xl border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -268,11 +268,78 @@ import { AuthService } from '../auth/auth.service';
         </div>
       </div>
 
+      <!-- Modal Nativo de Confirmación de Cierre de Sesión (RateMat Design System) -->
+      <div *ngIf="authService.showLogoutModal()" 
+           (click)="closeLogoutModal()"
+           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+        <div (click)="$event.stopPropagation()" 
+             class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-100 space-y-5 animate-scale-up">
+          
+          <!-- Encabezado con Icono y Botón de Cerrar -->
+          <div class="flex items-start justify-between">
+            <div class="flex items-center space-x-3.5">
+              <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100/80 shadow-2xs flex-shrink-0">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">¿Cerrar tu sesión?</h3>
+                <p class="text-xs text-slate-400">Confirmación de salida de cuenta</p>
+              </div>
+            </div>
+            
+            <button (click)="closeLogoutModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Preview de Identidad del Alumno -->
+          <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-sm flex-shrink-0 shadow-2xs">
+              {{ userInitial }}
+            </div>
+            <div class="min-w-0 flex-1 text-left">
+              <div class="text-xs font-bold text-slate-900 truncate">{{ userName }}</div>
+              <div class="text-[11px] text-slate-500 font-mono truncate">{{ userEmail }}</div>
+            </div>
+          </div>
+
+          <!-- Mensaje Explicativo -->
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Saldrás de tu cuenta estudiantil activa. Para calificar profesores, votar opiniones o moderar cátedras deberás iniciar sesión nuevamente con tu correo institucional UCAB.
+          </p>
+
+          <!-- Botones de Acción -->
+          <div class="flex items-center justify-end space-x-3 pt-2">
+            <button (click)="closeLogoutModal()"
+                    class="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all active:scale-95 cursor-pointer">
+              Cancelar
+            </button>
+            <button (click)="confirmLogout()"
+                    class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold shadow-sm shadow-rose-600/30 transition-all active:scale-95 flex items-center space-x-2 cursor-pointer">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              <span>Cerrar sesión</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   `
 })
 export class LayoutComponent {
-  private authService = inject(AuthService);
+  authService = inject(AuthService);
   private router = inject(Router);
 
   showTakedownModal = false;
@@ -294,11 +361,18 @@ export class LayoutComponent {
     return this.currentUser?.email || 'estudiante@est.ucab.edu.ve';
   }
 
-  async logout(): Promise<void> {
-    if (typeof window !== 'undefined' && window.confirm('¿Deseas cerrar tu sesión actual y regresar al inicio?')) {
-      await this.authService.signOut();
-      this.router.navigate(['/']);
-    }
+  openLogoutModal(): void {
+    this.authService.openLogoutModal();
+  }
+
+  closeLogoutModal(): void {
+    this.authService.closeLogoutModal();
+  }
+
+  async confirmLogout(): Promise<void> {
+    this.authService.closeLogoutModal();
+    await this.authService.signOut();
+    this.router.navigate(['/']);
   }
 
   openTakedownModal(): void {

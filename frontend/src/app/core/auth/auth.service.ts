@@ -11,6 +11,15 @@ export class AuthService {
   // Usamos Signals (Angular 16+) para reactividad premium
   currentUser = signal<User | null>(null);
   session = signal<Session | null>(null);
+  showLogoutModal = signal<boolean>(false);
+
+  openLogoutModal(): void {
+    this.showLogoutModal.set(true);
+  }
+
+  closeLogoutModal(): void {
+    this.showLogoutModal.set(false);
+  }
 
   constructor() {
     const isConfigured = environment.supabaseUrl && 

@@ -32,10 +32,7 @@ export class ProfileComponent {
     return this.userName.charAt(0).toUpperCase() || 'U';
   }
 
-  async logout() {
-    if (window.confirm('¿Seguro que deseas cerrar sesión?')) {
-      await this.authService.signOut();
-      this.router.navigate(['/']);
-    }
+  logout(): void {
+    this.authService.openLogoutModal();
   }
 }

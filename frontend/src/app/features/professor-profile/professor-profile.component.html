@@ -150,11 +150,43 @@
     <!-- ============================================== -->
     <div class="lg:col-span-7 space-y-5">
       
-      <!-- Barra Superior: Pestañas de Cátedras + CTA Escribir/Editar Reseña -->
-      <div class="bg-white rounded-2xl border border-slate-200/90 p-3 sm:p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <!-- Barra Superior: Encabezado de Reseñas y CTA Principal Calificar -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.03)] space-y-4">
         
-        <!-- Carrusel Deslizable de Cátedras -->
-        <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar whitespace-nowrap flex-1 min-w-0 pr-1">
+        <!-- Fila 1: Título Muro de Reseñas + Conteo + Botón Calificar Profesor -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 pb-3.5 border-b border-slate-100">
+          <div class="space-y-0.5">
+            <div class="flex items-center space-x-2">
+              <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight whitespace-nowrap">Muro de Reseñas</h2>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full flex-shrink-0">
+                {{ filteredReviews.length }} {{ filteredReviews.length === 1 ? 'registrada' : 'registradas' }}
+              </span>
+            </div>
+            <p class="text-xs text-slate-400">
+              <span *ngIf="selectedSubjectTab === 'all'">Ordenadas por reputación neta (Net Score) de estudiantes</span>
+              <span *ngIf="selectedSubjectTab !== 'all'">Filtradas por la cátedra: <strong class="text-slate-700">{{ selectedSubjectTab }}</strong></span>
+            </p>
+          </div>
+
+          <!-- Primary Amber CTA Button (Amplio, con jerarquía y sin interferir con las cátedras) -->
+          <button 
+            (click)="openReviewModal()" 
+            class="w-full lg:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-amber-400 hover:bg-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_8px_rgba(245,158,11,0.25)] hover:shadow-lg hover:shadow-amber-400/30 active:scale-[0.98] transition-[transform,background-color,box-shadow] duration-150 ease-out flex-shrink-0 cursor-pointer">
+            <svg *ngIf="!existingUserReview" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            <svg *ngIf="existingUserReview" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <span>{{ existingUserReview ? 'Editar mi reseña' : 'Calificar Profesor' }}</span>
+          </button>
+        </div>
+
+        <!-- Fila 2: Carrusel Deslizable de Cátedras (100% Ancho independiente, sin colisiones ni cortes) -->
+        <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar whitespace-nowrap py-0.5">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider pr-1 flex-shrink-0">Cátedra:</span>
+          
           <button 
             (click)="selectSubjectTab('all')"
             [ngClass]="selectedSubjectTab === 'all' ? 'bg-slate-900 text-white shadow-xs' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80'"
@@ -170,47 +202,19 @@
             {{ subject }}
           </button>
 
-          <!-- Botón Sugerir Cátedra -->
+          <!-- Botón Sugerir Cátedra (Icono SVG + texto limpio sin doble plus) -->
           <button 
             (click)="openSuggestSubjectModal()"
             title="Proponer nueva cátedra que dicta este profesor (D-004 & D-011)"
-            class="px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/70 transition-all active:scale-95 flex items-center space-x-1 flex-shrink-0 cursor-pointer">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            class="px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/70 transition-all active:scale-95 flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            <span>+ Cátedra</span>
+            <span>Sugerir cátedra</span>
           </button>
         </div>
 
-        <!-- Primary Amber CTA Button -->
-        <button 
-          (click)="openReviewModal()" 
-          class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-amber-400 hover:bg-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_8px_rgba(245,158,11,0.25)] hover:shadow-lg hover:shadow-amber-400/30 active:scale-[0.98] transition-[transform,background-color,box-shadow] duration-150 ease-out flex-shrink-0 cursor-pointer">
-          <svg *ngIf="!existingUserReview" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
-          <svg *ngIf="existingUserReview" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
-          <span>{{ existingUserReview ? 'Editar mi reseña' : 'Calificar Profesor' }}</span>
-        </button>
-
-      </div>
-
-      <!-- Header Reseñas -->
-      <div class="flex items-center justify-between px-1">
-        <div>
-          <h2 class="text-base sm:text-lg font-extrabold text-slate-900">Muro de Reseñas</h2>
-          <p class="text-xs text-slate-400">
-            <span *ngIf="selectedSubjectTab === 'all'">Ordenadas por reputación neta (Net Score)</span>
-            <span *ngIf="selectedSubjectTab !== 'all'">Filtradas por: <strong>{{ selectedSubjectTab }}</strong></span>
-          </p>
-        </div>
-        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 bg-white border border-slate-200/80 px-2.5 py-1 rounded-full shadow-2xs">
-          {{ filteredReviews.length }} registradas
-        </span>
       </div>
 
       <!-- Skeletons during reviews loading -->
