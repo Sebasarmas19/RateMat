@@ -25,12 +25,19 @@ export class AuthService {
         console.warn('No se pudo inicializar Supabase:', e);
       }
     } else {
-      console.warn('⚠️ Supabase no está configurado aún en environment.ts. Modo demo activo para previsualización.');
       if (typeof window !== 'undefined' && localStorage.getItem('ratemat_demo_auth') === 'true') {
+        const storedUser = localStorage.getItem('rateMat_demoUser');
+        let parsed: any = null;
+        try {
+          parsed = storedUser ? JSON.parse(storedUser) : null;
+        } catch {
+          parsed = null;
+        }
+
         const mockUser: any = {
-          id: 'd3b07384-d113-4f4c-9f0e-36798547372a',
-          email: 'estudiante.demo@est.ucab.edu.ve',
-          user_metadata: { full_name: 'Estudiante Demo' }
+          id: parsed?.id || '11111111-0000-4000-8000-000000000001',
+          email: parsed?.email || 'andres.v@est.ucab.edu.ve',
+          user_metadata: { full_name: parsed?.name || 'Andrés Villalobos' }
         };
         const mockSession: any = {
           access_token: 'mock-jwt-token-for-dev',
@@ -58,24 +65,59 @@ export class AuthService {
     }
   }
 
+  isInstitutionalEmail(email: string): boolean {
+    if (!email) return false;
+    const lower = email.trim().toLowerCase();
+    return lower.endsWith('@est.ucab.edu.ve') || lower.endsWith('@ucab.edu.ve');
+  }
+
+  loginWithEmail(email: string, fullName?: string): { success: boolean; error?: string } {
+    const trimmed = email.trim().toLowerCase();
+    if (!this.isInstitutionalEmail(trimmed)) {
+      return {
+        success: false,
+        error: 'El correo ingresado no pertenece al dominio oficial @est.ucab.edu.ve o @ucab.edu.ve. RateMat requiere validación institucional para garantizar la veracidad de la comunidad.'
+      };
+    }
+
+    const defaultName = trimmed.split('@')[0]
+      .split('.')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+
+    const name = fullName || defaultName || 'Estudiante UCAB';
+
+    const mockUser: any = {
+      id: '11111111-0000-4000-8000-' + Math.floor(100000000000 + Math.random() * 900000000000).toString(16).substring(0, 12),
+      email: trimmed,
+      user_metadata: { full_name: name }
+    };
+
+    const mockSession: any = {
+      access_token: 'mock-jwt-token-for-dev',
+      user: mockUser
+    };
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ratemat_demo_auth', 'true');
+      localStorage.setItem('rateMat_demoUser', JSON.stringify({
+        id: mockUser.id,
+        email: mockUser.email,
+        name: name,
+        role: trimmed.includes('admin') ? 'admin' : 'student'
+      }));
+      localStorage.setItem('rateMat_termsAccepted_mock', 'true');
+    }
+
+    this.session.set(mockSession);
+    this.currentUser.set(mockUser);
+
+    return { success: true };
+  }
+
   async signInWithGoogle() {
     if (!this.supabase) {
-      // Modo demo sin credenciales de Supabase para probar la app en desarrollo
-      const mockUser: any = {
-        id: 'd3b07384-d113-4f4c-9f0e-36798547372a',
-        email: 'estudiante.demo@est.ucab.edu.ve',
-        user_metadata: { full_name: 'Estudiante Demo' }
-      };
-      const mockSession: any = {
-        access_token: 'mock-jwt-token-for-dev',
-        user: mockUser
-      };
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('ratemat_demo_auth', 'true');
-      }
-      this.session.set(mockSession);
-      this.currentUser.set(mockUser);
-      return { data: { user: mockUser, session: mockSession }, error: null };
+      return this.loginWithEmail('andres.v@est.ucab.edu.ve', 'Andrés Villalobos');
     }
 
     const { data, error } = await this.supabase.auth.signInWithOAuth({
@@ -90,11 +132,16 @@ export class AuthService {
 
   async signOut() {
     if (this.supabase) {
-      const { error } = await this.supabase.auth.signOut();
-      if (error) throw error;
+      try {
+        await this.supabase.auth.signOut();
+      } catch (err) {
+        console.warn('Error signing out of Supabase:', err);
+      }
     }
     if (typeof window !== 'undefined') {
       localStorage.removeItem('ratemat_demo_auth');
+      localStorage.removeItem('rateMat_demoUser');
+      localStorage.removeItem('rateMat_termsAccepted_mock');
     }
     this.session.set(null);
     this.currentUser.set(null);

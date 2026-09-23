@@ -235,12 +235,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  async login() {
-    try {
-      await this.authService.signInWithGoogle();
-    } catch (error) {
-      console.error('Error logging in:', error);
-    }
+  login(): void {
+    this.router.navigate(['/login']);
   }
 
   toggleDemoVote(btnEl: HTMLElement): void {

@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { LegalModalComponent } from '../../shared/components/legal-modal/legal-modal.component';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -71,8 +72,31 @@ import { LegalModalComponent } from '../../shared/components/legal-modal/legal-m
           </a>
         </nav>
 
+        <!-- User Identity Card & Sign Out Button -->
+        <div class="p-3 m-3 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2.5">
+          <div class="flex items-center space-x-3 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-sm flex-shrink-0 shadow-2xs">
+              {{ userInitial }}
+            </div>
+            <div class="min-w-0 flex-1">
+              <span class="text-xs font-bold text-slate-900 block truncate leading-tight">{{ userName }}</span>
+              <span class="text-[10px] text-slate-400 font-mono block truncate">{{ userEmail }}</span>
+            </div>
+          </div>
+
+          <button (click)="logout()"
+                  class="w-full py-1.5 px-2.5 rounded-xl border border-slate-200/90 hover:border-red-200 hover:bg-red-50 text-slate-600 hover:text-red-600 text-xs font-semibold flex items-center justify-center space-x-2 transition-all active:scale-[0.98] cursor-pointer">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <span>Cerrar sesión</span>
+          </button>
+        </div>
+
         <!-- Sidebar Footer / Community Badge -->
-        <div class="p-4 m-3 bg-slate-50 border border-slate-200/70 rounded-2xl">
+        <div class="px-4 pb-4">
           <div class="flex items-center space-x-2 text-indigo-600 text-xs font-bold mb-1">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -87,6 +111,39 @@ import { LegalModalComponent } from '../../shared/components/legal-modal/legal-m
 
       <!-- Main Content Area -->
       <main class="flex-1 md:ml-64 min-h-screen pb-24 md:pb-12 flex flex-col justify-between">
+        
+        <!-- Mobile Top Header Bar with Quick Logout -->
+        <header class="md:hidden sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-2.5 flex items-center justify-between shadow-2xs">
+          <a routerLink="/search" class="flex items-center space-x-2">
+            <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-xs shadow-2xs">
+              R
+            </div>
+            <div>
+              <span class="font-extrabold text-sm text-slate-900 tracking-tight leading-none block">RateMat</span>
+              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">UCAB</span>
+            </div>
+          </a>
+
+          <div class="flex items-center space-x-2">
+            <a routerLink="/profile" class="flex items-center space-x-1.5 px-2 py-1 rounded-xl bg-slate-100 text-slate-700 text-xs font-medium hover:bg-slate-200 transition-colors">
+              <div class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-[10px]">
+                {{ userInitial }}
+              </div>
+              <span class="text-[11px] font-bold truncate max-w-[90px]">{{ userName.split(' ')[0] }}</span>
+            </a>
+
+            <button (click)="logout()" 
+                    title="Cerrar sesión"
+                    class="p-1.5 rounded-xl border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+            </button>
+          </div>
+        </header>
+
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 w-full flex-1">
           <router-outlet></router-outlet>
         </div>
@@ -215,7 +272,34 @@ import { LegalModalComponent } from '../../shared/components/legal-modal/legal-m
   `
 })
 export class LayoutComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   showTakedownModal = false;
+
+  get currentUser() {
+    return this.authService.currentUser();
+  }
+
+  get userInitial(): string {
+    const name = this.currentUser?.user_metadata?.['full_name'] || this.currentUser?.email || 'U';
+    return name.charAt(0).toUpperCase();
+  }
+
+  get userName(): string {
+    return this.currentUser?.user_metadata?.['full_name'] || this.currentUser?.email?.split('@')[0] || 'Estudiante UCAB';
+  }
+
+  get userEmail(): string {
+    return this.currentUser?.email || 'estudiante@est.ucab.edu.ve';
+  }
+
+  async logout(): Promise<void> {
+    if (typeof window !== 'undefined' && window.confirm('¿Deseas cerrar tu sesión actual y regresar al inicio?')) {
+      await this.authService.signOut();
+      this.router.navigate(['/']);
+    }
+  }
 
   openTakedownModal(): void {
     this.showTakedownModal = true;

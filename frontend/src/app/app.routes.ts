@@ -13,6 +13,10 @@ export const routes: Routes = [
     component: LandingComponent
   },
   {
+    path: 'login',
+    loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent)
+  },
+  {
     path: '',
     component: LayoutComponent,
     children: [
