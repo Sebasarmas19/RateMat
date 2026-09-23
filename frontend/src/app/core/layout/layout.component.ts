@@ -22,7 +22,7 @@ import { AuthService } from '../auth/auth.service';
             </div>
             <div>
               <span class="text-lg font-extrabold tracking-tight text-slate-900">RateMat</span>
-              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">UCAB Guayana</span>
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">UCAB Caracas</span>
             </div>
           </a>
         </div>
@@ -166,7 +166,7 @@ import { AuthService } from '../auth/auth.service';
               Moderación
             </a>
             <span class="text-slate-300">•</span>
-            <span>UCAB Guayana 2026</span>
+            <span>UCAB Caracas 2026</span>
           </div>
         </footer>
       </main>

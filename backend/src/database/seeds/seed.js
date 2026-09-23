@@ -1,6 +1,6 @@
 /**
  * RateMat Database Seeder
- * Populates PostgreSQL with realistic UCAB Guayana university data:
+ * Populates PostgreSQL with realistic UCAB Caracas university data:
  * - 10 Verified Student Users
  * - 22 Subjects across 7 Academic Schools
  * - 21 Verified Professors
@@ -287,7 +287,7 @@ async function runSeed() {
         userId: makeUuid('11111111', 9), // Javier S.
         mapId: makeUuid('44444444', 30), // Marcos Febres - Control de Calidad
         rating: 4,
-        text: 'Muy enfocado en la metodología Seis Sigma y casos industriales reales de Ciudad Guayana. Los talleres prácticos con datos estadísticos son excelentes.',
+        text: 'Muy enfocado en la metodología Seis Sigma y casos industriales reales de empresas en Caracas. Los talleres prácticos con datos estadísticos son excelentes.',
         isAnonymous: false,
         netScore: 7,
         status: 'ACTIVE',
