@@ -25,6 +25,13 @@ El sistema no gira únicamente en torno al profesor, sino en la **relación Mate
    - Estrellas (1-5) con hover preview dinámico + Selector de Materia + Tags + Justificación obligatoria en 1★ y 5★ + Switch de Privacidad Híbrida (D-002).
 6. **Módulo de Perfil del Estudiante (`/profile`):** 
    - Panel de estadísticas, gamificación, niveles de reputación estudiantil y explicación de la garantía de privacidad híbrida.
+7. **Módulo de Autenticación & Acceso (`/login`):**
+   - Vista dedicada y sobria con selector de inicio de sesión mediante Google Workspace OAuth.
+   - Validación de dominios institucionales autorizados: `@est.ucab.edu.ve` (estudiantes) y `@ucab.edu.ve` (docentes y autoridades).
+   - Botón de cierre de sesión con modal nativo de confirmación en la barra de navegación.
+8. **Módulo de Administración y Moderación (`/admin` — D-011):**
+   - Vista ejecutiva independiente (protegida por guard de autenticación) desacoplada de la vista de perfil de usuario.
+   - Gestión de colas operativas: Aprobación de sugerencias de catálogo (profesores/cátedras en cold-start) y moderación de denuncias comunitarias de reseñas.
 
 ## Reglas de Interfaz (UX/UI Responsive)
 - **Diseño Mobile-First Estricto:** La plataforma será consumida mayoritariamente en teléfonos móviles (PWA). El diseño base debe ser para móviles (ej. Bottom Navigation Bar en lugar de menús de hamburguesa complicados).
