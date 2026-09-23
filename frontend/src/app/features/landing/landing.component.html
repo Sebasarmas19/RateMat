@@ -114,16 +114,17 @@
               CM
             </div>
             <div>
-              <div class="flex items-center space-x-2">
+              <div class="flex items-center space-x-2 flex-wrap sm:flex-nowrap">
                 <h3 class="text-sm sm:text-base font-bold text-slate-900">Prof. Carlos Mendoza</h3>
-                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  4.8 ★
+                <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                  <span>4.8</span>
+                  <span>★</span>
                 </span>
               </div>
-              <div class="flex items-center space-x-1.5 text-xs text-slate-500 mt-0.5">
-                <span class="font-medium text-slate-800">Cálculo I</span>
+              <div class="flex items-center space-x-1.5 text-xs text-slate-500 mt-0.5 flex-wrap">
+                <span class="font-medium text-slate-800 whitespace-nowrap">Cálculo I</span>
                 <span>•</span>
-                <span>Escuela de Informática</span>
+                <span class="whitespace-nowrap">Escuela de Informática</span>
               </div>
             </div>
           </div>
@@ -139,19 +140,23 @@
 
         <!-- Opinión del Alumno -->
         <p class="text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50/80 p-3.5 rounded-2xl border border-slate-100">
-          «El contenido del segundo parcial de integrales es exigente. Si resuelves las guías del Hub y asistes a las consultas apruebas seguro. Muy justo calificando y retroalimenta cada corrección.»
+          «El contenido del segundo parcial de integrales es exigente. Si resuelves las guías prácticas y asistes a las consultas apruebas seguro. Muy justo calificando y retroalimenta cada corrección.»
         </p>
 
-        <!-- Adjunto PDF del Hub Académico -->
-        <div class="flex items-center justify-between p-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-xs">
-          <div class="flex items-center space-x-2 truncate">
-            <svg class="w-4 h-4 text-indigo-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-            </svg>
-            <span class="font-semibold text-indigo-950 truncate">Formulario_Oficial_Derivadas_Integrales.pdf</span>
+        <!-- Métricas Pedagógicas Concretas (D-003) -->
+        <div class="grid grid-cols-3 gap-2 p-2.5 bg-indigo-50/40 border border-indigo-100/80 rounded-xl text-center text-xs">
+          <div>
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Claridad</span>
+            <span class="font-black text-slate-900">4.9 / 5</span>
           </div>
-          <span class="text-[10px] font-bold text-indigo-600 flex-shrink-0 ml-2">1.2 MB PDF</span>
+          <div class="border-x border-indigo-100">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Dificultad</span>
+            <span class="font-black text-slate-900">3.8 / 5</span>
+          </div>
+          <div>
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Recomienda</span>
+            <span class="font-black text-emerald-600">96%</span>
+          </div>
         </div>
 
         <!-- Footer con Voto Interactivo Demo -->
@@ -497,10 +502,10 @@
         <!-- FAQ 4 -->
         <div class="faq-card p-7 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-3 hover:border-slate-300 transition-all">
           <h3 class="text-base sm:text-lg font-bold text-slate-900">
-            ¿Qué es el Hub Académico y qué tipo de archivos puedo descargar?
+            ¿Cómo protege RateMat la veracidad pedagógica y previene difamaciones?
           </h3>
           <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Es el repositorio colaborativo del estudiante ucabista (D-005): exámenes de semestres anteriores, guías de ejercicios resueltos, resúmenes de temas complejos y formularios. Todo archivo en formato PDF (máx. 10 MB) se asocia directamente a la cátedra correspondiente para que el próximo estudiante pueda prepararse con ventaja.
+            Mediante el blindaje legal D-010 y moderación comunitaria: las notas extremas exigen justificación objetiva obligatoria, se aplican filtros de palabras clave que bloquean acusaciones delictivas redirigiendo al Protocolo 2.83 UCAB formal, y la comunidad modera activamente mediante votos útiles y repliegue de opiniones tóxicas.
           </p>
         </div>
 
@@ -546,7 +551,7 @@
         <!-- Columna 2 -->
         <div class="testimonial-card p-6 sm:p-7 rounded-3xl bg-[#f8fafc] border border-slate-200/80 space-y-4 hover:shadow-md transition-all">
           <p class="text-xs sm:text-sm text-slate-700 leading-relaxed italic">
-            «El Hub de parciales es la mejor herramienta que tenemos. Las guías de ejercicios resueltos que subieron compañeros de semestres anteriores fueron determinantes para aprobar el final de Física.»
+            «El desglose de dificultad por cátedra es la mejor herramienta antes de inscribir. Saber la diferencia de exigencia entre secciones teóricas y prácticas fue determinante para armar mi semestre con éxito.»
           </p>
           <div class="pt-3 border-t border-slate-200/70 flex items-center space-x-3">
             <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs flex-shrink-0">

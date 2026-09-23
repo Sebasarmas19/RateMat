@@ -26,6 +26,19 @@ export class AuthService {
       }
     } else {
       console.warn('⚠️ Supabase no está configurado aún en environment.ts. Modo demo activo para previsualización.');
+      if (typeof window !== 'undefined' && localStorage.getItem('ratemat_demo_auth') === 'true') {
+        const mockUser: any = {
+          id: 'd3b07384-d113-4f4c-9f0e-36798547372a',
+          email: 'estudiante.demo@est.ucab.edu.ve',
+          user_metadata: { full_name: 'Estudiante Demo' }
+        };
+        const mockSession: any = {
+          access_token: 'mock-jwt-token-for-dev',
+          user: mockUser
+        };
+        this.session.set(mockSession);
+        this.currentUser.set(mockUser);
+      }
     }
   }
 
@@ -57,6 +70,9 @@ export class AuthService {
         access_token: 'mock-jwt-token-for-dev',
         user: mockUser
       };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('ratemat_demo_auth', 'true');
+      }
       this.session.set(mockSession);
       this.currentUser.set(mockUser);
       return { data: { user: mockUser, session: mockSession }, error: null };
@@ -76,6 +92,9 @@ export class AuthService {
     if (this.supabase) {
       const { error } = await this.supabase.auth.signOut();
       if (error) throw error;
+    }
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('ratemat_demo_auth');
     }
     this.session.set(null);
     this.currentUser.set(null);

@@ -80,12 +80,12 @@ export class AdminComponent {
     },
     {
       id: 'rep-2',
-      itemType: 'file',
-      title: 'Archivo Académico en Hub',
-      targetName: 'Examen_Parcial_2026_Resuelto_Filtrado.pdf',
-      reportsCount: 4,
-      reason: 'Violación de derechos de autor y distribución no permitida de evaluación activa',
-      contentPreview: 'Documento PDF de 3.2 MB reportado por la cátedra docente y 3 estudiantes de la materia.',
+      itemType: 'review',
+      title: 'Reseña con Acusación No Sustanciada',
+      targetName: 'Prof. Ricardo Mendoza',
+      reportsCount: 3,
+      reason: 'Insinuación de cobros ilegales y descalificación no pedagógica',
+      contentPreview: '"Exige comprar su guía fotocopiada en un sitio específico para tener derecho a nota en el parcial..."',
       date: 'Hace 3 días'
     }
   ];
@@ -210,12 +210,12 @@ export class AdminComponent {
       },
       {
         id: 'rep-2',
-        itemType: 'file',
-        title: 'Archivo Académico en Hub',
-        targetName: 'Examen_Parcial_2026_Resuelto_Filtrado.pdf',
-        reportsCount: 4,
-        reason: 'Violación de derechos de autor y distribución no permitida de evaluación activa',
-        contentPreview: 'Documento PDF de 3.2 MB reportado por la cátedra docente y 3 estudiantes de la materia.',
+        itemType: 'review',
+        title: 'Reseña con Acusación No Sustanciada',
+        targetName: 'Prof. Ricardo Mendoza',
+        reportsCount: 3,
+        reason: 'Insinuación de cobros ilegales y descalificación no pedagógica',
+        contentPreview: '"Exige comprar su guía fotocopiada en un sitio específico para tener derecho a nota en el parcial..."',
         date: 'Hace 3 días'
       }
     ];
