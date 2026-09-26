@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -14,7 +14,7 @@ import gsap from 'gsap';
   templateUrl: './professor-profile.component.html',
   styleUrls: ['./professor-profile.component.css']
 })
-export class ProfessorProfileComponent implements OnInit {
+export class ProfessorProfileComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private profileService = inject(ProfessorProfileService);
   private fb = inject(FormBuilder);
@@ -203,6 +203,7 @@ export class ProfessorProfileComponent implements OnInit {
   // --- Brecha 1.B: Sugerir Nueva Materia / Cátedra (D-004 & D-011) ---
 
   openSuggestSubjectModal(): void {
+    this.setBodyScrollLocked(true);
     this.suggestSubjectSuccessMessage = '';
     this.suggestSubjectForm.reset({
       subjectName: '',
@@ -215,6 +216,7 @@ export class ProfessorProfileComponent implements OnInit {
     if (!this.isSubmittingSuggestSubject) {
       this.showSuggestSubjectModal = false;
       this.suggestSubjectSuccessMessage = '';
+      this.setBodyScrollLocked(false);
     }
   }
 
@@ -246,9 +248,28 @@ export class ProfessorProfileComponent implements OnInit {
     review.isCollapsed = !review.isCollapsed;
   }
 
+  private setBodyScrollLocked(locked: boolean): void {
+    if (typeof window !== 'undefined') {
+      if (locked) {
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.touchAction = 'none';
+      } else {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        document.body.style.touchAction = '';
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.setBodyScrollLocked(false);
+  }
+
   // --- D-003 & D-010 Review Creation & Edit Flow (Brecha 4) ---
 
   openReviewModal(defaultSubject?: string): void {
+    this.setBodyScrollLocked(true);
     this.showReviewModal = true;
     this.reviewSubmitError = null;
     const subj = defaultSubject || (this.selectedSubjectTab !== 'all' ? this.selectedSubjectTab : (this.profile?.subjects?.[0] || ''));
@@ -286,6 +307,7 @@ export class ProfessorProfileComponent implements OnInit {
   closeReviewModal(): void {
     if (!this.isSubmittingReview) {
       this.showReviewModal = false;
+      this.setBodyScrollLocked(false);
     }
   }
 
@@ -361,6 +383,7 @@ export class ProfessorProfileComponent implements OnInit {
 
       this.isSubmittingReview = false;
       this.showReviewModal = false;
+      this.setBodyScrollLocked(false);
       return;
     }
 
@@ -375,6 +398,7 @@ export class ProfessorProfileComponent implements OnInit {
         }
         this.isSubmittingReview = false;
         this.showReviewModal = false;
+        this.setBodyScrollLocked(false);
       },
       error: (err) => {
         this.isSubmittingReview = false;

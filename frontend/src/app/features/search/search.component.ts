@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
@@ -15,7 +15,7 @@ export type ProfessorSort = 'rating_desc' | 'newest' | 'oldest' | 'reviews_desc'
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './search.component.html'
 })
-export class SearchComponent implements OnInit, AfterViewInit {
+export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private apiService = inject(ApiService);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
@@ -359,9 +359,28 @@ export class SearchComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private setBodyScrollLocked(locked: boolean): void {
+    if (typeof window !== 'undefined') {
+      if (locked) {
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.touchAction = 'none';
+      } else {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        document.body.style.touchAction = '';
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.setBodyScrollLocked(false);
+  }
+
   // --- Subject selection (Level 3: Professors) ---
 
   selectSubject(subject: SubjectItem) {
+    this.setBodyScrollLocked(true);
     this.selectedSubject = subject;
     this.isLoadingSubjectProfessors = true;
     this.subjectProfessors = [];
@@ -382,11 +401,13 @@ export class SearchComponent implements OnInit, AfterViewInit {
   closeSubjectModal() {
     this.selectedSubject = null;
     this.subjectProfessors = [];
+    this.setBodyScrollLocked(false);
   }
 
   // --- Brecha 1: Suggest Professor Modal Methods (D-004 & D-011) ---
 
   openSuggestProfModal(prefilledSubject?: string, prefilledName?: string) {
+    this.setBodyScrollLocked(true);
     this.suggestSuccessMessage = '';
     this.suggestProfForm.reset({
       name: prefilledName || '',
@@ -400,6 +421,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
     if (!this.isSubmittingSuggest) {
       this.showSuggestProfModal = false;
       this.suggestSuccessMessage = '';
+      this.setBodyScrollLocked(false);
     }
   }
 

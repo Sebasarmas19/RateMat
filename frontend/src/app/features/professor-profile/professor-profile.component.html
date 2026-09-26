@@ -422,18 +422,18 @@
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity cursor-pointer" (click)="closeReviewModal()" title="Toca fuera para cerrar"></div>
 
     <!-- Modal Dialog / Mobile Bottom Sheet -->
-    <div class="w-full sm:max-w-xl max-sm:fixed max-sm:bottom-0 max-sm:inset-x-0 max-sm:rounded-b-none max-sm:rounded-t-3xl max-sm:max-h-[88vh] bg-white sm:rounded-2xl shadow-2xl overflow-hidden border-t sm:border border-slate-200/90 z-10 relative flex flex-col animate-sheet-up sm:animate-modal-in">
+    <div class="w-full sm:max-w-xl max-sm:fixed max-sm:bottom-0 max-sm:inset-x-0 max-sm:rounded-b-none max-sm:rounded-t-3xl max-sm:max-h-[92vh] bg-white sm:rounded-2xl shadow-2xl overflow-hidden border-t sm:border border-slate-200/90 z-10 relative flex flex-col animate-sheet-up sm:animate-modal-in overscroll-contain">
       
       <!-- Mobile Pull Bar Indicator (Tappable to close) -->
       <div 
         (click)="closeReviewModal()"
-        class="sm:hidden py-3 px-6 flex items-center justify-center cursor-pointer flex-shrink-0"
+        class="sm:hidden py-2.5 px-6 flex items-center justify-center cursor-pointer flex-shrink-0"
         title="Toca para cerrar">
         <div class="w-12 h-1.5 bg-slate-300 hover:bg-slate-400 rounded-full transition-colors"></div>
       </div>
 
       <!-- Modal Header -->
-      <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 flex-shrink-0">
+      <div class="px-5 sm:px-6 py-3.5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 flex-shrink-0">
         <div>
           <h3 class="text-base font-extrabold text-slate-900">{{ isEditingReview ? 'Editar Reseña de ' + profile?.name : 'Calificar a ' + profile?.name }}</h3>
           <p class="text-xs text-slate-400">{{ isEditingReview ? 'Modifica tu calificación o tu comentario previo (D-003)' : 'Tu opinión ayuda a toda la comunidad estudiantil' }}</p>
@@ -446,154 +446,161 @@
         </button>
       </div>
 
-      <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 flex-1">
+      <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="flex flex-col flex-1 min-h-0 overflow-hidden">
         
-        <!-- Error Alert (D-010: Preserves user text while highlighting issue) -->
-        <div *ngIf="reviewSubmitError" class="p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-start space-x-2">
-          <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          <span class="leading-relaxed">{{ reviewSubmitError }}</span>
-        </div>
-
-        <!-- Subject Course Selector (D-003 / D-007 Mandatory: A professor is NEVER rated in the abstract) -->
-        <div class="space-y-1.5">
-          <div class="flex items-center justify-between">
-            <label class="text-xs font-bold text-slate-700" for="subjectSelect">
-              Materia o Cátedra que cursaste <span class="text-red-500">*</span>
-            </label>
-            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">
-              Obligatorio (D-003)
-            </span>
+        <!-- Scrollable Form Body with overscroll containment -->
+        <div class="p-4 sm:p-6 overflow-y-auto space-y-3.5 sm:space-y-4 flex-1 overscroll-contain">
+          
+          <!-- Error Alert (D-010: Preserves user text while highlighting issue) -->
+          <div *ngIf="reviewSubmitError" class="p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-start space-x-2">
+            <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span class="leading-relaxed">{{ reviewSubmitError }}</span>
           </div>
-          <div class="relative">
-            <select id="subjectSelect" formControlName="subject"
-                    class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-medium appearance-none focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all pr-9 cursor-pointer">
-              <option value="" disabled>Selecciona la cátedra que cursaste...</option>
-              <option *ngFor="let sub of profile?.subjects" [value]="sub">{{ sub }}</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
+
+          <!-- Subject Course Selector (D-003 / D-007 Mandatory: A professor is NEVER rated in the abstract) -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-slate-700" for="subjectSelect">
+                Materia o Cátedra que cursaste <span class="text-red-500">*</span>
+              </label>
+              <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">
+                Obligatorio (D-003)
+              </span>
+            </div>
+            <div class="relative">
+              <select id="subjectSelect" formControlName="subject"
+                      class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-medium appearance-none focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all pr-9 cursor-pointer">
+                <option value="" disabled>Selecciona la cátedra que cursaste...</option>
+                <option *ngFor="let sub of profile?.subjects" [value]="sub">{{ sub }}</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="reviewForm.get('subject')?.touched && reviewForm.get('subject')?.errors?.['required']" 
+                 class="text-xs text-red-500">
+              Debes seleccionar la materia que cursaste con este profesor para poder calificarlo.
             </div>
           </div>
-          <div *ngIf="reviewForm.get('subject')?.touched && reviewForm.get('subject')?.errors?.['required']" 
-               class="text-xs text-red-500">
-            Debes seleccionar la materia que cursaste con este profesor para poder calificarlo.
-          </div>
-        </div>
 
-        <!-- 5-Star Selector Interactivo con Hover Coordinado (Directiva 2.B) -->
-        <div class="text-center space-y-2 py-1">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">
-            ¿Cómo calificas a este profesor? <span class="text-red-500">*</span>
-          </label>
-          <div class="flex justify-center space-x-1 sm:space-x-2" (mouseleave)="clearHoverRating()">
-            <button type="button" *ngFor="let star of [1,2,3,4,5]" 
-                    (click)="setRating(star)"
-                    (mouseenter)="setHoverRating(star)"
-                    class="p-1 sm:p-1.5 rounded-xl hover:bg-amber-50 active:scale-90 transition-all focus:outline-none cursor-pointer">
-              <svg class="w-9 h-9 sm:w-10 sm:h-10 fill-current transition-colors duration-150" 
-                   [ngClass]="star <= (hoverRating || reviewForm.get('rating')?.value) ? 'text-amber-400 drop-shadow-[0_2px_8px_rgba(251,191,36,0.3)]' : 'text-slate-200'" 
-                   viewBox="0 0 24 24">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-            </button>
-          </div>
-          <div *ngIf="reviewForm.get('rating')?.touched && reviewForm.get('rating')?.errors?.['min']" class="text-xs text-red-500">
-            Por favor selecciona al menos 1 estrella.
-          </div>
-        </div>
-
-        <!-- Quick Tags (D-003) -->
-        <div class="space-y-2">
-          <label class="block text-xs font-bold text-slate-700">Etiquetas Rápidas (opcional):</label>
-          <div class="flex flex-wrap gap-1.5">
-            <button type="button" 
-                    *ngFor="let tag of availableTags"
-                    (click)="toggleTag(tag)"
-                    [class.bg-indigo-600]="selectedTags.includes(tag)"
-                    [class.text-white]="selectedTags.includes(tag)"
-                    [class.border-indigo-600]="selectedTags.includes(tag)"
-                    [class.bg-slate-50]="!selectedTags.includes(tag)"
-                    [class.text-slate-600]="!selectedTags.includes(tag)"
-                    [class.border-slate-200]="!selectedTags.includes(tag)"
-                    class="px-3 py-1 rounded-full border text-xs font-medium transition-all active:scale-95 cursor-pointer">
-              {{ tag }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Text Review (D-003: Conditional Validation Rule & D-009: MaxLength & Counter) -->
-        <div class="space-y-1.5">
-          <div class="flex items-center justify-between">
-            <label class="text-xs font-bold text-slate-700" for="reviewTextInput">
-              Opinión y Justificación:
+          <!-- 5-Star Selector Interactivo con Hover Coordinado (Directiva 2.B) -->
+          <div class="text-center space-y-1.5 py-1">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">
+              ¿Cómo calificas a este profesor? <span class="text-red-500">*</span>
             </label>
-            <span class="text-[11px] font-bold" [ngClass]="isTextRequired ? 'text-amber-600' : 'text-slate-400'">
-              {{ isTextRequired ? 'Obligatorio en 1★ y 5★' : 'Opcional en 2★, 3★ y 4★' }}
-            </span>
+            <div class="flex justify-center space-x-1 sm:space-x-2" (mouseleave)="clearHoverRating()">
+              <button type="button" *ngFor="let star of [1,2,3,4,5]" 
+                      (click)="setRating(star)"
+                      (mouseenter)="setHoverRating(star)"
+                      class="p-1 sm:p-1.5 rounded-xl hover:bg-amber-50 active:scale-90 transition-all focus:outline-none cursor-pointer">
+                <svg class="w-8 h-8 sm:w-10 sm:h-10 fill-current transition-colors duration-150" 
+                     [ngClass]="star <= (hoverRating || reviewForm.get('rating')?.value) ? 'text-amber-400 drop-shadow-[0_2px_8px_rgba(251,191,36,0.3)]' : 'text-slate-200'" 
+                     viewBox="0 0 24 24">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </button>
+            </div>
+            <div *ngIf="reviewForm.get('rating')?.touched && reviewForm.get('rating')?.errors?.['min']" class="text-xs text-red-500">
+              Por favor selecciona al menos 1 estrella.
+            </div>
           </div>
 
-          <textarea 
-            id="reviewTextInput" 
-            formControlName="text" 
-            rows="4" 
-            maxlength="1000"
-            class="w-full border border-slate-200 rounded-xl p-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all resize-none"
-            placeholder="¿Cómo explica los temas? ¿Los exámenes son coherentes? Justifica tu nota objetivamente..."></textarea>
-          
-          <!-- Brecha 6: Subtitle info and Tabular-nums Counter (D-009) -->
-          <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
-            <span *ngIf="isTextRequired" class="text-amber-600 font-medium">
-              * Mínimo 10 caracteres requeridos
-            </span>
-            <span *ngIf="!isTextRequired" class="text-slate-400">
-              Opcional para 2, 3 y 4 estrellas
-            </span>
-            <span class="tabular-nums font-semibold" [class.text-red-500]="(reviewForm.get('text')?.value?.length || 0) > 1000">
-              {{ reviewForm.get('text')?.value?.length || 0 }} / 1000 caracteres
-            </span>
+          <!-- Quick Tags (D-003) -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-slate-700">Etiquetas Rápidas (opcional):</label>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" 
+                      *ngFor="let tag of availableTags"
+                      (click)="toggleTag(tag)"
+                      [class.bg-indigo-600]="selectedTags.includes(tag)"
+                      [class.text-white]="selectedTags.includes(tag)"
+                      [class.border-indigo-600]="selectedTags.includes(tag)"
+                      [class.bg-slate-50]="!selectedTags.includes(tag)"
+                      [class.text-slate-600]="!selectedTags.includes(tag)"
+                      [class.border-slate-200]="!selectedTags.includes(tag)"
+                      class="px-2.5 py-1 rounded-full border text-xs font-medium transition-all active:scale-95 cursor-pointer">
+                {{ tag }}
+              </button>
+            </div>
           </div>
 
-          <div *ngIf="isTextRequired && reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['required']" 
-               class="text-xs text-red-500">
-            Debes justificar la nota extrema (1★ o 5★) con al menos 10 caracteres.
+          <!-- Text Review (D-003: Conditional Validation Rule & D-009: MaxLength & Counter) -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-slate-700" for="reviewTextInput">
+                Opinión y Justificación:
+              </label>
+              <span class="text-[11px] font-bold" [ngClass]="isTextRequired ? 'text-amber-600' : 'text-slate-400'">
+                {{ isTextRequired ? 'Obligatorio en 1★ y 5★' : 'Opcional en 2★, 3★ y 4★' }}
+              </span>
+            </div>
+
+            <textarea 
+              id="reviewTextInput" 
+              formControlName="text" 
+              rows="3" 
+              maxlength="1000"
+              class="w-full border border-slate-200 rounded-xl p-3 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all resize-none"
+              placeholder="¿Cómo explica los temas? ¿Los exámenes son coherentes? Justifica tu nota objetivamente..."></textarea>
+            
+            <!-- Brecha 6: Subtitle info and Tabular-nums Counter (D-009) -->
+            <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
+              <span *ngIf="isTextRequired" class="text-amber-600 font-medium">
+                * Mínimo 10 caracteres requeridos
+              </span>
+              <span *ngIf="!isTextRequired" class="text-slate-400">
+                Opcional para 2, 3 y 4 estrellas
+              </span>
+              <span class="tabular-nums font-semibold" [class.text-red-500]="(reviewForm.get('text')?.value?.length || 0) > 1000">
+                {{ reviewForm.get('text')?.value?.length || 0 }} / 1000 caracteres
+              </span>
+            </div>
+
+            <div *ngIf="isTextRequired && reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['required']" 
+                 class="text-xs text-red-500">
+              Debes justificar la nota extrema (1★ o 5★) con al menos 10 caracteres.
+            </div>
+            <div *ngIf="reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['minlength']" 
+                 class="text-xs text-red-500">
+              La opinión debe tener un mínimo de 10 caracteres.
+            </div>
+            <div *ngIf="reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['maxlength']" 
+                 class="text-xs text-red-500">
+              La opinión no puede exceder los 1000 caracteres (D-009).
+            </div>
           </div>
-          <div *ngIf="reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['minlength']" 
-               class="text-xs text-red-500">
-            La opinión debe tener un mínimo de 10 caracteres.
+
+          <!-- Anonymous Toggle Switch (D-002) -->
+          <div class="p-3 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center justify-between">
+            <div class="pr-3">
+              <div class="text-xs font-bold text-slate-900">Publicar de forma Anónima</div>
+              <div class="text-[11px] text-slate-400">Protege tu identidad. Tu nombre no aparecerá en el muro público.</div>
+            </div>
+
+            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+              <input type="checkbox" formControlName="isAnonymous" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+            </label>
           </div>
-          <div *ngIf="reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['maxlength']" 
-               class="text-xs text-red-500">
-            La opinión no puede exceder los 1000 caracteres (D-009).
-          </div>
+
         </div>
 
-        <!-- Anonymous Toggle Switch (D-002) -->
-        <div class="p-3.5 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center justify-between">
-          <div class="pr-3">
-            <div class="text-xs font-bold text-slate-900">Publicar de forma Anónima</div>
-            <div class="text-[11px] text-slate-400">Protege tu identidad. Tu nombre no aparecerá en el muro público.</div>
-          </div>
-
-          <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
-            <input type="checkbox" formControlName="isAnonymous" class="sr-only peer">
-            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-          </label>
+        <!-- Sticky Bottom Action Footer (SIEMPRE VISIBLE SIN HACER SCROLL) -->
+        <div class="p-3.5 sm:p-4 bg-white/95 backdrop-blur-md border-t border-slate-100 flex-shrink-0 z-20">
+          <button 
+            type="submit" 
+            [disabled]="isSubmittingReview"
+            class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center space-x-2 cursor-pointer">
+            <span *ngIf="!isSubmittingReview">{{ isEditingReview ? 'Guardar Cambios' : 'Publicar Reseña' }}</span>
+            <span *ngIf="isSubmittingReview">{{ isEditingReview ? 'Guardando cambios...' : 'Validando y publicando...' }}</span>
+          </button>
         </div>
-
-        <!-- Submit Action (Brecha 4: Guardar Cambios vs Publicar Reseña) -->
-        <button 
-          type="submit" 
-          [disabled]="isSubmittingReview"
-          class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center space-x-2 cursor-pointer">
-          <span *ngIf="!isSubmittingReview">{{ isEditingReview ? 'Guardar Cambios' : 'Publicar Reseña' }}</span>
-          <span *ngIf="isSubmittingReview">{{ isEditingReview ? 'Guardando cambios...' : 'Validando y publicando...' }}</span>
-        </button>
 
       </form>
     </div>
@@ -607,7 +614,7 @@
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity cursor-pointer" (click)="closeSuggestSubjectModal()" title="Toca fuera para cerrar"></div>
 
     <!-- Modal Dialog / Mobile Bottom Sheet -->
-    <div class="w-full sm:max-w-lg max-sm:fixed max-sm:bottom-0 max-sm:inset-x-0 max-sm:rounded-b-none max-sm:rounded-t-3xl max-sm:max-h-[88vh] bg-white sm:rounded-2xl shadow-2xl overflow-hidden border-t sm:border border-slate-200/90 z-10 relative flex flex-col animate-sheet-up sm:animate-modal-in">
+    <div class="w-full sm:max-w-lg max-sm:fixed max-sm:bottom-0 max-sm:inset-x-0 max-sm:rounded-b-none max-sm:rounded-t-3xl max-sm:max-h-[88vh] bg-white sm:rounded-2xl shadow-2xl overflow-hidden border-t sm:border border-slate-200/90 z-10 relative flex flex-col animate-sheet-up sm:animate-modal-in overscroll-contain">
       
       <!-- Mobile Pull Bar Indicator -->
       <div 
