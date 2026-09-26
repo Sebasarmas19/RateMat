@@ -4,7 +4,11 @@
   <meta charset="utf-8">
   <title>RateMat — Valoración Pedagógica UCAB Caracas</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <script>
+    // Prevenir zoom accidental por gestos (pinch / double-tap) en móviles y PWA
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+  </script>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
