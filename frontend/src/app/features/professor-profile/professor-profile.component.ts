@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,6 +18,16 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private profileService = inject(ProfessorProfileService);
   private fb = inject(FormBuilder);
+
+  showStickyFloatingPill = false;
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    if (typeof window !== 'undefined') {
+      const scrollY = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      this.showStickyFloatingPill = scrollY > 260;
+    }
+  }
 
   // Morphicons icons for animated eye/eye-off toggle, thumbs, and flag
   iconEye = Eye;
