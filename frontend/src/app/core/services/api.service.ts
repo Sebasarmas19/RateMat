@@ -52,7 +52,9 @@ export interface Career {
 })
 export class ApiService {
   private http = inject(HttpClient);
-  private apiUrl = environment.apiUrl;
+  private apiUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? `${window.location.protocol}//${window.location.hostname}:3001`
+    : environment.apiUrl;
 
   // Master catalog of professors
   private masterProfessors: { [id: string]: ProfessorSummary } = {

@@ -61,7 +61,10 @@ export class LegalModalComponent {
       if (token) {
         headers = headers.set('Authorization', `Bearer ${token}`);
       }
-      this.http.post(`${environment.apiUrl}/api/users/accept-terms`, {}, { headers })
+      const baseApi = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+        ? `${window.location.protocol}//${window.location.hostname}:3001`
+        : environment.apiUrl;
+      this.http.post(`${baseApi}/api/users/accept-terms`, {}, { headers })
         .pipe(
           catchError(err => {
             console.warn('Registro local completado; sincronización con backend:', err);
