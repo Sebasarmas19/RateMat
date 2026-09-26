@@ -107,12 +107,16 @@ export class AdminComponent {
     }, 20);
   }
 
-  showToast(message: string): void {
+  // Undo state for fat-finger accidental actions
+  lastAction: { type: 'suggestion' | 'report'; item: any; index: number; actionName: string } | null = null;
+
+  showToast(message: string, duration = 3500): void {
     this.toastMessage = message;
     if (this.toastTimer) clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(() => {
       this.toastMessage = null;
-    }, 3500);
+      this.lastAction = null;
+    }, duration);
   }
 
   private dismissCard(elementId: string, onDone: () => void): void {
@@ -136,6 +140,7 @@ export class AdminComponent {
   // --- D-004 Cold Start Moderation Actions ---
 
   approveSuggestion(item: PendingSuggestion): void {
+    this.lastAction = null;
     this.dismissCard(`suggestion-${item.id}`, () => {
       this.pendingSuggestions = this.pendingSuggestions.filter(s => s.id !== item.id);
       this.showToast(`"${item.name}" ha sido aprobado e incorporado al catálogo docente activo (D-004).`);
@@ -143,26 +148,43 @@ export class AdminComponent {
   }
 
   rejectSuggestion(item: PendingSuggestion): void {
+    const idx = this.pendingSuggestions.findIndex(s => s.id === item.id);
     this.dismissCard(`suggestion-${item.id}`, () => {
+      this.lastAction = { type: 'suggestion', item, index: idx, actionName: 'descartada' };
       this.pendingSuggestions = this.pendingSuggestions.filter(s => s.id !== item.id);
-      this.showToast(`Propuesta de "${item.name}" descartada de la cola.`);
+      this.showToast(`Propuesta de "${item.name}" descartada.`, 5000);
     });
   }
 
   // --- D-010 Content Report Moderation Actions ---
 
   deleteReportedItem(item: ReportedItem): void {
+    const idx = this.pendingReports.findIndex(r => r.id === item.id);
     this.dismissCard(`report-${item.id}`, () => {
+      this.lastAction = { type: 'report', item, index: idx, actionName: 'eliminada' };
       this.pendingReports = this.pendingReports.filter(r => r.id !== item.id);
-      this.showToast(`Contenido eliminado definitivamente por violar las normas comunitarias (D-010).`);
+      this.showToast(`Contenido eliminado definitivamente por violar las normas comunitarias (D-010).`, 5000);
     });
   }
 
   dismissReports(item: ReportedItem): void {
+    this.lastAction = null;
     this.dismissCard(`report-${item.id}`, () => {
       this.pendingReports = this.pendingReports.filter(r => r.id !== item.id);
       this.showToast(`Denuncias desestimadas. El contenido vuelve a ser visible públicamente.`);
     });
+  }
+
+  undoLastAction(): void {
+    if (!this.lastAction) return;
+    if (this.lastAction.type === 'suggestion') {
+      this.pendingSuggestions.splice(this.lastAction.index, 0, this.lastAction.item);
+    } else if (this.lastAction.type === 'report') {
+      this.pendingReports.splice(this.lastAction.index, 0, this.lastAction.item);
+    }
+    const restoredName = this.lastAction.item.name || this.lastAction.item.title;
+    this.lastAction = null;
+    this.showToast(`Acción deshecha. Se restauró "${restoredName}".`, 3000);
   }
 
   // Reset sample items for testing

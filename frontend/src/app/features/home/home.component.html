@@ -197,14 +197,21 @@
         </button>
       </div>
 
-      <!-- Texto de la reseña (Indented and Airy Typography) -->
-      <p *ngIf="!review.isCollapsed && review.text" 
-         [class.text-slate-500]="(review.netScore || 0) <= -3"
-         [class.opacity-75]="(review.netScore || 0) <= -3"
-         [class.text-slate-600]="(review.netScore || 0) > -3"
-         class="text-[13.5px] sm:text-sm leading-relaxed whitespace-pre-line font-normal">
-        {{ review.text }}
-      </p>
+      <!-- Texto de la reseña (Smart Truncation & Airy Typography) -->
+      <div *ngIf="!review.isCollapsed && review.text" class="space-y-1">
+        <p [class.line-clamp-4]="!isExpanded(review.id) && review.text.length > 250"
+           [class.text-slate-500]="(review.netScore || 0) <= -3"
+           [class.opacity-75]="(review.netScore || 0) <= -3"
+           [class.text-slate-600]="(review.netScore || 0) > -3"
+           class="text-[13.5px] sm:text-sm leading-relaxed whitespace-pre-line font-normal transition-all">
+          {{ review.text }}
+        </p>
+        <button *ngIf="review.text.length > 250" 
+                (click)="toggleExpand(review.id)" 
+                class="text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline pt-0.5 inline-flex items-center space-x-1 cursor-pointer">
+          <span>{{ isExpanded(review.id) ? 'Mostrar menos' : 'Leer opinión completa...' }}</span>
+        </button>
+      </div>
 
       <!-- Tags en píldoras sobrias -->
       <div *ngIf="review.tags && review.tags.length > 0" class="flex flex-wrap gap-1.5 pt-0.5">

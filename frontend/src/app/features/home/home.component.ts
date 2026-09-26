@@ -112,14 +112,27 @@ export class HomeComponent implements OnInit {
     review.isCollapsed = !review.isCollapsed;
   }
 
+  // Smart truncation tracking for long review text
+  expandedReviews = new Set<string>();
+
+  isExpanded(id: string): boolean {
+    return this.expandedReviews.has(id);
+  }
+
+  toggleExpand(id: string): void {
+    if (this.expandedReviews.has(id)) {
+      this.expandedReviews.delete(id);
+    } else {
+      this.expandedReviews.add(id);
+    }
+  }
+
   // Point 4: Report and Undo Report with Reasons (D-010)
   onReportClick(review: any) {
     if (review.reported) {
-      if (window.confirm('¿Deseas retirar tu denuncia sobre esta reseña?')) {
-        review.reported = false;
-        review.reportReason = null;
-        this.showToast('Has cancelado tu reporte sobre esta reseña.');
-      }
+      review.reported = false;
+      review.reportReason = null;
+      this.showToast('Has retirado tu reporte sobre esta reseña.');
       return;
     }
 

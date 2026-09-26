@@ -1,11 +1,13 @@
 {
-  "name": "frontend",
-  "short_name": "frontend",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "name": "RateMat — UCAB Caracas",
+  "short_name": "RateMat",
+  "description": "Plataforma de valoración pedagógica de profesores y materias de la UCAB Caracas",
+  "theme_color": "#4f46e5",
+  "background_color": "#f1f4f9",
   "display": "standalone",
-  "scope": "./",
-  "start_url": "./",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
