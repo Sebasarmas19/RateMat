@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { ApiService, Career, SubjectItem, ProfessorSummary } from '../../core/services/api.service';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { gsap } from 'gsap';
@@ -18,6 +18,7 @@ export type ProfessorSort = 'rating_desc' | 'newest' | 'oldest' | 'reviews_desc'
 export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private apiService = inject(ApiService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private fb = inject(FormBuilder);
 
   @ViewChild('searchInput') searchInput!: ElementRef;
@@ -441,5 +442,11 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
         this.closeSuggestProfModal();
       }, 2500);
     }, 600);
+  }
+
+  quickRateProfessor(profId: string, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.router.navigate(['/professor', profId], { queryParams: { rate: 'true' } });
   }
 }

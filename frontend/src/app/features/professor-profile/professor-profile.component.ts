@@ -123,6 +123,8 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  private pendingAutoRate = false;
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.professorId = params.get('id');
@@ -130,6 +132,22 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
         this.loadData();
       }
     });
+
+    this.route.queryParams.subscribe(queryParams => {
+      if (queryParams['action'] === 'rate' || queryParams['rate'] === 'true') {
+        this.pendingAutoRate = true;
+        this.checkAutoRate();
+      }
+    });
+  }
+
+  private checkAutoRate(): void {
+    if (this.pendingAutoRate && this.profile && !this.isLoadingProfile) {
+      this.pendingAutoRate = false;
+      setTimeout(() => {
+        this.openReviewModal();
+      }, 100);
+    }
   }
 
   loadData(): void {
@@ -143,6 +161,7 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
         this.profile = data;
         this.isLoadingProfile = false;
         setTimeout(() => this.animateRatingBars(), 60);
+        this.checkAutoRate();
       },
       error: () => {
         this.errorProfile = true;
@@ -165,6 +184,7 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
         this.checkExistingReview();
         this.isLoadingReviews = false;
         setTimeout(() => this.animateReviewCards(), 60);
+        this.checkAutoRate();
       },
       error: () => {
         this.errorReviews = true;

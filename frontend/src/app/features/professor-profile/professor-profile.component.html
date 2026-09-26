@@ -66,6 +66,22 @@
           </div>
         </div>
 
+        <!-- Mobile Quick Review CTA (Visible immediately on mobile in first fold - 0 Scroll) -->
+        <div class="lg:hidden pt-1">
+          <button 
+            (click)="openReviewModal()" 
+            class="w-full inline-flex items-center justify-center space-x-2 py-3 px-5 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-sm rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_8px_rgba(245,158,11,0.25)] active:scale-[0.98] transition-all cursor-pointer">
+            <svg *ngIf="!existingUserReview" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            <svg *ngIf="existingUserReview" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <span>{{ existingUserReview ? 'Editar mi valoración' : '★ Calificar a este Profesor' }}</span>
+          </button>
+        </div>
+
         <!-- Cátedras Dictadas -->
         <div class="space-y-1.5 pt-1 border-t border-slate-100">
           <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Cátedras asignadas:</span>
@@ -867,6 +883,39 @@
     </div>
     <div class="text-xs font-medium leading-snug">
       {{ reportToastMessage }}
+    </div>
+  </div>
+
+  <!-- Mobile Floating Bottom CTA Pill (Persistente durante el scroll en móviles) -->
+  <div *ngIf="!isLoadingProfile && profile" 
+       class="lg:hidden fixed bottom-[70px] inset-x-3.5 z-40 pointer-events-none transition-all duration-300">
+    <div class="pointer-events-auto bg-slate-900/95 backdrop-blur-md text-white px-3.5 py-2.5 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3">
+      <div class="min-w-0 flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center font-black text-xs flex-shrink-0 shadow-xs">
+          {{ profile.name.charAt(0) }}
+        </div>
+        <div class="min-w-0">
+          <span class="text-xs font-bold text-white block truncate leading-tight">{{ profile.name }}</span>
+          <div class="flex items-center space-x-1 text-[11px] text-amber-400 font-bold">
+            <span>{{ profile.globalScore | number:'1.1-1' }}</span>
+            <span>★</span>
+            <span class="text-slate-400 font-normal">({{ profile.totalReviews }})</span>
+          </div>
+        </div>
+      </div>
+
+      <button 
+        (click)="openReviewModal()"
+        class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-xs rounded-xl shadow-md active:scale-95 transition-all flex-shrink-0 cursor-pointer">
+        <svg *ngIf="!existingUserReview" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        <svg *ngIf="existingUserReview" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        <span>{{ existingUserReview ? 'Editar' : '★ Calificar' }}</span>
+      </button>
     </div>
   </div>
 
