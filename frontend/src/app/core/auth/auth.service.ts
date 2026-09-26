@@ -58,16 +58,45 @@ export class AuthService {
     }
   }
 
+  hasActiveSession(): boolean {
+    if (this.currentUser()) return true;
+    if (typeof window !== 'undefined') {
+      if (localStorage.getItem('ratemat_demo_auth') === 'true') return true;
+      if (localStorage.getItem('ratemat_has_session') === 'true') return true;
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith('sb-') && key.endsWith('-auth-token'))) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   private async initSession() {
     if (!this.supabase) return;
     try {
       const { data: { session } } = await this.supabase.auth.getSession();
       this.session.set(session);
       this.currentUser.set(session?.user ?? null);
+      if (typeof window !== 'undefined') {
+        if (session) {
+          localStorage.setItem('ratemat_has_session', 'true');
+        } else {
+          localStorage.removeItem('ratemat_has_session');
+        }
+      }
 
       this.supabase.auth.onAuthStateChange((_event, session) => {
         this.session.set(session);
         this.currentUser.set(session?.user ?? null);
+        if (typeof window !== 'undefined') {
+          if (session) {
+            localStorage.setItem('ratemat_has_session', 'true');
+          } else {
+            localStorage.removeItem('ratemat_has_session');
+          }
+        }
       });
     } catch (err) {
       console.error('Error al obtener sesión de Supabase:', err);
@@ -109,6 +138,7 @@ export class AuthService {
 
     if (typeof window !== 'undefined') {
       localStorage.setItem('ratemat_demo_auth', 'true');
+      localStorage.setItem('ratemat_has_session', 'true');
       localStorage.setItem('rateMat_demoUser', JSON.stringify({
         id: mockUser.id,
         email: mockUser.email,
@@ -149,6 +179,7 @@ export class AuthService {
     }
     if (typeof window !== 'undefined') {
       localStorage.removeItem('ratemat_demo_auth');
+      localStorage.removeItem('ratemat_has_session');
       localStorage.removeItem('rateMat_demoUser');
       localStorage.removeItem('rateMat_termsAccepted_mock');
     }

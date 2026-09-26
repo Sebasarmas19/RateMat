@@ -17,9 +17,7 @@ import { AuthService } from '../auth/auth.service';
         <!-- Brand Header -->
         <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100">
           <a routerLink="/search" class="flex items-center space-x-2.5 group">
-            <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-lg shadow-md shadow-indigo-600/20 group-hover:scale-105 transition-transform duration-200">
-              R
-            </div>
+            <img src="logo.png" alt="RateMat" class="w-9 h-9 rounded-xl shadow-md shadow-indigo-600/20 object-cover group-hover:scale-105 transition-transform duration-200">
             <div>
               <span class="text-lg font-extrabold tracking-tight text-slate-900">RateMat</span>
               <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">UCAB Caracas</span>
@@ -115,9 +113,7 @@ import { AuthService } from '../auth/auth.service';
         <!-- Mobile Top Header Bar with Quick Logout -->
         <header class="md:hidden sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-2.5 flex items-center justify-between shadow-2xs">
           <a routerLink="/search" class="flex items-center space-x-2">
-            <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-xs shadow-2xs">
-              R
-            </div>
+            <img src="logo.png" alt="RateMat" class="w-7 h-7 rounded-lg shadow-2xs object-cover">
             <div>
               <span class="font-extrabold text-sm text-slate-900 tracking-tight leading-none block">RateMat</span>
               <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">UCAB</span>

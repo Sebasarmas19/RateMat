@@ -5,16 +5,18 @@ import { SearchComponent } from './features/search/search.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { AdminComponent } from './features/admin/admin.component';
 import { LandingComponent } from './features/landing/landing.component';
-import { authGuard } from './core/auth/auth.guard';
+import { authGuard, landingGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: LandingComponent
+    component: LandingComponent,
+    canActivate: [landingGuard]
   },
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent)
+    loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent),
+    canActivate: [landingGuard]
   },
   {
     path: '',
