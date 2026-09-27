@@ -1031,7 +1031,7 @@ export class ApiService {
     );
   }
 
-  reportItem(id: string, type: 'review' | 'file'): Observable<{ success: boolean; message: string }> {
+  reportItem(id: string, type: 'review' = 'review'): Observable<{ success: boolean; message: string }> {
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
     if (!isUuid) {
       return of({ success: true, message: 'Reporte registrado para moderación estudiantil.' }).pipe(delay(300));

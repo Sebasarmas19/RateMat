@@ -14,7 +14,7 @@ export interface PendingSuggestion {
 
 export interface ReportedItem {
   id: string;
-  itemType: 'review' | 'file';
+  itemType: 'review';
   title: string;
   targetName: string;
   reportsCount: number;

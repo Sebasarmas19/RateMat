@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -19,15 +19,19 @@ import { AuthModule } from './auth/auth.module';
       ttl: 60000,
       limit: 100,
     }]),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost', // Configurable por env luego
-      port: 5432,
-      username: 'postgres',
-      password: 'gomitas', // ¡Encontramos la contraseña!
-      database: 'ratemat',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true, // Solo en desarrollo (Tarea 1: que TypeORM sincronice la BD)
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get<string>('DB_HOST') || 'localhost',
+        port: parseInt(config.get<string>('DB_PORT') || '5432', 10),
+        username: config.get<string>('DB_USERNAME') || 'postgres',
+        password: config.get<string>('DB_PASSWORD') || 'gomitas',
+        database: config.get<string>('DB_DATABASE') || 'ratemat',
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: config.get<string>('NODE_ENV') !== 'production',
+      }),
     }),
     AuthModule,
     UsersModule,

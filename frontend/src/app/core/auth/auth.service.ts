@@ -10,8 +10,13 @@ export class AuthService {
   
   // Usamos Signals (Angular 16+) para reactividad premium
   currentUser = signal<User | null>(null);
+  currentUserRole = signal<'admin' | 'student'>('student');
   session = signal<Session | null>(null);
   showLogoutModal = signal<boolean>(false);
+
+  isAdmin(): boolean {
+    return this.currentUserRole() === 'admin';
+  }
 
   openLogoutModal(): void {
     this.showLogoutModal.set(true);
@@ -42,6 +47,9 @@ export class AuthService {
         } catch {
           parsed = null;
         }
+
+        const role = parsed?.role === 'admin' ? 'admin' : 'student';
+        this.currentUserRole.set(role);
 
         const mockUser: any = {
           id: parsed?.id || '11111111-0000-4000-8000-000000000001',
@@ -136,6 +144,8 @@ export class AuthService {
       user: mockUser
     };
 
+    const assignedRole = (trimmed.startsWith('admin.') || trimmed.includes('admin@')) ? 'admin' : 'student';
+
     if (typeof window !== 'undefined') {
       localStorage.setItem('ratemat_demo_auth', 'true');
       localStorage.setItem('ratemat_has_session', 'true');
@@ -143,11 +153,12 @@ export class AuthService {
         id: mockUser.id,
         email: mockUser.email,
         name: name,
-        role: trimmed.includes('admin') ? 'admin' : 'student'
+        role: assignedRole
       }));
       localStorage.setItem('rateMat_termsAccepted_mock', 'true');
     }
 
+    this.currentUserRole.set(assignedRole);
     this.session.set(mockSession);
     this.currentUser.set(mockUser);
 
@@ -183,6 +194,7 @@ export class AuthService {
       localStorage.removeItem('rateMat_demoUser');
       localStorage.removeItem('rateMat_termsAccepted_mock');
     }
+    this.currentUserRole.set('student');
     this.session.set(null);
     this.currentUser.set(null);
   }

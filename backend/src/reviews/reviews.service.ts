@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Review, ReviewStatus } from './review.entity';
@@ -28,8 +28,20 @@ export class ReviewsService {
   async create(createReviewDto: CreateReviewDto, user: any): Promise<Review> {
     const { professorSubjectId, rating, text, isAnonymous } = createReviewDto;
 
-    if (text && this.filter.isProfane(text)) {
-      throw new BadRequestException('Tu reseña contiene lenguaje inapropiado y viola las normas de la comunidad');
+    if (text) {
+      // D-010 Blindaje Legal: Filtro preventivo contra imputaciones delictivas (Protocolo 2.83 UCAB)
+      const normalized = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const criminalRegex = /\b(acoso|acosador|acoso|soborno|sobornar|soborno|plata por nota|dolares para pasar|abuso sexual|violacion|violar|violo|extorsion|extorsionar)\b/i;
+      if (criminalRegex.test(normalized)) {
+        throw new HttpException(
+          'En RateMat evaluamos el desempeño pedagógico y académico de las cátedras. Denuncias sobre presuntos delitos, acoso o sobornos deben tramitarse obligatoriamente por el Protocolo 2.83 de la UCAB para garantizar una investigación formal y salvaguardar tus derechos.',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+
+      if (this.filter.isProfane(text)) {
+        throw new BadRequestException('Tu reseña contiene lenguaje inapropiado y viola las normas de la comunidad');
+      }
     }
 
     const professorSubject = await this.professorSubjectRepository.findOne({
@@ -114,7 +126,7 @@ export class ReviewsService {
     });
   }
 
-  async getRecentReviews(page: number = 1, limit: number = 10): Promise<{ data: Review[]; total: number; page: number; limit: number; hasMore: boolean }> {
+  async getRecentReviews(page: number = 1, limit: number = 10): Promise<{ data: any[]; total: number; page: number; limit: number; hasMore: boolean }> {
     const skip = (page - 1) * limit;
     const [data, total] = await this.reviewRepository.findAndCount({
       where: { status: ReviewStatus.ACTIVE },
@@ -123,8 +135,24 @@ export class ReviewsService {
       take: limit,
       skip,
     });
+
+    // D-002 Blindaje de Privacidad: Ocultar completamente identidad y correo en reseñas anónimas y no anónimas
+    const sanitizedData = data.map(review => {
+      const { user, ...rest } = review;
+      return {
+        ...rest,
+        isAnonymous: review.isAnonymous,
+        user: review.isAnonymous
+          ? null
+          : {
+              name: user?.email ? user.email.split('@')[0] : 'Estudiante verificado',
+              reputation: user?.reputation ?? 0
+            }
+      };
+    });
+
     return {
-      data,
+      data: sanitizedData,
       total,
       page,
       limit,

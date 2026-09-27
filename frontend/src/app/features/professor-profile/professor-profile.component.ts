@@ -451,12 +451,8 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
 
-    const keywords = [
-      'acoso', 'acosador', 'acoso', 'soborno', 'cobro', 
-      'plata por nota', 'dolares para pasar', 'toco', 'abuso', 'violo', 'extorsion'
-    ];
-
-    return keywords.some(keyword => normalized.includes(keyword));
+    const criminalRegex = /\b(acoso|acosador|soborno|sobornar|plata por nota|dolares para pasar|abuso sexual|violacion|violar|violo|extorsion|extorsionar)\b/i;
+    return criminalRegex.test(normalized);
   }
 
   closeCrimeAlertModal(): void {

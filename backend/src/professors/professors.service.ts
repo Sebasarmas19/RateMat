@@ -86,12 +86,7 @@ export class ProfessorsService {
     }
 
     if (!professor) {
-      professor = await this.professorRepository.findOne({
-        where: { status: ProfessorStatus.APPROVED, isActive: true },
-      });
-      if (!professor) {
-        throw new NotFoundException(`Profesor con ID ${id} no encontrado`);
-      }
+      throw new NotFoundException(`Profesor con ID ${id} no encontrado`);
     }
 
     const profSubjects = await this.professorSubjectRepository.find({

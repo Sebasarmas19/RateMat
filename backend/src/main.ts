@@ -9,8 +9,29 @@ async function bootstrap() {
 
   app.use(helmet());
 
-  // Habilitamos CORS según reglas de seguridad D-009
-  app.enableCors();
+  // Habilitamos CORS restringido según reglas de seguridad D-009
+  app.enableCors({
+    origin: (origin, callback) => {
+      const allowed = [
+        'http://localhost:4200',
+        'http://127.0.0.1:4200',
+        process.env['FRONTEND_URL'],
+      ].filter(Boolean) as string[];
+
+      if (
+        !origin ||
+        allowed.includes(origin) ||
+        (process.env['NODE_ENV'] !== 'production' &&
+          /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+):4200$/.test(origin))
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error('Acceso no autorizado por política CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  });
 
   app.setGlobalPrefix('api');
 

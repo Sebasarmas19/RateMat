@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, IsBoolean, Min, Max, IsOptional, IsUUID, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsBoolean, Min, Max, IsOptional, IsUUID, ValidateIf, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateReviewDto {
@@ -18,6 +18,7 @@ export class CreateReviewDto {
   @ValidateIf(o => o.rating === 1 || o.rating === 5 || typeof o.text !== 'undefined')
   @IsNotEmpty({ message: 'El texto de la reseña es obligatorio si la calificación es de 1 o 5 estrellas.' })
   @IsString()
+  @MaxLength(1000, { message: 'El texto de la reseña no puede exceder los 1000 caracteres.' })
   text?: string;
 
   @ApiPropertyOptional({ description: 'Si la reseña será anónima', default: false })

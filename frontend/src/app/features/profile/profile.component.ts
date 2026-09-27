@@ -13,7 +13,9 @@ export class ProfileComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  isAdmin = true; // D-011: Admin Role activated for student leaders and mentors
+  get isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
 
   get currentUser() {
     return this.authService.currentUser();

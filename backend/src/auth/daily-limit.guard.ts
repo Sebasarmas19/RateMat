@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, BadRequestException, mixin, Type } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, BadRequestException, UnauthorizedException, mixin, Type } from '@nestjs/common';
 import { DataSource, MoreThan } from 'typeorm';
 import { EntityTarget } from 'typeorm/common/EntityTarget';
 
@@ -11,7 +11,9 @@ export const DailyLimitGuard = (entityTarget: EntityTarget<any>, limit: number, 
       const request = context.switchToHttp().getRequest();
       const user = request.user;
       
-      if (!user) return true;
+      if (!user || !user.id) {
+        throw new UnauthorizedException('Usuario no autenticado para validar cuota de solicitudes.');
+      }
 
       const yesterday = new Date();
       yesterday.setHours(yesterday.getHours() - 24);

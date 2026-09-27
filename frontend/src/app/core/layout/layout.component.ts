@@ -57,8 +57,8 @@ import { AuthService } from '../auth/auth.service';
             <span>Mi Reputación</span>
           </a>
 
-          <!-- D-011: Admin Direct Link -->
-          <a routerLink="/admin" routerLinkActive="bg-purple-50 text-purple-700 shadow-sm"
+          <!-- D-011: Admin Direct Link (Solo visible para rol admin) -->
+          <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="bg-purple-50 text-purple-700 shadow-sm"
              class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 active:scale-[0.98] transition-[transform,background-color,color] duration-150 ease-out">
             <div class="flex items-center space-x-3">
               <svg class="w-5 h-5 flex-shrink-0 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -202,8 +202,8 @@ import { AuthService } from '../auth/auth.service';
           <span class="text-[10px] tracking-tight">Perfil</span>
         </a>
 
-        <!-- D-011: Admin Mobile Tab -->
-        <a routerLink="/admin" 
+        <!-- D-011: Admin Mobile Tab (Solo visible para rol admin) -->
+        <a *ngIf="isAdmin" routerLink="/admin" 
            routerLinkActive="bg-purple-50/90 text-purple-700 font-bold shadow-2xs"
            class="min-h-[50px] py-1 px-2 flex flex-col items-center justify-center flex-1 rounded-2xl text-slate-500 hover:text-slate-900 active:scale-[0.96] transition-[transform,background-color,color] duration-150 ease-out">
           <svg class="w-5 h-5 mb-0.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -342,6 +342,10 @@ export class LayoutComponent {
 
   get currentUser() {
     return this.authService.currentUser();
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
   get userInitial(): string {
