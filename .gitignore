@@ -128,3 +128,6 @@ dist/
 
 # Agent skills & local harness configs
 .agents/
+
+# Temporary test scripts
+scratch/
