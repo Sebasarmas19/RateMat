@@ -437,7 +437,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       this.isSubmittingSuggest = false;
-      this.suggestSuccessMessage = '¡Gracias por tu aporte! Tu sugerencia ha sido enviada a la cola de moderación de los administradores estudiantiles (D-004 & D-011).';
+      this.suggestSuccessMessage = '¡Gracias por tu aporte! Tu sugerencia ha sido enviada a moderación.';
       setTimeout(() => {
         this.closeSuggestProfModal();
       }, 2500);

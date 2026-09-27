@@ -113,10 +113,7 @@
 
       <!-- Card: Distribución de Puntuaciones (Star Distribution) -->
       <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.03)] space-y-4">
-        <div>
-          <h3 class="text-sm font-extrabold text-slate-900">Distribución de Puntuaciones</h3>
-          <p class="text-xs text-slate-400">Basado en opiniones comunitarias ponderadas</p>
-        </div>
+        <h3 class="text-sm font-extrabold text-slate-900">Distribución de Puntuaciones</h3>
 
         <div class="space-y-2.5">
           <div *ngFor="let item of ratingDistribution" class="flex items-center space-x-3 text-xs">
@@ -218,10 +215,10 @@
             {{ subject }}
           </button>
 
-          <!-- Botón Sugerir Cátedra (Icono SVG + texto limpio sin doble plus) -->
+          <!-- Botón Sugerir Cátedra -->
           <button 
             (click)="openSuggestSubjectModal()"
-            title="Proponer nueva cátedra que dicta este profesor (D-004 & D-011)"
+            title="Proponer nueva cátedra que dicta este profesor"
             class="px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/70 transition-all active:scale-95 flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
@@ -302,10 +299,10 @@
                 </svg>
               </div>
 
-              <!-- Report Button with undo support (Point 4 & D-010) -->
+              <!-- Report Button with undo support -->
               <button 
                 (click)="onReportClick(review)" 
-                [title]="review.reported ? 'Denuncia registrada (clic para deshacer)' : 'Reportar contenido indebido (D-010)'" 
+                [title]="review.reported ? 'Denuncia registrada (clic para deshacer)' : 'Reportar contenido indebido'" 
                 [class.text-red-500]="review.reported"
                 [class.bg-red-50]="review.reported"
                 [class.text-slate-300]="!review.reported"
@@ -452,7 +449,7 @@
       <div class="px-5 sm:px-6 py-3.5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 flex-shrink-0">
         <div>
           <h3 class="text-base font-extrabold text-slate-900">{{ isEditingReview ? 'Editar Reseña de ' + profile?.name : 'Calificar a ' + profile?.name }}</h3>
-          <p class="text-xs text-slate-400">{{ isEditingReview ? 'Modifica tu calificación o tu comentario previo (D-003)' : 'Tu opinión ayuda a toda la comunidad estudiantil' }}</p>
+          <p class="text-xs text-slate-400">{{ isEditingReview ? 'Modifica tu calificación o tu comentario previo' : 'Comparte tu experiencia con esta cátedra' }}</p>
         </div>
         <button (click)="closeReviewModal()" class="min-w-[40px] min-h-[40px] p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -477,16 +474,11 @@
             <span class="leading-relaxed">{{ reviewSubmitError }}</span>
           </div>
 
-          <!-- Subject Course Selector (D-003 / D-007 Mandatory: A professor is NEVER rated in the abstract) -->
+          <!-- Subject Course Selector -->
           <div class="space-y-1.5">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-slate-700" for="subjectSelect">
-                Materia o Cátedra que cursaste <span class="text-red-500">*</span>
-              </label>
-              <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">
-                Obligatorio (D-003)
-              </span>
-            </div>
+            <label class="text-xs font-bold text-slate-700 block" for="subjectSelect">
+              Materia o Cátedra que cursaste <span class="text-red-500">*</span>
+            </label>
             <div class="relative">
               <select id="subjectSelect" formControlName="subject"
                       class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-medium appearance-none focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all pr-9 cursor-pointer">
@@ -553,7 +545,7 @@
                 Opinión y Justificación:
               </label>
               <span class="text-[11px] font-bold" [ngClass]="isTextRequired ? 'text-amber-600' : 'text-slate-400'">
-                {{ isTextRequired ? 'Obligatorio en 1★ y 5★' : 'Opcional en 2★, 3★ y 4★' }}
+                {{ isTextRequired ? 'Requerido para 1★ y 5★' : 'Opcional' }}
               </span>
             </div>
 
@@ -565,16 +557,13 @@
               class="w-full border border-slate-200 rounded-xl p-3 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all resize-none"
               placeholder="¿Cómo explica los temas? ¿Los exámenes son coherentes? Justifica tu nota objetivamente..."></textarea>
             
-            <!-- Brecha 6: Subtitle info and Tabular-nums Counter (D-009) -->
             <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
               <span *ngIf="isTextRequired" class="text-amber-600 font-medium">
-                * Mínimo 10 caracteres requeridos
+                * Mínimo 10 caracteres
               </span>
-              <span *ngIf="!isTextRequired" class="text-slate-400">
-                Opcional para 2, 3 y 4 estrellas
-              </span>
+              <span *ngIf="!isTextRequired"></span>
               <span class="tabular-nums font-semibold" [class.text-red-500]="(reviewForm.get('text')?.value?.length || 0) > 1000">
-                {{ reviewForm.get('text')?.value?.length || 0 }} / 1000 caracteres
+                {{ reviewForm.get('text')?.value?.length || 0 }} / 1000
               </span>
             </div>
 
@@ -588,15 +577,15 @@
             </div>
             <div *ngIf="reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['maxlength']" 
                  class="text-xs text-red-500">
-              La opinión no puede exceder los 1000 caracteres (D-009).
+              La opinión no puede exceder los 1000 caracteres.
             </div>
           </div>
 
-          <!-- Anonymous Toggle Switch (D-002) -->
+          <!-- Anonymous Toggle Switch -->
           <div class="p-3 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center justify-between">
             <div class="pr-3">
               <div class="text-xs font-bold text-slate-900">Publicar de forma Anónima</div>
-              <div class="text-[11px] text-slate-400">Protege tu identidad. Tu nombre no aparecerá en el muro público.</div>
+              <div class="text-[11px] text-slate-400">Tu nombre no será visible públicamente.</div>
             </div>
 
             <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
@@ -651,7 +640,7 @@
           </div>
           <div>
             <h3 class="text-base font-extrabold text-slate-900">Sugerir Nueva Cátedra</h3>
-            <p class="text-xs text-slate-400">Para {{ profile?.name }} (D-004 & D-011)</p>
+            <p class="text-xs text-slate-400">Para {{ profile?.name }}</p>
           </div>
         </div>
 
@@ -710,7 +699,7 @@
               <line x1="12" y1="8" x2="12.01" y2="8"/>
             </svg>
             <span>
-              Tu propuesta pasará a revisión de moderadores estudiantiles (D-004 & D-011) para vincular formalmente la cátedra a este profesor en el catálogo.
+              Tu propuesta será revisada por moderadores estudiantiles antes de ser añadida al catálogo.
             </span>
           </div>
 
@@ -752,7 +741,7 @@
           </div>
           <div>
             <h3 class="text-base font-extrabold text-slate-900">Reportar Reseña</h3>
-            <p class="text-xs text-slate-400">Protección de la comunidad (D-010)</p>
+            <p class="text-xs text-slate-400">Protección y convivencia comunitaria</p>
           </div>
         </div>
 
@@ -785,7 +774,7 @@
         </div>
 
         <div class="p-3 bg-slate-50 border border-slate-200/70 rounded-xl text-[11px] text-slate-500 leading-relaxed">
-          <strong>Regla Comunitaria D-010:</strong> Al acumular 3 reportes independientes, la reseña se ocultará de inmediato y pasará al Panel de Moderación para revisión definitiva.
+          <strong>Aviso Comunitario:</strong> Al acumular 3 reportes, la reseña se ocultará temporalmente para revisión de moderación.
         </div>
 
         <!-- Actions -->

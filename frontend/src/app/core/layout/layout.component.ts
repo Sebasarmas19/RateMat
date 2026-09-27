@@ -66,7 +66,7 @@ import { AuthService } from '../auth/auth.service';
               </svg>
               <span>Panel Admin</span>
             </div>
-            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700">D-011</span>
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700">Admin</span>
           </a>
         </nav>
 

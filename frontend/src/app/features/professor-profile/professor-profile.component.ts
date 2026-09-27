@@ -66,9 +66,9 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
   // Point 4: Report and Undo Report Modal State (D-010)
   showReportModal = false;
   reviewToReport: ReviewItem | null = null;
-  selectedReportReason = 'Lenguaje inapropiado, insultos o difamación personal (D-010)';
+  selectedReportReason = 'Lenguaje inapropiado, insultos o difamación personal';
   availableReportReasons = [
-    'Lenguaje inapropiado, insultos o difamación personal (D-010)',
+    'Lenguaje inapropiado, insultos o difamación personal',
     'Información falsa o engañosa sobre evaluaciones o exigencias',
     'Spam, publicidad no autorizada o contenido sin relación académica'
   ];
@@ -261,7 +261,7 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.isSubmittingSuggestSubject = false;
-      this.suggestSubjectSuccessMessage = '¡Cátedra propuesta con éxito! Ha sido enviada a la cola de moderación estudiantil (D-004 & D-011).';
+      this.suggestSubjectSuccessMessage = '¡Cátedra propuesta con éxito! Ha sido enviada a moderación.';
       const newSubj = this.suggestSubjectForm.value.subjectName;
       if (this.profile && !this.profile.subjects.includes(newSubj)) {
         this.profile.subjects.push(newSubj);
@@ -557,7 +557,7 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
     target.reportReason = this.selectedReportReason;
     const reasonText = this.selectedReportReason.split('(')[0].trim();
     this.showReportModal = false;
-    this.showToast(`Reseña reportada por: "${reasonText}". Enviada a moderación (D-010).`);
+    this.showToast('Reseña reportada correctamente. Enviada a moderación.');
 
     this.profileService.reportItem(target.id, 'review').subscribe();
     this.reviewToReport = null;

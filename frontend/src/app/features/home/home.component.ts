@@ -33,9 +33,9 @@ export class HomeComponent implements OnInit {
   // Brecha 3 & Point 4: Report Modal & Reasons State
   showReportModal = false;
   reviewToReport: any = null;
-  selectedReportReason = 'Lenguaje ofensivo, agresiones o insultos personales (D-010)';
+  selectedReportReason = 'Lenguaje ofensivo, agresiones o insultos personales';
   availableReportReasons = [
-    'Lenguaje ofensivo, agresiones o insultos personales (D-010)',
+    'Lenguaje ofensivo, agresiones o insultos personales',
     'Información falsa o difamación sobre el profesor',
     'Spam, publicidad o contenido no académico',
     'Violación de derechos de autor o examen activo filtrado'
