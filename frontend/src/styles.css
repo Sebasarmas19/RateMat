@@ -6,6 +6,9 @@
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0.75rem);
   }
+  .bottom-above-mobile-nav {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 html, body {

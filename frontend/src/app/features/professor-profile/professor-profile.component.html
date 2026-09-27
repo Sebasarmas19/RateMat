@@ -280,7 +280,7 @@
               </div>
 
               <div class="min-w-0">
-                <h4 class="font-bold text-slate-900 text-sm sm:text-base leading-tight truncate">
+                <h4 class="font-bold text-slate-900 text-xs sm:text-sm md:text-base leading-tight">
                   {{ review.isAnonymous ? 'Estudiante anónimo' : review.authorName }}
                 </h4>
                 <p class="text-xs text-slate-400 font-normal mt-0.5">
@@ -886,10 +886,9 @@
     </div>
   </div>
 
-  <!-- Mobile Floating Bottom CTA Pill (Persistente durante el scroll en móviles) -->
   <!-- Mobile Floating Bottom CTA Pill (Aparece únicamente al scrollear hacia abajo pasando la tarjeta) -->
   <div *ngIf="!isLoadingProfile && profile && showStickyFloatingPill" 
-       class="lg:hidden fixed bottom-[70px] inset-x-3.5 z-40 pointer-events-none animate-sheet-up transition-all duration-300">
+       class="lg:hidden fixed bottom-above-mobile-nav inset-x-3.5 z-40 pointer-events-none animate-sheet-up transition-all duration-300">
     <div class="pointer-events-auto bg-slate-900/95 backdrop-blur-md text-white px-3.5 py-2.5 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3">
       <div class="min-w-0 flex items-center space-x-2.5">
         <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center font-black text-xs flex-shrink-0 shadow-xs">
