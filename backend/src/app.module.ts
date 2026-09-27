@@ -27,7 +27,7 @@ import { AuthModule } from './auth/auth.module';
         host: config.get<string>('DB_HOST') || 'localhost',
         port: parseInt(config.get<string>('DB_PORT') || '5432', 10),
         username: config.get<string>('DB_USERNAME') || 'postgres',
-        password: config.get<string>('DB_PASSWORD') || 'gomitas',
+        password: config.get<string>('DB_PASSWORD') || 'postgres',
         database: config.get<string>('DB_DATABASE') || 'ratemat',
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
