@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Param, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Param, Get, Query } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { VoteReviewDto } from './dto/vote-review.dto';
@@ -15,10 +15,15 @@ export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Get('recent')
-  @ApiOperation({ summary: 'Obtener las reseñas más recientes' })
-  @ApiResponse({ status: 200, description: 'Lista de reseñas recientes' })
-  async getRecent() {
-    return this.reviewsService.getRecentReviews();
+  @ApiOperation({ summary: 'Obtener las reseñas más recientes con paginación' })
+  @ApiResponse({ status: 200, description: 'Lista paginada de reseñas recientes' })
+  async getRecent(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pageNum = Math.max(1, parseInt(page || '1', 10) || 1);
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit || '10', 10) || 10));
+    return this.reviewsService.getRecentReviews(pageNum, limitNum);
   }
 
   @Post()

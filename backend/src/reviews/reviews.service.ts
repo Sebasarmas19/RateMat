@@ -114,12 +114,21 @@ export class ReviewsService {
     });
   }
 
-  async getRecentReviews(limit: number = 15): Promise<Review[]> {
-    return this.reviewRepository.find({
+  async getRecentReviews(page: number = 1, limit: number = 10): Promise<{ data: Review[]; total: number; page: number; limit: number; hasMore: boolean }> {
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.reviewRepository.findAndCount({
       where: { status: ReviewStatus.ACTIVE },
       relations: ['professorSubject', 'professorSubject.professor', 'professorSubject.subject', 'user', 'tags'],
       order: { createdAt: 'DESC' },
       take: limit,
+      skip,
     });
+    return {
+      data,
+      total,
+      page,
+      limit,
+      hasMore: skip + data.length < total,
+    };
   }
 }

@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ApiService } from '../../core/services/api.service';
+import { ApiService, PaginatedReviews } from '../../core/services/api.service';
 import { MorphIconComponent } from '../../shared/components/morph-icon/morph-icon.component';
 import { Eye, EyeOff, ThumbsUp, ThumbsDown, Check, Flag } from 'lucide';
 import { gsap } from 'gsap';
@@ -24,10 +24,15 @@ export class HomeComponent implements OnInit {
   iconCheck = Check;
   iconFlag = Flag;
 
-  // Community Reviews Feed State
+  // Community Reviews Feed State & Pagination
   reviews: any[] = [];
   filteredReviews: any[] = [];
   isLoadingFeed = true;
+  isLoadingMore = false;
+  currentPage = 1;
+  pageSize = 10;
+  totalReviews = 0;
+  hasMore = false;
   feedFilter = 'all'; // 'all' | 'high_rated' | 'positive' | 'critical'
 
   // Brecha 3 & Point 4: Report Modal & Reasons State
@@ -49,28 +54,70 @@ export class HomeComponent implements OnInit {
     this.loadFeed();
   }
 
+  private formatReview(r: any) {
+    return {
+      ...r,
+      user: r.user ? {
+        ...r.user,
+        name: r.user.name || (r.user.email ? r.user.email.split('@')[0] : 'Estudiante verificado')
+      } : null,
+      tags: Array.isArray(r.tags) ? r.tags.map((t: any) => typeof t === 'string' ? t : (t.tagName || '')) : [],
+      isCollapsed: (r.netScore !== undefined && r.netScore <= -3) ? true : false,
+      reported: false,
+      reportReason: null
+    };
+  }
+
   loadFeed() {
     this.isLoadingFeed = true;
-    this.apiService.getRecentReviews().subscribe({
-      next: (data) => {
-        // Brecha 2: Initialize isCollapsed = true if netScore <= -3 (D-003 & D-008)
-        this.reviews = data.map(r => ({
-          ...r,
-          user: r.user ? {
-            ...r.user,
-            name: r.user.name || (r.user.email ? r.user.email.split('@')[0] : 'Estudiante verificado')
-          } : null,
-          tags: Array.isArray(r.tags) ? r.tags.map((t: any) => typeof t === 'string' ? t : (t.tagName || '')) : [],
-          isCollapsed: (r.netScore !== undefined && r.netScore <= -3) ? true : false,
-          reported: false,
-          reportReason: null
-        }));
+    this.currentPage = 1;
+    this.apiService.getRecentReviews(this.currentPage, this.pageSize).subscribe({
+      next: (res: PaginatedReviews) => {
+        this.reviews = (res.data || []).map(r => this.formatReview(r));
+        this.totalReviews = res.total;
+        this.hasMore = res.hasMore;
         this.applyFeedFilter();
         this.isLoadingFeed = false;
       },
       error: (err) => {
         console.error('Error loading feed', err);
         this.isLoadingFeed = false;
+      }
+    });
+  }
+
+  loadMoreReviews() {
+    if (this.isLoadingMore || !this.hasMore) return;
+    this.isLoadingMore = true;
+    const nextPage = this.currentPage + 1;
+
+    this.apiService.getRecentReviews(nextPage, this.pageSize).subscribe({
+      next: (res: PaginatedReviews) => {
+        const incoming = (res.data || []).map(r => this.formatReview(r));
+        const existingIds = new Set(this.reviews.map(r => r.id));
+        const newReviews = incoming.filter(r => !existingIds.has(r.id));
+
+        this.reviews = [...this.reviews, ...newReviews];
+        this.currentPage = nextPage;
+        this.hasMore = res.hasMore;
+        this.totalReviews = res.total;
+        this.applyFeedFilter();
+        this.isLoadingMore = false;
+
+        setTimeout(() => {
+          gsap.from('.review-feed-card:nth-last-child(-n+' + newReviews.length + ')', {
+            y: 12,
+            autoAlpha: 0,
+            duration: 0.3,
+            stagger: 0.05,
+            ease: 'power2.out',
+            clearProps: 'all'
+          });
+        }, 20);
+      },
+      error: (err) => {
+        console.error('Error loading more reviews', err);
+        this.isLoadingMore = false;
       }
     });
   }

@@ -47,6 +47,14 @@ export interface Career {
   subjects: SubjectItem[];
 }
 
+export interface PaginatedReviews {
+  data: any[];
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -866,18 +874,27 @@ export class ApiService {
     return profIds.map(id => this.masterProfessors[id]).filter(Boolean);
   }
 
-  getRecentReviews(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/reviews/recent`).pipe(
-      map(reviews => {
-        if (!reviews || !Array.isArray(reviews)) return [];
-        return reviews.map(r => ({
+  getRecentReviews(page: number = 1, limit: number = 10): Observable<PaginatedReviews> {
+    return this.http.get<any>(`${this.apiUrl}/reviews/recent`, {
+      params: { page: page.toString(), limit: limit.toString() }
+    }).pipe(
+      map(res => {
+        const rawList = Array.isArray(res) ? res : (res?.data || []);
+        const formattedData = rawList.map((r: any) => ({
           ...r,
-          tags: Array.isArray(r.tags) ? r.tags.map((t: any) => typeof t === 'string' ? t : t.tagName) : []
+          tags: Array.isArray(r.tags) ? r.tags.map((t: any) => typeof t === 'string' ? t : (t.tagName || '')) : []
         }));
+        return {
+          data: formattedData,
+          total: res?.total ?? formattedData.length,
+          page: res?.page ?? page,
+          limit: res?.limit ?? limit,
+          hasMore: res?.hasMore ?? (formattedData.length >= limit)
+        };
       }),
       catchError(err => {
         console.warn('Backend API /reviews/recent unreachable, displaying high-fidelity preview data:', err);
-        return of([
+        const mockReviews = [
           {
             id: 'rev-1',
             rating: 5,
@@ -953,7 +970,16 @@ export class ApiService {
             tags: ['#Exigente', '#MuchaLectura'],
             userVote: 'down'
           }
-        ]).pipe(delay(400));
+        ];
+        const skip = (page - 1) * limit;
+        const pagedData = mockReviews.slice(skip, skip + limit);
+        return of({
+          data: pagedData,
+          total: mockReviews.length,
+          page,
+          limit,
+          hasMore: skip + pagedData.length < mockReviews.length
+        }).pipe(delay(300));
       })
     );
   }
