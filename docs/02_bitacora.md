@@ -37,3 +37,15 @@ Este archivo registra cronológicamente los hitos, atajos tomados y cambios de r
   * La sesión del Arquitecto realizó una auditoría forense completa de la rama `master`.
   * Se sincronizó la carpeta `RateMat_logica` con todas las decisiones, módulos y cambios de infraestructura implementados en el código.
   * Se constató que tanto Backend como Frontend compilan con Exit Code 0 y están listos para la fase final de despliegue a producción.
+
+* **[2026-09-27] - QA Integral, Paginación Escalable y Blindaje AppSec/WebSec (Agente Ejecutor):**
+  * **Limpieza UI/UX:** Retiro de micro-textos redundantes, asignación de iconos vectoriales Reicon oficiales para cada carrera y corrección del scroll vertical en dispositivos móviles.
+  * **Paginación Incremental:** Endpoint paginado `/api/reviews/recent` con TypeORM `findAndCount` (`page`, `limit`, `hasMore`), adaptado en Angular con animaciones GSAP stagger y botón ergonómico *"Cargar más opiniones"*.
+  * **QA Full-Stack 100%:** Suite automatizada de 30 pruebas integrales de extremo a extremo con Puppeteer (`30/30 PASS`), resolviendo prefijo `/api` y sincronización JWT.
+  * **Blindaje de Privacidad y AppSec (9/9 PASS):**
+    * Supresión total del objeto `user` (`user: null`) en reseñas anónimas (D-002).
+    * Control de acceso RBAC con `adminGuard` para `/admin` y ocultamiento de controles para estudiantes (D-011).
+    * Rechazo HTTP 422 a acusaciones delictivas (Protocolo 2.83 UCAB) y corrección de regex `\b` en frontend (D-010).
+    * Cuota de 5 reportes diarios por estudiante con `DailyLimitGuard` en modo *fail-closed* y `@MaxLength` en DTOs.
+  * Frontend y Backend verificados con compilación limpia (Exit Code 0).
+
