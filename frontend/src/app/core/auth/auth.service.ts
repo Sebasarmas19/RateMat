@@ -49,7 +49,7 @@ export class AuthService {
           user_metadata: { full_name: parsed?.name || 'Andrés Villalobos' }
         };
         const mockSession: any = {
-          access_token: 'mock-jwt-token-for-dev',
+          access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDEiLCJlbWFpbCI6ImFuZHJlcy52QGVzdC51Y2FiLmVkdS52ZSIsImlhdCI6MTc5MDUzMDg3OX0.bN3PzOwOyTQJsO6fC5OnuDbkow-VnVW2ZhSXEEl8Ssc',
           user: mockUser
         };
         this.session.set(mockSession);
@@ -132,7 +132,7 @@ export class AuthService {
     };
 
     const mockSession: any = {
-      access_token: 'mock-jwt-token-for-dev',
+      access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDEiLCJlbWFpbCI6ImFuZHJlcy52QGVzdC51Y2FiLmVkdS52ZSIsImlhdCI6MTc5MDUzMDg3OX0.bN3PzOwOyTQJsO6fC5OnuDbkow-VnVW2ZhSXEEl8Ssc',
       user: mockUser
     };
 

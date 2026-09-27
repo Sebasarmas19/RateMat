@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, catchError, delay, tap } from 'rxjs';
+import { Observable, of, catchError, delay, tap, map } from 'rxjs';
 
 export interface ProfessorProfile {
   id: string;
@@ -135,7 +135,9 @@ export class ProfessorProfileService {
   }
 
   voteReview(reviewId: string, voteType: 'up' | 'down'): Observable<{ netScore: number }> {
-    return this.http.post<{ netScore: number }>(`${this.baseUrl}/reviews/${reviewId}/vote`, { voteType }).pipe(
+    const payload = { voteType: voteType.toUpperCase() };
+    return this.http.post<any>(`${this.baseUrl}/reviews/${reviewId}/vote`, payload).pipe(
+      map((res: any) => ({ netScore: res?.netScore ?? 0 })),
       catchError(err => {
         return of({ netScore: 0 }).pipe(delay(400));
       })
@@ -143,7 +145,17 @@ export class ProfessorProfileService {
   }
 
   reportItem(itemId: string, itemType: 'review' = 'review'): Observable<{ success: boolean }> {
-    return this.http.post<{ success: boolean }>(`${this.baseUrl}/reports`, { itemId, itemType }).pipe(
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(itemId);
+    if (!isUuid) {
+      return of({ success: true }).pipe(delay(400));
+    }
+    const payload = {
+      entityType: 'REVIEW',
+      entityId: itemId,
+      reason: 'Contenido inapropiado reportado por estudiante'
+    };
+    return this.http.post<any>(`${this.baseUrl}/reports`, payload).pipe(
+      map(() => ({ success: true })),
       catchError(err => {
         return of({ success: true }).pipe(delay(600));
       })

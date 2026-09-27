@@ -53,8 +53,8 @@ export interface Career {
 export class ApiService {
   private http = inject(HttpClient);
   private apiUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-    ? `${window.location.protocol}//${window.location.hostname}:3001`
-    : environment.apiUrl;
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${environment.apiUrl}/api`;
 
   // Master catalog of professors
   private masterProfessors: { [id: string]: ProfessorSummary } = {
@@ -868,6 +868,13 @@ export class ApiService {
 
   getRecentReviews(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/reviews/recent`).pipe(
+      map(reviews => {
+        if (!reviews || !Array.isArray(reviews)) return [];
+        return reviews.map(r => ({
+          ...r,
+          tags: Array.isArray(r.tags) ? r.tags.map((t: any) => typeof t === 'string' ? t : t.tagName) : []
+        }));
+      }),
       catchError(err => {
         console.warn('Backend API /reviews/recent unreachable, displaying high-fidelity preview data:', err);
         return of([
@@ -991,14 +998,26 @@ export class ApiService {
   }
 
   voteReview(reviewId: string, voteType: 'up' | 'down'): Observable<{ netScore: number }> {
-    return this.http.post<{ netScore: number }>(`${this.apiUrl}/reviews/${reviewId}/vote`, { voteType }).pipe(
+    const payload = { voteType: voteType.toUpperCase() };
+    return this.http.post<any>(`${this.apiUrl}/reviews/${reviewId}/vote`, payload).pipe(
+      map(res => ({ netScore: res?.netScore ?? 0 })),
       catchError(() => of({ netScore: 0 }).pipe(delay(300)))
     );
   }
 
   reportItem(id: string, type: 'review' | 'file'): Observable<{ success: boolean; message: string }> {
-    return this.http.post<{ success: boolean; message: string }>(`${this.apiUrl}/moderation/report`, { id, type }).pipe(
-      catchError(() => of({ success: true, message: 'Reporte registrado para moderación estudiantil (D-010).' }).pipe(delay(300)))
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (!isUuid) {
+      return of({ success: true, message: 'Reporte registrado para moderación estudiantil.' }).pipe(delay(300));
+    }
+    const payload = {
+      entityType: 'REVIEW',
+      entityId: id,
+      reason: 'Contenido reportado por estudiante de la comunidad'
+    };
+    return this.http.post<any>(`${this.apiUrl}/reports`, payload).pipe(
+      map(() => ({ success: true, message: 'Reporte registrado exitosamente para moderación.' })),
+      catchError(() => of({ success: true, message: 'Reporte registrado para moderación estudiantil.' }).pipe(delay(300)))
     );
   }
 }
