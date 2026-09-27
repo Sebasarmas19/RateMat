@@ -52,7 +52,10 @@ export class ProfessorsService {
           },
         });
         const count = reviews.length;
-        const avg = count > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / count : 4.5;
+        const totalWeight = reviews.reduce((sum, r) => sum + Number(r.weight || 0), 0);
+        const avg = totalWeight > 0
+          ? reviews.reduce((sum, r) => sum + (r.rating * Number(r.weight || 0)), 0) / totalWeight
+          : (count > 0 ? 3.0 : 4.5);
 
         const profSubjects = await this.professorSubjectRepository.find({
           where: { professor: { id: p.id }, status: PivotStatus.APPROVED },
@@ -104,7 +107,10 @@ export class ProfessorsService {
     });
 
     const count = reviews.length;
-    const avg = count > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / count : 4.8;
+    const totalWeight = reviews.reduce((sum, r) => sum + Number(r.weight || 0), 0);
+    const avg = totalWeight > 0
+      ? reviews.reduce((sum, r) => sum + (r.rating * Number(r.weight || 0)), 0) / totalWeight
+      : (count > 0 ? 3.0 : 4.8);
 
     return {
       id: professor.id,
