@@ -442,7 +442,7 @@ export class ApiService {
       badgeBg: 'bg-amber-400/20 text-amber-100',
       textColor: 'text-amber-100',
       previewBadge: 'Constitucional • Penal',
-      icon: 'scale',
+      icon: 'judge',
       description: 'Leyes, justicia, derecho constitucional, civil, penal, laboral y corporativo.',
       subjectsCount: 4,
       subjects: [
@@ -506,7 +506,7 @@ export class ApiService {
       badgeBg: 'bg-emerald-400/20 text-emerald-100',
       textColor: 'text-emerald-100',
       previewBadge: 'Finanzas • Mercadeo',
-      icon: 'trending-up',
+      icon: 'briefcase',
       description: 'Gestión estratégica, finanzas corporativas, mercadeo, modelos de negocio y liderazgo.',
       subjectsCount: 3,
       subjects: [
@@ -558,7 +558,7 @@ export class ApiService {
       badgeBg: 'bg-rose-400/20 text-rose-100',
       textColor: 'text-rose-100',
       previewBadge: 'Periodismo • Audiovisual',
-      icon: 'mic',
+      icon: 'microphone',
       description: 'Narrativa transmedia, periodismo digital, producción audiovisual y opinión pública.',
       subjectsCount: 3,
       subjects: [
@@ -702,7 +702,7 @@ export class ApiService {
       badgeBg: 'bg-purple-400/20 text-purple-100',
       textColor: 'text-purple-100',
       previewBadge: 'Clínica • Social',
-      icon: 'smile',
+      icon: 'heart',
       description: 'Comportamiento humano, psicología clínica, evaluación psicométrica y bienestar.',
       subjectsCount: 2,
       subjects: [
@@ -742,7 +742,7 @@ export class ApiService {
       badgeBg: 'bg-sky-400/20 text-sky-100',
       textColor: 'text-sky-100',
       previewBadge: 'Estructuras • Suelos',
-      icon: 'layers',
+      icon: 'building',
       description: 'Cálculo estructural, mecánica de suelos, topografía, obras hidráulicas e infraestructura urbana.',
       subjectsCount: 3,
       subjects: [
