@@ -38,6 +38,23 @@
         </button>
       </div>
 
+      <!-- Video del proceso -->
+      <div *ngIf="videos[selectedPlatform()] as clip" class="flex justify-center">
+        <div class="w-40 p-1.5 rounded-[1.75rem] bg-slate-900 shadow-lg">
+          <video
+            [src]="clip.src"
+            [poster]="clip.poster"
+            [muted]="true"
+            autoplay
+            loop
+            playsinline
+            preload="auto"
+            (canplay)="playVideo($event)"
+            aria-label="Cómo agregar RateMat a la pantalla de inicio"
+            class="block w-full aspect-[540/1108] rounded-[1.4rem] bg-slate-800 object-cover"></video>
+        </div>
+      </div>
+
       <!-- Instalación en un toque (Chrome/Edge) -->
       <div *ngIf="canPromptHere()" class="space-y-3">
         <button type="button" (click)="install()"

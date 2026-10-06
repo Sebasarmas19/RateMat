@@ -44,6 +44,11 @@ export class InstallSheetComponent {
     ]
   };
 
+  // Grabación del proceso real; solo se carga al abrir la pestaña correspondiente
+  readonly videos: Partial<Record<InstallPlatform, { src: string; poster: string }>> = {
+    ios: { src: 'media/install-ios.mp4', poster: 'media/install-ios.jpg' }
+  };
+
   readonly notes: Record<InstallPlatform, string> = {
     ios: 'En Chrome para iPhone, Compartir está junto a la barra de direcciones.',
     android: 'Si no ves "Instalar app", busca "Agregar a la pantalla principal".',
@@ -62,6 +67,13 @@ export class InstallSheetComponent {
   // El diálogo nativo solo sirve en la plataforma donde se está navegando
   canPromptHere(): boolean {
     return this.pwa.canPrompt() && this.selectedPlatform() === this.pwa.platform();
+  }
+
+  // Angular no aplica `muted` como atributo; sin esto Safari bloquea el autoplay
+  playVideo(event: Event): void {
+    const video = event.target as HTMLVideoElement;
+    video.muted = true;
+    video.play().catch(() => {});
   }
 
   close(): void {
