@@ -171,7 +171,7 @@ export class AdminComponent {
     this.lastAction = null;
     this.dismissCard(`report-${item.id}`, () => {
       this.pendingReports = this.pendingReports.filter(r => r.id !== item.id);
-      this.showToast(`Denuncias desestimadas. El contenido vuelve a ser visible públicamente.`);
+      this.showToast(`Reportes descartados. La reseña vuelve a estar visible.`);
     });
   }
 
@@ -242,6 +242,6 @@ export class AdminComponent {
       }
     ];
 
-    this.showToast('Datos de muestra del panel de administración restablecidos.');
+    this.showToast('Datos de prueba restablecidos.');
   }
 }
