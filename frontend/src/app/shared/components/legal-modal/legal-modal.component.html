@@ -13,21 +13,20 @@
         </svg>
       </div>
       <div>
-        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Políticas de la Comunidad</h2>
-        <p class="text-xs text-slate-400">Compromiso obligatorio para estudiantes UCAB</p>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Políticas de la comunidad</h2>
       </div>
     </div>
 
     <div class="text-slate-600 mb-6 flex-1 overflow-y-auto space-y-3.5 pr-1">
       <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
-        Para mantener a RateMat como un espacio seguro, verídico y constructivo, debes aceptar las 3 cláusulas obligatorias antes de interactuar:
+        Antes de opinar, tres reglas:
       </p>
 
       <div class="space-y-2.5 mt-2">
         <label class="flex items-start space-x-3 p-3.5 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-50/80 transition-colors group">
           <input type="checkbox" [(ngModel)]="check1" class="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
           <span class="text-xs text-slate-700 leading-relaxed select-none">
-            <strong class="font-semibold text-slate-900 block mb-0.5">1. Responsabilidad de Opinión:</strong>
+            <strong class="font-semibold text-slate-900 block mb-0.5">1. Responsabilidad de opinión:</strong>
             Soy el único responsable de mis valoraciones. Acepto enfocar mis aportes exclusivamente en criterios pedagógicos y docentes, absteniéndome de emitir insultos, descalificaciones personales o acusaciones delictivas.
           </span>
         </label>
@@ -35,7 +34,7 @@
         <label class="flex items-start space-x-3 p-3.5 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-50/80 transition-colors group">
           <input type="checkbox" [(ngModel)]="check2" class="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
           <span class="text-xs text-slate-700 leading-relaxed select-none">
-            <strong class="font-semibold text-slate-900 block mb-0.5">2. Identidad y Trazabilidad Institucional:</strong>
+            <strong class="font-semibold text-slate-900 block mb-0.5">2. Identidad y trazabilidad institucional:</strong>
             Comprendo que el acceso requiere autenticación institucional UCAB. El mal uso de la plataforma o la vulneración de las normas comunitarias acarreará la suspensión permanente de mi cuenta.
           </span>
         </label>
@@ -43,7 +42,7 @@
         <label class="flex items-start space-x-3 p-3.5 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-50/80 transition-colors group">
           <input type="checkbox" [(ngModel)]="check3" class="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
           <span class="text-xs text-slate-700 leading-relaxed select-none">
-            <strong class="font-semibold text-slate-900 block mb-0.5">3. Deslinde Institucional e Independencia:</strong>
+            <strong class="font-semibold text-slate-900 block mb-0.5">3. Deslinde institucional e independencia:</strong>
             Reconozco que RateMat es un proyecto estudiantil independiente y sin relación oficial con la UCAB. Las opiniones aquí emitidas pertenecen exclusivamente a sus respectivos autores.
           </span>
         </label>
@@ -57,7 +56,7 @@
         [class.opacity-50]="!canAccept"
         [class.cursor-not-allowed]="!canAccept"
         class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all duration-200 active:scale-[0.98] shadow-lg shadow-indigo-600/20 disabled:hover:bg-indigo-600">
-        Acepto las políticas y deseo continuar
+        Acepto
       </button>
     </div>
     

@@ -126,7 +126,7 @@ export class AuthService {
         localStorage.removeItem('ratemat_demo_auth');
       }
       this.authError.set(
-        `El correo de Google "${email}" no pertenece al dominio oficial de la Universidad Católica Andrés Bello (@est.ucab.edu.ve o @ucab.edu.ve). Para preservar la veracidad comunitaria y proteger las reseñas, debes ingresar con tu cuenta institucional de la UCAB.`
+        `Esa cuenta (${email}) no es de la UCAB. Entra con tu correo @est.ucab.edu.ve.`
       );
       return false;
     }
@@ -191,7 +191,7 @@ export class AuthService {
     if (!this.isInstitutionalEmail(trimmed)) {
       return {
         success: false,
-        error: 'El correo ingresado no pertenece al dominio oficial @est.ucab.edu.ve o @ucab.edu.ve. RateMat requiere validación institucional para garantizar la veracidad de la comunidad.'
+        error: `Esa cuenta (${trimmed}) no es de la UCAB. Entra con tu correo @est.ucab.edu.ve.`
       };
     }
 
