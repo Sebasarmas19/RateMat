@@ -25,6 +25,7 @@
 .device-stage {
   container-type: inline-size;
   position: relative;
+  padding-top: 2cqw;
   padding-bottom: 4cqw;
 }
 
@@ -52,10 +53,10 @@
   object-position: top center;
 }
 
-/* Laptop */
+/* Laptop (deja libre la derecha para que el iPhone no tape la pantalla) */
 .laptop {
-  width: 82cqw;
-  margin-left: 3cqw;
+  width: 73cqw;
+  margin-left: 4cqw;
 }
 
 .laptop-lid {
@@ -108,30 +109,30 @@
 /* iPhone */
 .iphone {
   position: absolute;
-  right: 1cqw;
+  right: 0;
   bottom: 0;
-  width: 24cqw;
-  padding: 1cqw;
+  width: 22cqw;
+  padding: 0.92cqw;
   background: #0b0d12;
-  border-radius: 4.8cqw;
+  border-radius: 4.4cqw;
   box-shadow:
-    0 0 0 0.4cqw #1e293b,
+    0 0 0 0.37cqw #1e293b,
     inset 0 0 0 1px rgba(148, 163, 184, 0.3),
     0 30px 60px -18px rgba(15, 23, 42, 0.5);
 }
 
 .iphone-screen {
   aspect-ratio: 1179 / 2556;
-  border-radius: 3.9cqw;
+  border-radius: 3.6cqw;
 }
 
 .iphone-island {
   position: absolute;
-  top: 1.25cqw;
+  top: 1.15cqw;
   left: 50%;
   z-index: 2;
-  width: 7.4cqw;
-  height: 2.2cqw;
+  width: 6.8cqw;
+  height: 2cqw;
   border-radius: 9999px;
   background: #000;
   transform: translateX(-50%);
