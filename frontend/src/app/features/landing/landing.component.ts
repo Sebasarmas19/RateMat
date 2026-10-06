@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, inject, effect } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ElementRef, QueryList, ViewChildren, inject, effect } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth/auth.service';
@@ -18,9 +18,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // Demo Card Interactive State
-  demoVoted = false;
-  demoVoteCount = 38;
+  @ViewChildren('demoVideo') private demoVideos!: QueryList<ElementRef<HTMLVideoElement>>;
+  private videoObserver?: IntersectionObserver;
 
   constructor() {
     effect(() => {
@@ -32,6 +31,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (typeof window === 'undefined') return;
+
+    this.setupDemoVideos();
 
     // =======================================================================
     // 1. HERO ENTRANCE CON EFECTO "BLUR-UP" (Como en video original 00:00 - 00:02)
@@ -230,6 +231,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.videoObserver?.disconnect();
     if (typeof window !== 'undefined') {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     }
@@ -239,14 +241,30 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  toggleDemoVote(btnEl: HTMLElement): void {
-    this.demoVoted = !this.demoVoted;
-    this.demoVoteCount += this.demoVoted ? 1 : -1;
+  onVideoError(event: Event): void {
+    // Sin grabación disponible: se oculta el <video> y queda visible el fallback del dispositivo
+    (event.target as HTMLVideoElement).style.display = 'none';
+  }
 
-    // Elastic micro-punch on button
-    gsap.fromTo(btnEl,
-      { scale: 0.95 },
-      { scale: 1, duration: 0.18, ease: 'back.out(1.6)' }
-    );
+  // Reproduce las grabaciones solo cuando están en pantalla y respeta prefers-reduced-motion
+  private setupDemoVideos(): void {
+    const videos = this.demoVideos.map(ref => ref.nativeElement);
+    // Angular no refleja el atributo `muted` como propiedad; sin esto el autoplay es bloqueado
+    videos.forEach(video => (video.muted = true));
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    this.videoObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const video = entry.target as HTMLVideoElement;
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.25 });
+
+    videos.forEach(video => this.videoObserver!.observe(video));
   }
 }
