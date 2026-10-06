@@ -11,14 +11,14 @@
       <img src="logo.png" alt="RateMat" class="w-8 h-8 rounded-xl shadow-sm object-cover">
       <div class="flex items-center space-x-2">
         <span class="font-extrabold text-base tracking-tight text-slate-900">RateMat</span>
-        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
+        <span class="max-[359px]:hidden text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
           UCAB
         </span>
       </div>
     </div>
 
     <!-- Navegación & Acciones -->
-    <div class="flex items-center space-x-3 sm:space-x-4">
+    <div class="flex items-center gap-2 sm:gap-4">
       <button
         type="button"
         (click)="scrollToSection('moderacion')"
@@ -35,22 +35,23 @@
         *ngIf="!pwa.isInstalled()"
         type="button"
         (click)="pwa.requestInstall()"
-        class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-sm active:scale-90 transition-all duration-150">
+        aria-label="Descargar la app"
+        class="inline-flex items-center justify-center gap-1.5 w-9 h-9 sm:w-auto sm:h-auto sm:px-4 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-sm active:scale-90 transition-all duration-150 flex-shrink-0">
         <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>
         </svg>
-        <span>Descargar</span>
+        <span class="hidden sm:inline">Descargar</span>
       </button>
 
       <button 
         (click)="login()" 
-        class="inline-flex items-center space-x-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shadow-sm hover:shadow active:scale-95 transition-all">
+        class="inline-flex items-center space-x-2 h-9 sm:h-auto px-3.5 sm:px-5 sm:py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shadow-sm hover:shadow active:scale-95 transition-all whitespace-nowrap flex-shrink-0">
         <!-- Reicon user (Outline) -->
         <svg class="w-3.5 h-3.5 text-slate-200" viewBox="0 0 24 24" fill="none">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C9.37665 1.25 7.25 3.37665 7.25 6C7.25 8.62335 9.37665 10.75 12 10.75C14.6234 10.75 16.75 8.62335 16.75 6C16.75 3.37665 14.6234 1.25 12 1.25ZM8.75 6C8.75 4.20507 10.2051 2.75 12 2.75C13.7949 2.75 15.25 4.20507 15.25 6C15.25 7.79493 13.7949 9.25 12 9.25C10.2051 9.25 8.75 7.79493 8.75 6Z" fill="currentColor"/>
           <path fill-rule="evenodd" clip-rule="evenodd" d="M12 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25 15.8661 3.25 17.5L3.25 17.602C3.25 18.7638 3.25 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.75 18.7638 20.75 17.602L20.75 17.5C20.75 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12 12.25ZM4.75 17.5C4.75 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.25 16.6487 19.25 17.5C19.25 18.8078 19.21 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75 18.8078 4.75 17.5Z" fill="currentColor"/>
         </svg>
-        <span>Ingresar con Google</span>
+        <span>Ingresar<span class="hidden sm:inline"> con Google</span></span>
       </button>
     </div>
   </header>
