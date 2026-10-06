@@ -37,15 +37,9 @@
             {{ profile.name.charAt(0) }}
           </div>
           <div class="space-y-1 min-w-0 flex-1">
-            <div class="flex flex-wrap items-center gap-2">
-              <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 leading-tight">
-                {{ profile.name }}
-              </h1>
-              <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span>Activo UCAB</span>
-              </span>
-            </div>
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 leading-tight">
+              {{ profile.name }}
+            </h1>
             
             <div class="flex items-center space-x-2 pt-1">
               <div class="flex items-center space-x-1 tabular-nums">
@@ -78,19 +72,8 @@
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
             </svg>
-            <span>{{ existingUserReview ? 'Editar mi valoración' : 'Calificar a este Profesor' }}</span>
+            <span>{{ existingUserReview ? 'Editar mi reseña' : 'Calificar profesor' }}</span>
           </button>
-        </div>
-
-        <!-- Cátedras Dictadas -->
-        <div class="space-y-1.5 pt-1 border-t border-slate-100">
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Cátedras asignadas:</span>
-          <div class="flex flex-wrap gap-1.5">
-            <span *ngFor="let subject of profile.subjects" 
-                  class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100/80 text-slate-700 border border-slate-200/60">
-              {{ subject }}
-            </span>
-          </div>
         </div>
 
         <!-- Métricas Cuantitativas Bar (Claridad / Dificultad / Recomiendan) -->
@@ -113,7 +96,7 @@
 
       <!-- Card: Distribución de Puntuaciones (Star Distribution) -->
       <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.03)] space-y-4">
-        <h3 class="text-sm font-extrabold text-slate-900">Distribución de Puntuaciones</h3>
+        <h3 class="text-sm font-extrabold text-slate-900">Distribución</h3>
 
         <div class="space-y-2.5">
           <div *ngFor="let item of ratingDistribution" class="flex items-center space-x-3 text-xs">
@@ -168,17 +151,11 @@
         
         <!-- Fila 1: Título Muro de Reseñas + Conteo + Botón Calificar Profesor -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 pb-3.5 border-b border-slate-100">
-          <div class="space-y-0.5">
-            <div class="flex items-center space-x-2">
-              <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight whitespace-nowrap">Muro de Reseñas</h2>
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full flex-shrink-0">
-                {{ filteredReviews.length }} {{ filteredReviews.length === 1 ? 'registrada' : 'registradas' }}
-              </span>
-            </div>
-            <p class="text-xs text-slate-400">
-              <span *ngIf="selectedSubjectTab === 'all'">Ordenadas por reputación neta (Net Score) de estudiantes</span>
-              <span *ngIf="selectedSubjectTab !== 'all'">Filtradas por la cátedra: <strong class="text-slate-700">{{ selectedSubjectTab }}</strong></span>
-            </p>
+          <div class="flex items-center space-x-2">
+            <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight whitespace-nowrap">Reseñas</h2>
+            <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full flex-shrink-0 tabular-nums">
+              {{ filteredReviews.length }}
+            </span>
           </div>
 
           <!-- Primary Amber CTA Button (Amplio, con jerarquía y sin interferir con las cátedras) -->
@@ -192,13 +169,12 @@
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
             </svg>
-            <span>{{ existingUserReview ? 'Editar mi reseña' : 'Calificar Profesor' }}</span>
+            <span>{{ existingUserReview ? 'Editar mi reseña' : 'Calificar profesor' }}</span>
           </button>
         </div>
 
         <!-- Fila 2: Carrusel Deslizable de Cátedras (100% Ancho independiente, sin colisiones ni cortes) -->
         <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar whitespace-nowrap py-0.5">
-          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider pr-1 flex-shrink-0">Cátedra:</span>
           
           <button 
             (click)="selectSubjectTab('all')"
@@ -218,7 +194,7 @@
           <!-- Botón Sugerir Cátedra -->
           <button 
             (click)="openSuggestSubjectModal()"
-            title="Proponer nueva cátedra que dicta este profesor"
+            title="Proponer otra cátedra de este profesor"
             class="px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/70 transition-all active:scale-95 flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
@@ -253,9 +229,6 @@
         <h3 class="text-sm font-bold text-slate-800">
           {{ selectedSubjectTab !== 'all' ? 'Sin reseñas para ' + selectedSubjectTab : 'Sé el primero en calificar' }}
         </h3>
-        <p class="text-xs text-slate-500 max-w-xs mx-auto">
-          {{ selectedSubjectTab !== 'all' ? 'Aún no hay opiniones registradas para esta cátedra específica. Comparte tu experiencia.' : 'Tus compañeros valorarán tu experiencia pedagógica honesta sobre este profesor.' }}
-        </p>
         <button (click)="openReviewModal(selectedSubjectTab !== 'all' ? selectedSubjectTab : undefined)" 
                 class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-sm hover:shadow active:scale-95 transition-all cursor-pointer">
           Escribir reseña
@@ -327,8 +300,7 @@
                 <path d="M8 9.75C7.58579 9.75 7.25 10.0858 7.25 10.5C7.25 10.9142 7.58579 11.25 8 11.25H13C13.4142 11.25 13.75 10.9142 13.75 10.5C13.75 10.0858 13.4142 9.75 13 9.75H8Z" fill="currentColor"/>
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.94513 1.25C8.57754 1.24998 7.47521 1.24996 6.60825 1.36652C5.70814 1.48754 4.95027 1.74643 4.34835 2.34835C3.74643 2.95027 3.48754 3.70814 3.36652 4.60825C3.24996 5.47521 3.24998 6.57753 3.25 7.94512V16.0549C3.24998 17.4225 3.24996 18.5248 3.36652 19.3918C3.48754 20.2919 3.74643 21.0497 4.34835 21.6517C4.95027 22.2536 5.70814 22.5125 6.60825 22.6335C7.47522 22.75 8.57754 22.75 9.94513 22.75H14.0549C15.4225 22.75 16.5248 22.75 17.3918 22.6335C18.2919 22.5125 19.0497 22.2536 19.6517 21.6517C20.2536 21.0497 20.5125 20.2919 20.6335 19.3918C20.75 18.5248 20.75 17.4225 20.75 16.0549V7.94513C20.75 6.57754 20.75 5.47522 20.6335 4.60825C20.5125 3.70814 20.2536 2.95027 19.6517 2.34835C19.0497 1.74643 18.2919 1.48754 17.3918 1.36652C16.5248 1.24996 15.4225 1.24998 14.0549 1.25H9.94513ZM5.40901 3.40901C5.68577 3.13225 6.07435 2.9518 6.80812 2.85315C7.56347 2.75159 8.56459 2.75 10 2.75H14C15.4354 2.75 16.4365 2.75159 17.1919 2.85315C17.9257 2.9518 18.3142 3.13225 18.591 3.40901C18.8678 3.68577 19.0482 4.07435 19.1469 4.80812C19.2484 5.56347 19.25 6.56459 19.25 8V15.25L7.78198 15.25C6.96402 15.2497 6.40587 15.2495 5.92721 15.3778C5.49923 15.4925 5.10224 15.6798 4.75 15.9259V8C4.75 6.56459 4.75159 5.56347 4.85315 4.80812C4.9518 4.07435 5.13225 3.68577 5.40901 3.40901ZM4.77676 18.2491C4.79196 18.6029 4.81579 18.914 4.85315 19.1919C4.9518 19.9257 5.13225 20.3142 5.40901 20.591C5.68577 20.8678 6.07435 21.0482 6.80812 21.1469C7.56347 21.2484 8.56459 21.25 10 21.25H14C15.4354 21.25 16.4365 21.2484 17.1919 21.1469C17.9257 21.0482 18.3142 20.8678 18.591 20.591C18.8678 20.3142 19.0482 19.9257 19.1469 19.1919C19.2297 18.5756 19.246 17.7958 19.2492 16.75H7.89778C6.91952 16.75 6.57752 16.7564 6.31544 16.8267C5.59612 17.0194 5.02268 17.5541 4.77676 18.2491Z" fill="currentColor"/>
               </svg>
-              <span class="font-bold text-slate-900">Cátedra:</span>
-              <span class="text-indigo-600 font-semibold">{{ review.subject }}</span>
+              <span class="text-slate-800 font-semibold">{{ review.subject }}</span>
             </span>
           </div>
 
@@ -341,7 +313,7 @@
                 <path d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z" fill="currentColor"/>
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M1.25 12C1.25 6.06294 6.06294 1.25 12 1.25C17.9371 1.25 22.75 6.06294 22.75 12C22.75 17.9371 17.9371 22.75 12 22.75C6.06294 22.75 1.25 17.9371 1.25 12ZM12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 6.89137 17.1086 2.75 12 2.75Z" fill="currentColor"/>
               </svg>
-              <span class="truncate font-medium text-slate-600">Esta opinión recibió múltiples votos negativos de la comunidad.</span>
+              <span class="truncate font-medium text-slate-600">Muchos votos negativos</span>
             </div>
             <button 
               (click)="toggleCollapse(review)" 
@@ -376,17 +348,7 @@
 
           <!-- Footer Row: Secondary metadata & Thumbs Up/Down Rating -->
           <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-400">
-            <div class="flex items-center space-x-2">
-              <span class="text-[11px] text-slate-400 flex items-center space-x-1 font-medium">
-                <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span>Evaluación Pedagógica</span>
-              </span>
-              <span *ngIf="review.reported" class="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-md">
-                Reportada por ti
-              </span>
-            </div>
+            <span></span>
 
             <!-- Lightweight Thumbs Interaction with Morphicons spring animation -->
             <div *ngIf="review.text" class="flex items-center space-x-1.5">
@@ -447,10 +409,7 @@
 
       <!-- Modal Header -->
       <div class="px-5 sm:px-6 py-3.5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 flex-shrink-0">
-        <div>
-          <h3 class="text-base font-extrabold text-slate-900">{{ isEditingReview ? 'Editar Reseña de ' + profile?.name : 'Calificar a ' + profile?.name }}</h3>
-          <p class="text-xs text-slate-400">{{ isEditingReview ? 'Modifica tu calificación o tu comentario previo' : 'Comparte tu experiencia con esta cátedra' }}</p>
-        </div>
+        <h3 class="text-base font-extrabold text-slate-900">{{ isEditingReview ? 'Editar reseña' : 'Calificar a ' + profile?.name }}</h3>
         <button (click)="closeReviewModal()" class="min-w-[40px] min-h-[40px] p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"/>
@@ -477,12 +436,12 @@
           <!-- Subject Course Selector -->
           <div class="space-y-1.5">
             <label class="text-xs font-bold text-slate-700 block" for="subjectSelect">
-              Materia o Cátedra que cursaste <span class="text-red-500">*</span>
+              Cátedra que cursaste <span class="text-red-500">*</span>
             </label>
             <div class="relative">
               <select id="subjectSelect" formControlName="subject"
                       class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-medium appearance-none focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all pr-9 cursor-pointer">
-                <option value="" disabled>Selecciona la cátedra que cursaste...</option>
+                <option value="" disabled>Selecciona una cátedra</option>
                 <option *ngFor="let sub of profile?.subjects" [value]="sub">{{ sub }}</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
@@ -493,14 +452,14 @@
             </div>
             <div *ngIf="reviewForm.get('subject')?.touched && reviewForm.get('subject')?.errors?.['required']" 
                  class="text-xs text-red-500">
-              Debes seleccionar la materia que cursaste con este profesor para poder calificarlo.
+              Selecciona la cátedra.
             </div>
           </div>
 
           <!-- 5-Star Selector Interactivo con Hover Coordinado (Directiva 2.B) -->
           <div class="text-center space-y-1.5 py-1">
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">
-              ¿Cómo calificas a este profesor? <span class="text-red-500">*</span>
+              Calificación <span class="text-red-500">*</span>
             </label>
             <div class="flex justify-center space-x-1 sm:space-x-2" (mouseleave)="clearHoverRating()">
               <button type="button" *ngFor="let star of [1,2,3,4,5]" 
@@ -515,13 +474,13 @@
               </button>
             </div>
             <div *ngIf="reviewForm.get('rating')?.touched && reviewForm.get('rating')?.errors?.['min']" class="text-xs text-red-500">
-              Por favor selecciona al menos 1 estrella.
+              Selecciona al menos 1 estrella.
             </div>
           </div>
 
           <!-- Quick Tags (D-003) -->
           <div class="space-y-1.5">
-            <label class="block text-xs font-bold text-slate-700">Etiquetas Rápidas (opcional):</label>
+            <label class="block text-xs font-bold text-slate-700">Etiquetas <span class="font-medium text-slate-400">(opcional)</span></label>
             <div class="flex flex-wrap gap-1.5">
               <button type="button" 
                       *ngFor="let tag of availableTags"
@@ -542,7 +501,7 @@
           <div class="space-y-1.5">
             <div class="flex items-center justify-between">
               <label class="text-xs font-bold text-slate-700" for="reviewTextInput">
-                Opinión y Justificación:
+                Opinión
               </label>
               <span class="text-[11px] font-bold" [ngClass]="isTextRequired ? 'text-amber-600' : 'text-slate-400'">
                 {{ isTextRequired ? 'Requerido para 1★ y 5★' : 'Opcional' }}
@@ -555,13 +514,9 @@
               rows="3" 
               maxlength="1000"
               class="w-full border border-slate-200 rounded-xl p-3 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all resize-none"
-              placeholder="¿Cómo explica los temas? ¿Los exámenes son coherentes? Justifica tu nota objetivamente..."></textarea>
+              placeholder="¿Cómo explica? ¿Los exámenes son coherentes con las clases?"></textarea>
             
-            <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
-              <span *ngIf="isTextRequired" class="text-amber-600 font-medium">
-                * Mínimo 10 caracteres
-              </span>
-              <span *ngIf="!isTextRequired"></span>
+            <div class="flex items-center justify-end text-[11px] text-slate-400 mt-1">
               <span class="tabular-nums font-semibold" [class.text-red-500]="(reviewForm.get('text')?.value?.length || 0) > 1000">
                 {{ reviewForm.get('text')?.value?.length || 0 }} / 1000
               </span>
@@ -569,24 +524,21 @@
 
             <div *ngIf="isTextRequired && reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['required']" 
                  class="text-xs text-red-500">
-              Debes justificar la nota extrema (1★ o 5★) con al menos 10 caracteres.
+              Justifica la nota con al menos 10 caracteres.
             </div>
             <div *ngIf="reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['minlength']" 
                  class="text-xs text-red-500">
-              La opinión debe tener un mínimo de 10 caracteres.
+              Mínimo 10 caracteres.
             </div>
             <div *ngIf="reviewForm.get('text')?.touched && reviewForm.get('text')?.errors?.['maxlength']" 
                  class="text-xs text-red-500">
-              La opinión no puede exceder los 1000 caracteres.
+              Máximo 1000 caracteres.
             </div>
           </div>
 
           <!-- Anonymous Toggle Switch -->
           <div class="p-3 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center justify-between">
-            <div class="pr-3">
-              <div class="text-xs font-bold text-slate-900">Publicar de forma Anónima</div>
-              <div class="text-[11px] text-slate-400">Tu nombre no será visible públicamente.</div>
-            </div>
+            <span class="pr-3 text-xs font-bold text-slate-900">Publicar como anónimo</span>
 
             <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
               <input type="checkbox" formControlName="isAnonymous" class="sr-only peer">
@@ -602,8 +554,8 @@
             type="submit" 
             [disabled]="isSubmittingReview"
             class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm rounded-xl shadow-lg shadow-indigo-600/25 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center space-x-2 cursor-pointer">
-            <span *ngIf="!isSubmittingReview">{{ isEditingReview ? 'Guardar Cambios' : 'Publicar Reseña Académica' }}</span>
-            <span *ngIf="isSubmittingReview">{{ isEditingReview ? 'Guardando cambios...' : 'Validando y publicando...' }}</span>
+            <span *ngIf="!isSubmittingReview">{{ isEditingReview ? 'Guardar cambios' : 'Publicar reseña' }}</span>
+            <span *ngIf="isSubmittingReview">{{ isEditingReview ? 'Guardando…' : 'Publicando…' }}</span>
           </button>
         </div>
 
@@ -638,10 +590,7 @@
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
             </svg>
           </div>
-          <div>
-            <h3 class="text-base font-extrabold text-slate-900">Sugerir Nueva Cátedra</h3>
-            <p class="text-xs text-slate-400">Para {{ profile?.name }}</p>
-          </div>
+          <h3 class="text-base font-extrabold text-slate-900">Sugerir cátedra</h3>
         </div>
 
         <button (click)="closeSuggestSubjectModal()" class="min-w-[40px] min-h-[40px] p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
@@ -669,7 +618,7 @@
         <form *ngIf="!suggestSubjectSuccessMessage" [formGroup]="suggestSubjectForm" (ngSubmit)="submitSuggestSubject()" class="space-y-4">
           <div class="space-y-1.5">
             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-              Nombre de la Materia / Cátedra <span class="text-red-500">*</span>
+              Materia <span class="text-red-500">*</span>
             </label>
             <input 
               type="text" 
@@ -683,7 +632,7 @@
 
           <div class="space-y-1.5">
             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-              Carrera o Escuela
+              Carrera o escuela
             </label>
             <input 
               type="text" 
@@ -699,7 +648,7 @@
               <line x1="12" y1="8" x2="12.01" y2="8"/>
             </svg>
             <span>
-              Tu propuesta será revisada por moderadores estudiantiles antes de ser añadida al catálogo.
+              Un moderador la revisará antes de publicarla.
             </span>
           </div>
 
@@ -718,7 +667,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span>{{ isSubmittingSuggestSubject ? 'Enviando...' : 'Enviar Cátedra para Aprobación' }}</span>
+              <span>{{ isSubmittingSuggestSubject ? 'Enviando…' : 'Enviar' }}</span>
             </button>
           </div>
         </form>
@@ -739,10 +688,7 @@
               <line x1="4" y1="22" x2="4" y2="15"/>
             </svg>
           </div>
-          <div>
-            <h3 class="text-base font-extrabold text-slate-900">Reportar Reseña</h3>
-            <p class="text-xs text-slate-400">Protección y convivencia comunitaria</p>
-          </div>
+          <h3 class="text-base font-extrabold text-slate-900">Reportar reseña</h3>
         </div>
 
         <button (click)="closeReportModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer">
@@ -754,10 +700,6 @@
       </div>
 
       <div class="space-y-3">
-        <p class="text-xs text-slate-600 leading-relaxed">
-          Selecciona el motivo por el cual consideras que esta reseña debe ser retirada de la plataforma:
-        </p>
-
         <div class="space-y-2">
           <label 
             *ngFor="let reason of availableReportReasons"
@@ -774,7 +716,7 @@
         </div>
 
         <div class="p-3 bg-slate-50 border border-slate-200/70 rounded-xl text-[11px] text-slate-500 leading-relaxed">
-          <strong>Aviso Comunitario:</strong> Al acumular 3 reportes, la reseña se ocultará temporalmente para revisión de moderación.
+          Con 3 reportes, la reseña se oculta hasta que la revise un moderador.
         </div>
 
         <!-- Actions -->
@@ -794,7 +736,7 @@
               <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
               <line x1="4" y1="22" x2="4" y2="15"/>
             </svg>
-            <span>Confirmar Denuncia</span>
+            <span>Reportar</span>
           </button>
         </div>
       </div>
@@ -887,7 +829,7 @@
           <span class="text-xs font-bold text-white block truncate leading-tight">{{ profile.name }}</span>
           <div class="flex items-center space-x-1 text-[11px] text-amber-400 font-bold">
             <span>{{ profile.globalScore | number:'1.1-1' }}</span>
-            <span>★</span>
+            <svg class="w-3 h-3 fill-current flex-shrink-0" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <span class="text-slate-400 font-normal">({{ profile.totalReviews }})</span>
           </div>
         </div>
