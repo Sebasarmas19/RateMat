@@ -246,14 +246,14 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     (event.target as HTMLVideoElement).style.display = 'none';
   }
 
-  // Reproduce las grabaciones solo cuando están en pantalla y respeta prefers-reduced-motion
+  // Reproduce las grabaciones solo cuando están en pantalla
   private setupDemoVideos(): void {
     const videos = this.demoVideos.map(ref => ref.nativeElement);
     // Angular no refleja el atributo `muted` como propiedad; sin esto el autoplay es bloqueado
     videos.forEach(video => (video.muted = true));
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
+    // Se reproduce aunque el sistema tenga "reducir movimiento": es el contenido principal del hero
+    // (Windows lo activa al apagar los efectos de animación y dejaba los videos congelados)
     this.videoObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         const video = entry.target as HTMLVideoElement;
