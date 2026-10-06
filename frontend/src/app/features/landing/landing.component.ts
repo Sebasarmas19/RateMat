@@ -91,6 +91,27 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       );
 
       // =======================================================================
+      // 2B. MODERACIÓN Y TRANSPARENCIA
+      // =======================================================================
+      gsap.fromTo('.moderation-card',
+        { y: 40, opacity: 0, filter: 'blur(10px)' },
+        {
+          scrollTrigger: {
+            trigger: '.moderation-grid',
+            start: 'top 82%',
+            toggleActions: 'play none none none'
+          },
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.65,
+          stagger: 0.1,
+          ease: 'power3.out',
+          clearProps: 'transform,opacity,filter'
+        }
+      );
+
+      // =======================================================================
       // 3. SECCIÓN DE ALTO CONTRASTE OSCURO (00:04 - 00:06 DEL VIDEO)
       // =======================================================================
       gsap.fromTo('.dark-hub-text',
@@ -239,6 +260,10 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   login(): void {
     this.router.navigate(['/login']);
+  }
+
+  scrollToSection(id: string): void {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   onVideoError(event: Event): void {

@@ -19,6 +19,12 @@
 
     <!-- Navegación & Acciones -->
     <div class="flex items-center space-x-3 sm:space-x-4">
+      <button
+        type="button"
+        (click)="scrollToSection('moderacion')"
+        class="hidden sm:inline-flex text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors px-3 py-2 rounded-xl hover:bg-slate-100">
+        Moderación
+      </button>
       <a 
         routerLink="/search" 
         class="hidden sm:inline-flex text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors px-3 py-2 rounded-xl hover:bg-slate-100">
@@ -225,6 +231,212 @@
               Las notas extremas exigen justificación. Los comentarios tóxicos se ocultan por votos de la comunidad.
             </p>
           </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 3B. MODERACIÓN Y TRANSPARENCIA (D-003, D-008, D-009, D-010, D-011)       -->
+  <!-- Solo describe mecanismos implementados en el backend.                     -->
+  <!-- ========================================================================= -->
+  <section id="moderacion" class="moderation-section py-20 sm:py-24 px-4 sm:px-6 bg-[#fafafa] relative z-10 scroll-mt-6">
+    <div class="max-w-6xl mx-auto space-y-12">
+
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Moderación y transparencia</span>
+        <h2 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          Cómo protegemos a los docentes.
+        </h2>
+        <p class="text-sm sm:text-base text-slate-500 leading-relaxed">
+          Cada reseña pasa por cuatro capas de control, antes y después de publicarse. Así funciona por dentro.
+        </p>
+      </div>
+
+      <!-- Las 4 capas, en el orden en que actúan -->
+      <ol class="moderation-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Capa 1: Filtro automático -->
+        <li class="moderation-card relative p-6 rounded-3xl bg-white border border-slate-200/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+            </div>
+            <span class="text-xs font-black text-slate-300 tabular-nums">01</span>
+          </div>
+          <div class="space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Antes de publicar</span>
+            <h3 class="text-base font-bold text-slate-900">Filtro automático</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <li>Rechaza reseñas con insultos y groserías, incluido el vocabulario local.</li>
+            <li>Rechaza acusaciones de delitos (acoso, soborno, extorsión) y remite al estudiante al Protocolo 2.83 de la UCAB.</li>
+          </ul>
+        </li>
+
+        <!-- Capa 2: Reglas de publicación -->
+        <li class="moderation-card relative p-6 rounded-3xl bg-white border border-slate-200/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <path d="m9 15 2 2 4-4"/>
+              </svg>
+            </div>
+            <span class="text-xs font-black text-slate-300 tabular-nums">02</span>
+          </div>
+          <div class="space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Al publicar</span>
+            <h3 class="text-base font-bold text-slate-900">Reglas de publicación</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <li>Solo cuentas con correo institucional UCAB.</li>
+            <li>Una reseña por estudiante en cada cátedra.</li>
+            <li>Las notas de 1 y 5 estrellas exigen un texto que las justifique.</li>
+            <li>Máximo 10 reseñas al día por cuenta.</li>
+          </ul>
+        </li>
+
+        <!-- Capa 3: Control comunitario -->
+        <li class="moderation-card relative p-6 rounded-3xl bg-white border border-slate-200/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <span class="text-xs font-black text-slate-300 tabular-nums">03</span>
+          </div>
+          <div class="space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Después de publicar</span>
+            <h3 class="text-base font-bold text-slate-900">Control comunitario</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <li>Con un puntaje neto de <strong class="font-semibold text-slate-800">−3</strong>, la reseña se colapsa.</li>
+            <li>Con <strong class="font-semibold text-slate-800">−5</strong>, deja de contar en el promedio del profesor.</li>
+            <li>Con <strong class="font-semibold text-slate-800">3 reportes</strong>, se oculta automáticamente.</li>
+          </ul>
+        </li>
+
+        <!-- Capa 4: Revisión humana -->
+        <li class="moderation-card relative p-6 rounded-3xl bg-white border border-slate-200/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+              <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <span class="text-xs font-black text-slate-300 tabular-nums">04</span>
+          </div>
+          <div class="space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Si hay reportes</span>
+            <h3 class="text-base font-bold text-slate-900">Revisión humana</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <li>Las reseñas ocultas pasan a la cola de los moderadores.</li>
+            <li>El moderador la elimina, o la restaura si el reporte fue infundado.</li>
+            <li>Anónimo no es impune: toda reseña queda vinculada internamente a una cuenta verificada.</li>
+          </ul>
+        </li>
+
+      </ol>
+
+      <!-- Algoritmo del promedio + derechos del docente -->
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+
+        <!-- Promedio ponderado (D-008) -->
+        <div class="moderation-card lg:col-span-3 p-6 sm:p-8 rounded-3xl bg-slate-950 text-white space-y-6 relative overflow-hidden">
+          <div class="absolute inset-0 dark-grid-pattern pointer-events-none opacity-40"></div>
+          <div class="relative space-y-2">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-300">El algoritmo</span>
+            <h3 class="text-lg sm:text-xl font-bold">El promedio no es un promedio simple.</h3>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-lg">
+              Cada reseña tiene un peso. Si la comunidad la rechaza, su peso pasa a cero y sus estrellas dejan de afectar la nota del profesor.
+            </p>
+          </div>
+
+          <div class="relative rounded-2xl bg-white/5 border border-white/10 px-5 py-4 font-mono text-sm sm:text-base text-center text-slate-100 overflow-x-auto whitespace-nowrap">
+            promedio = Σ (estrellas × peso) ÷ Σ peso
+          </div>
+
+          <div class="relative grid grid-cols-2 gap-3 text-xs">
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-4 space-y-1">
+              <span class="font-mono text-emerald-400 font-bold">peso = 1</span>
+              <p class="text-slate-400">Reseña normal.</p>
+            </div>
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-4 space-y-1">
+              <span class="font-mono text-rose-400 font-bold">peso = 0</span>
+              <p class="text-slate-400">Puntaje neto de −5 o menos.</p>
+            </div>
+          </div>
+
+          <div class="relative pt-5 border-t border-white/10 space-y-3">
+            <p class="text-xs text-slate-400">
+              Ejemplo: reseñas de 5, 4 y 5 estrellas, más una de 1 estrella por desquite que la comunidad votó en contra.
+            </p>
+            <div class="flex items-center gap-4">
+              <div>
+                <div class="text-2xl font-black text-slate-500 line-through decoration-2 tabular-nums">3.75</div>
+                <div class="text-[11px] text-slate-500">Promedio simple</div>
+              </div>
+              <svg class="w-4 h-4 text-slate-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+              </svg>
+              <div>
+                <div class="text-2xl font-black text-emerald-400 tabular-nums">4.67</div>
+                <div class="text-[11px] text-slate-400">Promedio RateMat</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Derechos del docente (D-010) -->
+        <div class="moderation-card lg:col-span-2 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/80 flex flex-col gap-6">
+          <div class="space-y-2">
+            <div class="w-11 h-11 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center">
+              <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                <path d="M7 21h10"/><path d="M12 3v18"/>
+                <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+              </svg>
+            </div>
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 pt-2">Derechos del docente</span>
+            <h3 class="text-lg font-bold text-slate-900">Se evalúa la cátedra, no a la persona.</h3>
+          </div>
+
+          <ul class="space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <li class="flex gap-3">
+              <svg class="w-4 h-4 mt-0.5 text-indigo-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Solo se publican el nombre profesional y las cátedras que dicta. Nunca datos personales.</span>
+            </li>
+            <li class="flex gap-3">
+              <svg class="w-4 h-4 mt-0.5 text-indigo-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Exclusión del perfil en un máximo de 48 horas, a solicitud del docente (Habeas Data, Art. 28 CRBV).</span>
+            </li>
+            <li class="flex gap-3">
+              <svg class="w-4 h-4 mt-0.5 text-indigo-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Las denuncias graves no se ventilan aquí: se remiten a los canales formales de la UCAB.</span>
+            </li>
+          </ul>
+
+          <a href="mailto:legal@ratemat.app"
+             class="mt-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold active:scale-90 transition-all duration-150">
+            <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            <span>Contacto para docentes y autoridades</span>
+          </a>
         </div>
 
       </div>
