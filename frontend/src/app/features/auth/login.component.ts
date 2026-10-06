@@ -1,16 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/auth/auth.service';
 
-interface GoogleAccountOption {
+interface DemoAccount {
   name: string;
   email: string;
   avatarInitial: string;
   avatarBg: string;
-  isInstitutional: boolean;
-  statusBadge: string;
+  role: 'student' | 'admin';
 }
 
 @Component({
@@ -20,119 +19,147 @@ interface GoogleAccountOption {
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
-  private authService = inject(AuthService);
+export class LoginComponent implements OnInit {
+  authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-  // Available sample Google accounts detected in the environment
-  accounts: GoogleAccountOption[] = [
+  isAuthenticating = false;
+  authenticatingEmail = '';
+  errorMessage: string | null = null;
+  returnUrl = '/search';
+
+  // Modo desarrollo / Cuentas de prueba rápidas
+  showDevAccounts = false;
+  demoAccounts: DemoAccount[] = [
     {
       name: 'Andrés Villalobos',
       email: 'andres.v@est.ucab.edu.ve',
       avatarInitial: 'A',
-      avatarBg: 'bg-gradient-to-tr from-indigo-600 to-indigo-700 text-white',
-      isInstitutional: true,
-      statusBadge: 'Estudiante UCAB • Autorizado'
+      avatarBg: 'bg-indigo-600 text-white',
+      role: 'admin'
     },
     {
       name: 'Valentina Morales',
       email: 'valentina.m@est.ucab.edu.ve',
       avatarInitial: 'V',
-      avatarBg: 'bg-gradient-to-tr from-purple-600 to-violet-700 text-white',
-      isInstitutional: true,
-      statusBadge: 'Estudiante UCAB • Autorizado'
+      avatarBg: 'bg-purple-600 text-white',
+      role: 'student'
     },
     {
-      name: 'Sebastián Personal',
-      email: 'sebastian.personal@gmail.com',
-      avatarInitial: 'S',
-      avatarBg: 'bg-slate-200 text-slate-700 border border-slate-300',
-      isInstitutional: false,
-      statusBadge: 'Personal • No institucional'
+      name: 'Gabriel Pacheco',
+      email: 'gabriel.p@est.ucab.edu.ve',
+      avatarInitial: 'G',
+      avatarBg: 'bg-emerald-600 text-white',
+      role: 'student'
     }
   ];
 
-  // Custom Account Form State
-  showCustomInput = false;
   customEmail = '';
   customName = '';
 
-  // Processing & Error State
-  isAuthenticating = false;
-  authenticatingEmail = '';
-  errorMessage: string | null = null;
-  errorEmail: string | null = null;
+  constructor() {
+    // Si el usuario ya está autenticado, redirigir inmediatamente
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user) {
+        this.router.navigateByUrl(this.returnUrl);
+      }
 
-  selectAccount(acc: GoogleAccountOption): void {
-    this.errorMessage = null;
-    this.errorEmail = null;
-
-    if (!acc.isInstitutional) {
-      this.errorEmail = acc.email;
-      this.errorMessage = `El correo ${acc.email} no pertenece al dominio oficial de la Universidad Católica Andrés Bello (@est.ucab.edu.ve). Para preservar la veracidad comunitaria y prevenir abusos, solo los estudiantes activos de la UCAB pueden ingresar a RateMat.`;
-      return;
-    }
-
-    this.processLogin(acc.email, acc.name);
+      const authErr = this.authService.authError();
+      if (authErr) {
+        this.errorMessage = authErr;
+        this.isAuthenticating = false;
+      }
+    });
   }
 
-  toggleCustomInput(): void {
-    this.showCustomInput = !this.showCustomInput;
-    this.errorMessage = null;
-    this.errorEmail = null;
-    if (this.showCustomInput) {
-      this.customEmail = '';
-      this.customName = '';
+  ngOnInit(): void {
+    const qUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (qUrl && qUrl !== '/login') {
+      this.returnUrl = qUrl;
+    }
+
+    // Verificar si ya hay error previo
+    if (this.authService.authError()) {
+      this.errorMessage = this.authService.authError();
     }
   }
 
-  appendUcabDomain(): void {
-    if (!this.customEmail.includes('@')) {
-      this.customEmail = this.customEmail.trim() + '@est.ucab.edu.ve';
-    } else {
-      const username = this.customEmail.split('@')[0];
-      this.customEmail = username + '@est.ucab.edu.ve';
+  async signInWithGoogle(): Promise<void> {
+    this.errorMessage = null;
+    this.authService.clearAuthError();
+    this.isAuthenticating = true;
+    this.authenticatingEmail = 'Conectando con Google Workspace UCAB...';
+
+    try {
+      const res = await this.authService.signInWithGoogle();
+      if (res.error) {
+        this.errorMessage = res.error.message || 'No se pudo iniciar la autenticación con Google.';
+        this.isAuthenticating = false;
+      }
+      // Si todo va bien, Supabase redirige el navegador a Google OAuth
+    } catch (err: any) {
+      this.errorMessage = err?.message || 'Error de conexión con el proveedor de autenticación.';
+      this.isAuthenticating = false;
     }
+  }
+
+  selectDemoAccount(acc: DemoAccount): void {
+    this.errorMessage = null;
+    this.authService.clearAuthError();
+    this.isAuthenticating = true;
+    this.authenticatingEmail = acc.email;
+
+    setTimeout(() => {
+      const res = this.authService.loginWithEmail(acc.email, acc.name);
+      this.isAuthenticating = false;
+      if (res.success) {
+        this.router.navigateByUrl(this.returnUrl);
+      } else {
+        this.errorMessage = res.error || 'Error al autenticar cuenta demo.';
+      }
+    }, 400);
   }
 
   submitCustomEmail(): void {
     this.errorMessage = null;
-    this.errorEmail = null;
-
-    const email = this.customEmail.trim();
+    const email = this.customEmail.trim().toLowerCase();
     if (!email) {
-      this.errorMessage = 'Por favor ingresa un correo electrónico.';
+      this.errorMessage = 'Ingresa un correo institucional.';
       return;
     }
 
     if (!this.authService.isInstitutionalEmail(email)) {
-      this.errorEmail = email;
-      this.errorMessage = `El correo "${email}" no posee la extensión institucional autorizada (@est.ucab.edu.ve o @ucab.edu.ve). Ingresa tu cuenta universitaria para continuar.`;
+      this.errorMessage = `El correo "${email}" no posee el dominio institucional oficial (@est.ucab.edu.ve o @ucab.edu.ve).`;
       return;
     }
 
-    this.processLogin(email, this.customName.trim() || undefined);
-  }
-
-  private processLogin(email: string, name?: string): void {
     this.isAuthenticating = true;
     this.authenticatingEmail = email;
 
-    // Simulate realistic Google OAuth verification latency
     setTimeout(() => {
-      const res = this.authService.loginWithEmail(email, name);
+      const res = this.authService.loginWithEmail(email, this.customName.trim() || undefined);
       this.isAuthenticating = false;
-
       if (res.success) {
-        this.router.navigate(['/search']);
+        this.router.navigateByUrl(this.returnUrl);
       } else {
-        this.errorMessage = res.error || 'Ocurrió un error inesperado al autenticar.';
+        this.errorMessage = res.error || 'Error al autenticar correo institucional.';
       }
-    }, 850);
+    }, 400);
+  }
+
+  appendUcabDomain(): void {
+    const val = this.customEmail.trim();
+    if (!val.includes('@')) {
+      this.customEmail = val + '@est.ucab.edu.ve';
+    } else {
+      this.customEmail = val.split('@')[0] + '@est.ucab.edu.ve';
+    }
   }
 
   clearError(): void {
     this.errorMessage = null;
-    this.errorEmail = null;
+    this.authService.clearAuthError();
   }
 }

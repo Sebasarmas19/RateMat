@@ -6,20 +6,22 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.currentUser() || authService.hasActiveSession()) {
+  if (authService.hasActiveSession()) {
     return true;
   }
 
-  // Redirigir a landing si no está autenticado
-  return router.parseUrl('/');
+  // Redirigir a /login si no está autenticado, preservando la URL de destino solicitada
+  return router.createUrlTree(['/login'], {
+    queryParams: { returnUrl: state.url }
+  });
 };
 
 export const landingGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Si el usuario ya inició sesión previamente o tiene sesión activa, va directo al buscador
-  if (authService.hasActiveSession()) {
+  // Si ya tiene sesión activa y navega explícitamente a /login, redirigirlo a /search
+  if (route.routeConfig?.path === 'login' && authService.hasActiveSession()) {
     return router.parseUrl('/search');
   }
 

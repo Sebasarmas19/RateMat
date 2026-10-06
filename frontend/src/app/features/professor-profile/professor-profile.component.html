@@ -1,5 +1,33 @@
 <div class="space-y-6 pb-20 md:pb-8">
 
+  <!-- Guest Explorer Mode Notice Banner -->
+  <div *ngIf="!isAuthenticated" class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-indigo-50/90 via-blue-50/80 to-indigo-50/90 border border-indigo-150 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="flex items-start sm:items-center space-x-3">
+      <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-xs font-bold text-slate-900 leading-snug">
+          Estás visualizando este perfil docente en modo explorador
+        </p>
+        <p class="text-[11px] text-slate-600 leading-tight mt-0.5">
+          Para calificar al docente, emitir tu reseña o votar por la utilidad de las opiniones, debes ingresar con tu cuenta UCAB.
+        </p>
+      </div>
+    </div>
+    <a routerLink="/login" [queryParams]="{ returnUrl: '/professor/' + (professorId || '') }"
+       class="inline-flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs active:scale-95 transition-all whitespace-nowrap flex-shrink-0">
+      <span>Ingresar con Google</span>
+      <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </a>
+  </div>
+
   <!-- Skeletons during Loading -->
   <div *ngIf="isLoadingProfile" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/70 p-6 sm:p-8 shadow-sm animate-pulse space-y-4">

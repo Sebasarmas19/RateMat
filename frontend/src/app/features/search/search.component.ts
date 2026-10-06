@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { ApiService, Career, SubjectItem, ProfessorSummary } from '../../core/services/api.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { gsap } from 'gsap';
 
@@ -17,9 +18,14 @@ export type ProfessorSort = 'rating_desc' | 'newest' | 'oldest' | 'reviews_desc'
 })
 export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private apiService = inject(ApiService);
+  authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+
+  get isAuthenticated(): boolean {
+    return this.authService.hasActiveSession();
+  }
 
   @ViewChild('searchInput') searchInput!: ElementRef;
 
@@ -408,6 +414,10 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   // --- Brecha 1: Suggest Professor Modal Methods (D-004 & D-011) ---
 
   openSuggestProfModal(prefilledSubject?: string, prefilledName?: string) {
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/search' } });
+      return;
+    }
     this.setBodyScrollLocked(true);
     this.suggestSuccessMessage = '';
     this.suggestProfForm.reset({
@@ -447,6 +457,10 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   quickRateProfessor(profId: string, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: `/professor/${profId}?rate=true` } });
+      return;
+    }
     this.router.navigate(['/professor', profId], { queryParams: { rate: 'true' } });
   }
 }

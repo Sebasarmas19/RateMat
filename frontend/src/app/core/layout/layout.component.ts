@@ -37,20 +37,26 @@ import { AuthService } from '../auth/auth.service';
           </a>
 
           <a routerLink="/home" routerLinkActive="bg-indigo-600 !text-white hover:!text-white font-bold shadow-md shadow-indigo-600/30" [routerLinkActiveOptions]="{exact: true}"
-             class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-[0.98] transition-[transform,background-color,color] duration-150 ease-out">
-            <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            <span>Reseñas</span>
+             class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-[0.98] transition-[transform,background-color,color] duration-150 ease-out">
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>Reseñas</span>
+            </div>
+            <span *ngIf="!isAuthenticated" class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">UCAB</span>
           </a>
 
           <a routerLink="/profile" routerLinkActive="bg-indigo-600 !text-white hover:!text-white font-bold shadow-md shadow-indigo-600/30" [routerLinkActiveOptions]="{exact: true}"
-             class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-[0.98] transition-[transform,background-color,color] duration-150 ease-out">
-            <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-            <span>Mi Reputación</span>
+             class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-[0.98] transition-[transform,background-color,color] duration-150 ease-out">
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <span>Mi Reputación</span>
+            </div>
+            <span *ngIf="!isAuthenticated" class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">UCAB</span>
           </a>
 
           <!-- D-011: Admin Direct Link (Solo visible para rol admin) -->
@@ -66,8 +72,8 @@ import { AuthService } from '../auth/auth.service';
           </a>
         </nav>
 
-        <!-- User Identity Card & Sign Out Button -->
-        <div class="p-3.5 m-3 bg-slate-50 border border-slate-200/90 rounded-2xl space-y-3 shadow-2xs">
+        <!-- User Identity Card (Authenticated) OR Guest CTA (Unauthenticated) -->
+        <div *ngIf="isAuthenticated" class="p-3.5 m-3 bg-slate-50 border border-slate-200/90 rounded-2xl space-y-3 shadow-2xs">
           <div class="flex items-center space-x-3 min-w-0">
             <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-sm flex-shrink-0 shadow-md shadow-indigo-600/30">
               {{ userInitial }}
@@ -88,6 +94,24 @@ import { AuthService } from '../auth/auth.service';
             <span>Cerrar sesión</span>
           </button>
         </div>
+
+        <div *ngIf="!isAuthenticated" class="p-3.5 m-3 bg-indigo-50/80 border border-indigo-150 rounded-2xl space-y-2.5 shadow-2xs text-left">
+          <div class="flex items-center space-x-2">
+            <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <span class="text-xs font-extrabold text-slate-900">Modo Invitado</span>
+          </div>
+          <p class="text-[11px] text-slate-600 leading-snug">
+            Inicia sesión para desbloquear las opiniones completas y calificar cátedras.
+          </p>
+          <a routerLink="/login"
+             class="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-xs transition-all cursor-pointer">
+            <span>Ingresar con Google</span>
+          </a>
+        </div>
       </aside>
 
       <!-- Main Content Area -->
@@ -103,11 +127,18 @@ import { AuthService } from '../auth/auth.service';
             </div>
           </a>
 
-          <a routerLink="/profile" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold shadow-2xs active:scale-90 transition-all duration-150">
+          <a *ngIf="isAuthenticated" routerLink="/profile" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold shadow-2xs active:scale-90 transition-all duration-150">
             <div class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-[10px]">
               {{ userInitial }}
             </div>
             <span class="text-[11px] font-bold truncate max-w-[90px] text-slate-700">{{ userName.split(' ')[0] }}</span>
+          </a>
+
+          <a *ngIf="!isAuthenticated" routerLink="/login" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs active:scale-90 transition-all duration-150">
+            <span>Ingresar</span>
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
           </a>
         </header>
 
@@ -304,6 +335,10 @@ export class LayoutComponent {
   private router = inject(Router);
 
   showTakedownModal = false;
+
+  get isAuthenticated(): boolean {
+    return this.authService.hasActiveSession();
+  }
 
   get currentUser() {
     return this.authService.currentUser();

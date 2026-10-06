@@ -23,7 +23,7 @@ export const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: [
-      { path: 'home', component: HomeComponent },
+      { path: 'home', component: HomeComponent, canActivate: [authGuard] },
       { path: 'search', component: SearchComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
       { path: 'admin', component: AdminComponent, canActivate: [authGuard, adminGuard] },

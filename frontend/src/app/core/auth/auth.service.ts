@@ -16,6 +16,8 @@ export class AuthService {
   currentUserRole = signal<'admin' | 'student'>('student');
   session = signal<Session | null>(null);
   showLogoutModal = signal<boolean>(false);
+  isInitializing = signal<boolean>(true);
+  authError = signal<string | null>(null);
 
   isAdmin(): boolean {
     return this.currentUserRole() === 'admin';
@@ -29,6 +31,10 @@ export class AuthService {
     this.showLogoutModal.set(false);
   }
 
+  clearAuthError(): void {
+    this.authError.set(null);
+  }
+
   constructor() {
     const isConfigured = environment.supabaseUrl && 
       environment.supabaseUrl.startsWith('http') && 
@@ -36,29 +42,44 @@ export class AuthService {
 
     if (isConfigured) {
       try {
-        this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+        this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        });
         this.initSession();
       } catch (e) {
         console.warn('No se pudo inicializar Supabase:', e);
+        this.restoreDemoSessionIfAny();
+        this.isInitializing.set(false);
       }
     } else {
-      if (typeof window !== 'undefined' && localStorage.getItem('ratemat_demo_auth') === 'true') {
-        const storedUser = localStorage.getItem('rateMat_demoUser');
-        let parsed: any = null;
-        try {
-          parsed = storedUser ? JSON.parse(storedUser) : null;
-        } catch {
-          parsed = null;
-        }
+      this.restoreDemoSessionIfAny();
+      this.isInitializing.set(false);
+    }
+  }
 
-        const email = parsed?.email || 'andres.v@est.ucab.edu.ve';
-        const role = parsed?.role === 'admin' || this.resolveDemoRole(email) === 'admin' ? 'admin' : 'student';
+  private restoreDemoSessionIfAny() {
+    if (typeof window !== 'undefined' && localStorage.getItem('ratemat_demo_auth') === 'true') {
+      const storedUser = localStorage.getItem('rateMat_demoUser');
+      let parsed: any = null;
+      try {
+        parsed = storedUser ? JSON.parse(storedUser) : null;
+      } catch {
+        parsed = null;
+      }
+
+      if (parsed) {
+        const email = parsed.email || 'andres.v@est.ucab.edu.ve';
+        const role = parsed.role === 'admin' || this.resolveDemoRole(email) === 'admin' ? 'admin' : 'student';
         this.currentUserRole.set(role);
 
         const mockUser: any = {
-          id: parsed?.id || '11111111-0000-4000-8000-000000000001',
+          id: parsed.id || '11111111-0000-4000-8000-000000000001',
           email,
-          user_metadata: { full_name: parsed?.name || 'Andrés Villalobos' }
+          user_metadata: { full_name: parsed.name || 'Andrés Villalobos' }
         };
         const mockSession: any = {
           access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDEiLCJlbWFpbCI6ImFuZHJlcy52QGVzdC51Y2FiLmVkdS52ZSIsImlhdCI6MTc5MDUzMDg3OX0.bN3PzOwOyTQJsO6fC5OnuDbkow-VnVW2ZhSXEEl8Ssc',
@@ -73,45 +94,83 @@ export class AuthService {
   hasActiveSession(): boolean {
     if (this.currentUser()) return true;
     if (typeof window !== 'undefined') {
-      if (localStorage.getItem('ratemat_demo_auth') === 'true') return true;
-      if (localStorage.getItem('ratemat_has_session') === 'true') return true;
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && (key.startsWith('sb-') && key.endsWith('-auth-token'))) {
-          return true;
-        }
+      if (localStorage.getItem('ratemat_demo_auth') === 'true') {
+        return !!localStorage.getItem('rateMat_demoUser');
       }
     }
     return false;
   }
 
-  private async initSession() {
-    if (!this.supabase) return;
-    try {
-      const { data: { session } } = await this.supabase.auth.getSession();
-      this.session.set(session);
-      this.currentUser.set(session?.user ?? null);
+  private async handleAuthSession(session: Session | null): Promise<boolean> {
+    if (!session || !session.user) {
+      this.session.set(null);
+      this.currentUser.set(null);
       if (typeof window !== 'undefined') {
-        if (session) {
-          localStorage.setItem('ratemat_has_session', 'true');
-        } else {
-          localStorage.removeItem('ratemat_has_session');
-        }
+        localStorage.removeItem('ratemat_has_session');
+      }
+      return false;
+    }
+
+    const email = (session.user.email || '').toLowerCase().trim();
+
+    // Verificación de blindaje de dominios institucionales autorizados (D-007 y D-009)
+    if (!this.isInstitutionalEmail(email)) {
+      console.warn(`[RateMat Security] Rechazado inicio de sesión de dominio no UCAB: ${email}`);
+      if (this.supabase) {
+        await this.supabase.auth.signOut();
+      }
+      this.session.set(null);
+      this.currentUser.set(null);
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('ratemat_has_session');
+        localStorage.removeItem('ratemat_demo_auth');
+      }
+      this.authError.set(
+        `El correo de Google "${email}" no pertenece al dominio oficial de la Universidad Católica Andrés Bello (@est.ucab.edu.ve o @ucab.edu.ve). Para preservar la veracidad comunitaria y proteger las reseñas, debes ingresar con tu cuenta institucional de la UCAB.`
+      );
+      return false;
+    }
+
+    // Aprobado institucionalmente
+    this.authError.set(null);
+    this.session.set(session);
+    this.currentUser.set(session.user);
+    const role = this.resolveDemoRole(email);
+    this.currentUserRole.set(role);
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ratemat_has_session', 'true');
+      localStorage.removeItem('ratemat_demo_auth');
+    }
+    return true;
+  }
+
+  private async initSession() {
+    if (!this.supabase) {
+      this.isInitializing.set(false);
+      return;
+    }
+
+    try {
+      const { data: { session }, error } = await this.supabase.auth.getSession();
+      if (error) {
+        console.warn('Error al verificar sesión en Supabase:', error);
       }
 
-      this.supabase.auth.onAuthStateChange((_event, session) => {
-        this.session.set(session);
-        this.currentUser.set(session?.user ?? null);
-        if (typeof window !== 'undefined') {
-          if (session) {
-            localStorage.setItem('ratemat_has_session', 'true');
-          } else {
-            localStorage.removeItem('ratemat_has_session');
-          }
-        }
+      if (session) {
+        await this.handleAuthSession(session);
+      } else {
+        this.restoreDemoSessionIfAny();
+      }
+
+      this.supabase.auth.onAuthStateChange(async (_event, newSession) => {
+        await this.handleAuthSession(newSession);
       });
     } catch (err) {
-      console.error('Error al obtener sesión de Supabase:', err);
+      console.error('Error al inicializar sesión de Supabase:', err);
+      this.restoreDemoSessionIfAny();
+    } finally {
+      this.isInitializing.set(false);
     }
   }
 
@@ -171,23 +230,38 @@ export class AuthService {
     this.currentUserRole.set(assignedRole);
     this.session.set(mockSession);
     this.currentUser.set(mockUser);
+    this.authError.set(null);
 
     return { success: true };
   }
 
-  async signInWithGoogle() {
+  async signInWithGoogle(): Promise<{ error?: any; url?: string }> {
     if (!this.supabase) {
       return this.loginWithEmail('andres.v@est.ucab.edu.ve', 'Andrés Villalobos');
     }
 
+    this.authError.set(null);
+
+    const redirectUrl = typeof window !== 'undefined'
+      ? `${window.location.origin}/login`
+      : 'http://localhost:4200/login';
+
     const { data, error } = await this.supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin
+        redirectTo: redirectUrl,
+        queryParams: {
+          prompt: 'select_account'
+        }
       }
     });
-    if (error) throw error;
-    return data;
+
+    if (error) {
+      this.authError.set(error.message);
+      return { error };
+    }
+
+    return { url: data.url };
   }
 
   async signOut() {
@@ -195,7 +269,7 @@ export class AuthService {
       try {
         await this.supabase.auth.signOut();
       } catch (err) {
-        console.warn('Error signing out of Supabase:', err);
+        console.warn('Error al cerrar sesión de Supabase:', err);
       }
     }
     if (typeof window !== 'undefined') {
@@ -207,6 +281,8 @@ export class AuthService {
     this.currentUserRole.set('student');
     this.session.set(null);
     this.currentUser.set(null);
+    this.authError.set(null);
+    this.closeLogoutModal();
   }
 
   get token(): string | undefined {

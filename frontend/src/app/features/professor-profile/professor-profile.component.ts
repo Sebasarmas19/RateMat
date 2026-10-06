@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProfessorProfileService, ProfessorProfile, ReviewItem } from './services/professor-profile.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { MorphIconComponent } from '../../shared/components/morph-icon/morph-icon.component';
 import { Eye, EyeOff, ThumbsUp, ThumbsDown, Check, Flag, Shield, AlertCircle } from 'lucide';
 import gsap from 'gsap';
@@ -10,14 +11,20 @@ import gsap from 'gsap';
 @Component({
   selector: 'app-professor-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, MorphIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, MorphIconComponent, RouterLink],
   templateUrl: './professor-profile.component.html',
   styleUrls: ['./professor-profile.component.css']
 })
 export class ProfessorProfileComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  authService = inject(AuthService);
   private profileService = inject(ProfessorProfileService);
   private fb = inject(FormBuilder);
+
+  get isAuthenticated(): boolean {
+    return this.authService.hasActiveSession();
+  }
 
   showStickyFloatingPill = false;
 
@@ -154,6 +161,10 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
   private checkAutoRate(): void {
     if (this.pendingAutoRate && this.profile && !this.isLoadingProfile) {
       this.pendingAutoRate = false;
+      if (!this.isAuthenticated) {
+        this.router.navigate(['/login'], { queryParams: { returnUrl: `/professor/${this.professorId}?rate=true` } });
+        return;
+      }
       setTimeout(() => {
         this.openReviewModal();
       }, 100);
@@ -233,6 +244,10 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
   // --- Brecha 1.B: Sugerir Nueva Materia / Cátedra (D-004 & D-011) ---
 
   openSuggestSubjectModal(): void {
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: `/professor/${this.professorId}` } });
+      return;
+    }
     this.setBodyScrollLocked(true);
     this.suggestSubjectSuccessMessage = '';
     this.suggestSubjectForm.reset({
@@ -299,6 +314,10 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
   // --- D-003 & D-010 Review Creation & Edit Flow (Brecha 4) ---
 
   openReviewModal(defaultSubject?: string): void {
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: `/professor/${this.professorId}?rate=true` } });
+      return;
+    }
     this.setBodyScrollLocked(true);
     this.showReviewModal = true;
     this.reviewSubmitError = null;
@@ -497,6 +516,11 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
   }
 
   voteReview(review: ReviewItem, voteType: 'up' | 'down', event?: MouseEvent): void {
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: `/professor/${this.professorId}` } });
+      return;
+    }
+
     if (event?.currentTarget) {
       const btn = event.currentTarget as HTMLElement;
       gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.18, ease: 'back.out(1.6)' });
@@ -527,6 +551,11 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
 
   // Point 4: Report with Undo & Modal (D-010)
   onReportClick(review: ReviewItem): void {
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: `/professor/${this.professorId}` } });
+      return;
+    }
+
     if (review.reported) {
       if (window.confirm('¿Deseas retirar tu denuncia sobre esta reseña?')) {
         review.reported = false;
