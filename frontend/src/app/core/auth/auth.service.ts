@@ -2,6 +2,9 @@ import { Injectable, signal } from '@angular/core';
 import { createClient, SupabaseClient, User, Session } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
 
+// Cuentas demo con rol admin (modo sin Supabase), para mostrar el módulo de moderación
+const DEMO_ADMIN_EMAILS = ['andres.v@est.ucab.edu.ve'];
+
 @Injectable({
   providedIn: 'root'
 })
@@ -48,12 +51,13 @@ export class AuthService {
           parsed = null;
         }
 
-        const role = parsed?.role === 'admin' ? 'admin' : 'student';
+        const email = parsed?.email || 'andres.v@est.ucab.edu.ve';
+        const role = parsed?.role === 'admin' || this.resolveDemoRole(email) === 'admin' ? 'admin' : 'student';
         this.currentUserRole.set(role);
 
         const mockUser: any = {
           id: parsed?.id || '11111111-0000-4000-8000-000000000001',
-          email: parsed?.email || 'andres.v@est.ucab.edu.ve',
+          email,
           user_metadata: { full_name: parsed?.name || 'Andrés Villalobos' }
         };
         const mockSession: any = {
@@ -111,6 +115,12 @@ export class AuthService {
     }
   }
 
+  private resolveDemoRole(email: string): 'admin' | 'student' {
+    const lower = email.trim().toLowerCase();
+    const isAdmin = DEMO_ADMIN_EMAILS.includes(lower) || lower.startsWith('admin.') || lower.includes('admin@');
+    return isAdmin ? 'admin' : 'student';
+  }
+
   isInstitutionalEmail(email: string): boolean {
     if (!email) return false;
     const lower = email.trim().toLowerCase();
@@ -144,7 +154,7 @@ export class AuthService {
       user: mockUser
     };
 
-    const assignedRole = (trimmed.startsWith('admin.') || trimmed.includes('admin@')) ? 'admin' : 'student';
+    const assignedRole = this.resolveDemoRole(trimmed);
 
     if (typeof window !== 'undefined') {
       localStorage.setItem('ratemat_demo_auth', 'true');
