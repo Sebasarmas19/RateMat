@@ -70,28 +70,34 @@ async function runSeed() {
     // 3. Insert Subjects
     console.log('📚 Seeding UCAB academic subjects...');
     const subjects = [
-      { id: makeUuid('22222222', 1), code: 'MAT-101', name: 'Cálculo I', credits: 5 },
-      { id: makeUuid('22222222', 2), code: 'INF-201', name: 'Algoritmos y Estructuras de Datos', credits: 4 },
-      { id: makeUuid('22222222', 3), code: 'INF-202', name: 'Programación Orientada a Objetos', credits: 4 },
-      { id: makeUuid('22222222', 4), code: 'INF-301', name: 'Bases de Datos I', credits: 4 },
-      { id: makeUuid('22222222', 5), code: 'INF-401', name: 'Redes de Computadores', credits: 4 },
-      { id: makeUuid('22222222', 6), code: 'DER-104', name: 'Derecho Constitucional', credits: 4 },
-      { id: makeUuid('22222222', 7), code: 'DER-101', name: 'Derecho Romano', credits: 3 },
-      { id: makeUuid('22222222', 8), code: 'DER-102', name: 'Derecho Civil I (Personas)', credits: 4 },
-      { id: makeUuid('22222222', 9), code: 'DER-201', name: 'Derecho Penal I', credits: 4 },
-      { id: makeUuid('22222222', 10), code: 'ECO-202', name: 'Macroeconomía I', credits: 4 },
-      { id: makeUuid('22222222', 11), code: 'ADM-101', name: 'Principios de Administración', credits: 3 },
-      { id: makeUuid('22222222', 12), code: 'ADM-301', name: 'Finanzas Corporativas', credits: 4 },
-      { id: makeUuid('22222222', 13), code: 'COM-101', name: 'Teoría de la Comunicación', credits: 3 },
-      { id: makeUuid('22222222', 14), code: 'COM-201', name: 'Redacción Periodística', credits: 4 },
-      { id: makeUuid('22222222', 15), code: 'COM-301', name: 'Producción Audiovisual', credits: 4 },
-      { id: makeUuid('22222222', 16), code: 'FIS-101', name: 'Física I (Mecánica)', credits: 4 },
-      { id: makeUuid('22222222', 17), code: 'IND-301', name: 'Control de Calidad', credits: 4 },
-      { id: makeUuid('22222222', 18), code: 'CON-101', name: 'Contabilidad Financiera I', credits: 4 },
-      { id: makeUuid('22222222', 19), code: 'CON-401', name: 'Auditoría Financiera', credits: 4 },
-      { id: makeUuid('22222222', 20), code: 'PSI-101', name: 'Psicología General', credits: 3 },
-      { id: makeUuid('22222222', 21), code: 'PSI-201', name: 'Psicología del Desarrollo', credits: 4 },
-      { id: makeUuid('22222222', 22), code: 'CIV-202', name: 'Resistencia de Materiales', credits: 4 },
+      { id: makeUuid('22222222', 1), code: 'FING-02002', name: 'Álgebra y Trigonometría', credits: 5 },
+      { id: makeUuid('22222222', 2), code: 'INFO-02002', name: 'Algoritmos y Estructuras de Datos', credits: 7 },
+      { id: makeUuid('22222222', 3), code: 'INFO-02003', name: 'Programación Orientada a Objetos', credits: 5 },
+      { id: makeUuid('22222222', 4), code: 'INFO-02104', name: 'Sistemas de Bases de Datos', credits: 5 },
+      { id: makeUuid('22222222', 5), code: 'INFO-02016', name: 'Redes de Comunicación de Datos', credits: 6 },
+      { id: makeUuid('22222222', 6), code: 'DERE-02003', name: 'Teoría General del Derecho Constitucional', credits: 4 },
+      { id: makeUuid('22222222', 7), code: 'DERE-02001', name: 'Derecho Civil Personas', credits: 6 },
+      { id: makeUuid('22222222', 8), code: 'DERE-00136', name: 'Derecho Constitucional Venezolano I', credits: 4 },
+      { id: makeUuid('22222222', 9), code: 'DERE-00134', name: 'Fundamentos del Derecho Penal y de la Pena', credits: 5 },
+      { id: makeUuid('22222222', 10), code: 'FACE-00019', name: 'Matemáticas I', credits: 8 },
+      { id: makeUuid('22222222', 11), code: 'ADCO-00350', name: 'Principios de Marketing', credits: 5 },
+      { id: makeUuid('22222222', 12), code: 'ADCO-00448', name: 'Finanzas Corporativas', credits: 5 },
+      { id: makeUuid('22222222', 13), code: 'COMU-00451', name: 'Comunicación 360', credits: 4 },
+      { id: makeUuid('22222222', 14), code: 'COMU-00452', name: 'Comunicación Periodística', credits: 4 },
+      { id: makeUuid('22222222', 15), code: 'COMU-00450', name: 'Comunicación Audiovisual', credits: 4 },
+      { id: makeUuid('22222222', 16), code: 'FING-02005', name: 'Física Mecánica', credits: 5 },
+      { id: makeUuid('22222222', 17), code: 'INDU-02032', name: 'Calidad y Mejora Continua', credits: 4 },
+      { id: makeUuid('22222222', 18), code: 'FACE-00024', name: 'Contabilidad Financiera', credits: 5 },
+      { id: makeUuid('22222222', 19), code: 'ADCO-02013', name: 'Tributos Nacionales y Municipales', credits: 4 },
+      { id: makeUuid('22222222', 20), code: 'PSIC-00065', name: 'Introducción al Estudio de la Psicología', credits: 5 },
+      { id: makeUuid('22222222', 21), code: 'PSIC-02026', name: 'Estadística Descriptiva', credits: 8 },
+      { id: makeUuid('22222222', 22), code: 'CIVI-02001', name: 'Introducción a la Ingeniería Civil', credits: 3 },
+      { id: makeUuid('22222222', 23), code: 'INFO-02102', name: 'Ciberseguridad Ofensiva', credits: 5 },
+      { id: makeUuid('22222222', 24), code: 'INFO-02020', name: 'Inteligencia Artificial: Aprendizaje Automático', credits: 4 },
+      { id: makeUuid('22222222', 25), code: 'INFO-02028', name: 'Computación en la Nube', credits: 5 },
+      { id: makeUuid('22222222', 26), code: 'INFO-0T004', name: 'Diseño de Experiencia de Usuario', credits: 4 },
+      { id: makeUuid('22222222', 27), code: 'INFO-02025', name: 'Desarrollo de Software', credits: 5 },
+      { id: makeUuid('22222222', 28), code: 'INFO-IILTG', name: 'Trabajo de Grado (TG)', credits: 12 },
     ];
 
     for (const s of subjects) {
@@ -177,6 +183,12 @@ async function runSeed() {
       [20, 20, 35],// Patricia Alarcón -> Psicología General
       [21, 22, 36],// Fernando Carballo -> Resistencia de Materiales
       [21, 1, 37], // Fernando Carballo -> Cálculo I
+      [8, 23, 38], // Andrés Solís -> Ciberseguridad Ofensiva
+      [6, 24, 39], // Luis Rodríguez -> Inteligencia Artificial
+      [8, 25, 40], // Andrés Solís -> Computación en la Nube
+      [7, 26, 41], // Mariana Gómez -> UX/UI
+      [2, 27, 42], // Aaron Zarraga -> Desarrollo de Software
+      [7, 28, 43], // Mariana Gómez -> Trabajo de Grado
     ];
 
     for (const [profIdx, subjIdx, mapIdx] of mappings) {

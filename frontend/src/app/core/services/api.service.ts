@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable, of, catchError, delay, map } from 'rxjs';
+import { CAREERS_CATALOG } from '../data/careers-catalog.data';
 
 export interface ProfessorSummary {
   id: string;
@@ -362,437 +363,8 @@ export class ApiService {
     }
   };
 
-  // Master catalog of Careers, Subjects, and their Professors
-  private careersCatalog: Career[] = [
-    {
-      id: 'carrera-informatica',
-      name: 'Ingeniería Informática',
-      shortName: 'Informática',
-      faculty: 'Facultad de Ingeniería',
-      facultyCategory: 'ingenieria',
-      gradient: 'from-indigo-600 via-indigo-700 to-violet-800',
-      badgeBg: 'bg-indigo-400/20 text-indigo-100',
-      textColor: 'text-indigo-100',
-      previewBadge: 'Algoritmos • Software',
-      icon: 'code',
-      description: 'Arquitectura de software, redes, bases de datos, algoritmos e inteligencia artificial.',
-      subjectsCount: 5,
-      subjects: [
-        {
-          id: 'sub-1',
-          name: 'Cálculo I',
-          code: 'MAT-101',
-          faculty: 'Facultad de Ingeniería',
-          semester: '1er Semestre',
-          credits: 5,
-          careerId: 'carrera-informatica',
-          careerName: 'Ingeniería Informática',
-          professorCount: 3,
-          professors: []
-        },
-        {
-          id: 'sub-2',
-          name: 'Algoritmos y Estructuras de Datos',
-          code: 'INF-201',
-          faculty: 'Facultad de Ingeniería',
-          semester: '3er Semestre',
-          credits: 4,
-          careerId: 'carrera-informatica',
-          careerName: 'Ingeniería Informática',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-7',
-          name: 'Programación Orientada a Objetos',
-          code: 'INF-202',
-          faculty: 'Facultad de Ingeniería',
-          semester: '2do Semestre',
-          credits: 4,
-          careerId: 'carrera-informatica',
-          careerName: 'Ingeniería Informática',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-8',
-          name: 'Bases de Datos I',
-          code: 'INF-301',
-          faculty: 'Facultad de Ingeniería',
-          semester: '4to Semestre',
-          credits: 4,
-          careerId: 'carrera-informatica',
-          careerName: 'Ingeniería Informática',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-9',
-          name: 'Redes de Computadores',
-          code: 'INF-401',
-          faculty: 'Facultad de Ingeniería',
-          semester: '5to Semestre',
-          credits: 4,
-          careerId: 'carrera-informatica',
-          careerName: 'Ingeniería Informática',
-          professorCount: 2,
-          professors: []
-        }
-      ]
-    },
-    {
-      id: 'carrera-derecho',
-      name: 'Derecho',
-      shortName: 'Derecho',
-      faculty: 'Facultad de Derecho',
-      facultyCategory: 'derecho',
-      gradient: 'from-amber-600 via-amber-700 to-yellow-800',
-      badgeBg: 'bg-amber-400/20 text-amber-100',
-      textColor: 'text-amber-100',
-      previewBadge: 'Constitucional • Penal',
-      icon: 'judge',
-      description: 'Leyes, justicia, derecho constitucional, civil, penal, laboral y corporativo.',
-      subjectsCount: 4,
-      subjects: [
-        {
-          id: 'sub-3',
-          name: 'Derecho Constitucional',
-          code: 'DER-104',
-          faculty: 'Facultad de Derecho',
-          semester: '2do Semestre',
-          credits: 4,
-          careerId: 'carrera-derecho',
-          careerName: 'Derecho',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-10',
-          name: 'Derecho Romano',
-          code: 'DER-101',
-          faculty: 'Facultad de Derecho',
-          semester: '1er Semestre',
-          credits: 3,
-          careerId: 'carrera-derecho',
-          careerName: 'Derecho',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-11',
-          name: 'Derecho Civil I (Personas)',
-          code: 'DER-102',
-          faculty: 'Facultad de Derecho',
-          semester: '1er Semestre',
-          credits: 4,
-          careerId: 'carrera-derecho',
-          careerName: 'Derecho',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-12',
-          name: 'Derecho Penal I',
-          code: 'DER-201',
-          faculty: 'Facultad de Derecho',
-          semester: '3er Semestre',
-          credits: 4,
-          careerId: 'carrera-derecho',
-          careerName: 'Derecho',
-          professorCount: 1,
-          professors: []
-        }
-      ]
-    },
-    {
-      id: 'carrera-administracion',
-      name: 'Administración de Empresas',
-      shortName: 'Administración',
-      faculty: 'FACES',
-      facultyCategory: 'faces',
-      gradient: 'from-emerald-600 via-emerald-700 to-teal-800',
-      badgeBg: 'bg-emerald-400/20 text-emerald-100',
-      textColor: 'text-emerald-100',
-      previewBadge: 'Finanzas • Mercadeo',
-      icon: 'briefcase',
-      description: 'Gestión estratégica, finanzas corporativas, mercadeo, modelos de negocio y liderazgo.',
-      subjectsCount: 3,
-      subjects: [
-        {
-          id: 'sub-4',
-          name: 'Macroeconomía I',
-          code: 'ECO-202',
-          faculty: 'FACES',
-          semester: '3er Semestre',
-          credits: 4,
-          careerId: 'carrera-administracion',
-          careerName: 'Administración de Empresas',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-13',
-          name: 'Principios de Administración',
-          code: 'ADM-101',
-          faculty: 'FACES',
-          semester: '1er Semestre',
-          credits: 3,
-          careerId: 'carrera-administracion',
-          careerName: 'Administración de Empresas',
-          professorCount: 1,
-          professors: []
-        },
-        {
-          id: 'sub-14',
-          name: 'Finanzas Corporativas',
-          code: 'ADM-301',
-          faculty: 'FACES',
-          semester: '5to Semestre',
-          credits: 4,
-          careerId: 'carrera-administracion',
-          careerName: 'Administración de Empresas',
-          professorCount: 2,
-          professors: []
-        }
-      ]
-    },
-    {
-      id: 'carrera-comunicacion',
-      name: 'Comunicación Social',
-      shortName: 'Comunicación',
-      faculty: 'Facultad de Humanidades',
-      facultyCategory: 'humanidades',
-      gradient: 'from-rose-600 via-rose-700 to-pink-800',
-      badgeBg: 'bg-rose-400/20 text-rose-100',
-      textColor: 'text-rose-100',
-      previewBadge: 'Periodismo • Audiovisual',
-      icon: 'microphone',
-      description: 'Narrativa transmedia, periodismo digital, producción audiovisual y opinión pública.',
-      subjectsCount: 3,
-      subjects: [
-        {
-          id: 'sub-15',
-          name: 'Teoría de la Comunicación',
-          code: 'COM-101',
-          faculty: 'Facultad de Humanidades',
-          semester: '1er Semestre',
-          credits: 3,
-          careerId: 'carrera-comunicacion',
-          careerName: 'Comunicación Social',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-16',
-          name: 'Redacción Periodística',
-          code: 'COM-201',
-          faculty: 'Facultad de Humanidades',
-          semester: '2do Semestre',
-          credits: 4,
-          careerId: 'carrera-comunicacion',
-          careerName: 'Comunicación Social',
-          professorCount: 1,
-          professors: []
-        },
-        {
-          id: 'sub-17',
-          name: 'Producción Audiovisual',
-          code: 'COM-301',
-          faculty: 'Facultad de Humanidades',
-          semester: '4to Semestre',
-          credits: 4,
-          careerId: 'carrera-comunicacion',
-          careerName: 'Comunicación Social',
-          professorCount: 1,
-          professors: []
-        }
-      ]
-    },
-    {
-      id: 'carrera-industrial',
-      name: 'Ingeniería Industrial',
-      shortName: 'Industrial',
-      faculty: 'Facultad de Ingeniería',
-      facultyCategory: 'ingenieria',
-      gradient: 'from-teal-600 via-teal-700 to-cyan-800',
-      badgeBg: 'bg-teal-400/20 text-teal-100',
-      textColor: 'text-teal-100',
-      previewBadge: 'Procesos • Calidad',
-      icon: 'settings',
-      description: 'Optimización de procesos, manufactura esbelta, control de calidad y cadena de suministros.',
-      subjectsCount: 3,
-      subjects: [
-        {
-          id: 'sub-1',
-          name: 'Cálculo I',
-          code: 'MAT-101',
-          faculty: 'Facultad de Ingeniería',
-          semester: '1er Semestre',
-          credits: 5,
-          careerId: 'carrera-industrial',
-          careerName: 'Ingeniería Industrial',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-5',
-          name: 'Física I (Mecánica)',
-          code: 'FIS-101',
-          faculty: 'Facultad de Ingeniería',
-          semester: '2do Semestre',
-          credits: 4,
-          careerId: 'carrera-industrial',
-          careerName: 'Ingeniería Industrial',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-18',
-          name: 'Control de Calidad',
-          code: 'IND-301',
-          faculty: 'Facultad de Ingeniería',
-          semester: '5to Semestre',
-          credits: 4,
-          careerId: 'carrera-industrial',
-          careerName: 'Ingeniería Industrial',
-          professorCount: 1,
-          professors: []
-        }
-      ]
-    },
-    {
-      id: 'carrera-contaduria',
-      name: 'Contaduría Pública',
-      shortName: 'Contaduría',
-      faculty: 'FACES',
-      facultyCategory: 'faces',
-      gradient: 'from-orange-600 via-orange-700 to-amber-800',
-      badgeBg: 'bg-orange-400/20 text-orange-100',
-      textColor: 'text-orange-100',
-      previewBadge: 'Tributos • NIIF',
-      icon: 'calculator',
-      description: 'Normas internacionales NIIF, auditoría fiscal, contabilidad gerencial y legislación tributaria.',
-      subjectsCount: 2,
-      subjects: [
-        {
-          id: 'sub-19',
-          name: 'Contabilidad Financiera I',
-          code: 'CON-101',
-          faculty: 'FACES',
-          semester: '1er Semestre',
-          credits: 4,
-          careerId: 'carrera-contaduria',
-          careerName: 'Contaduría Pública',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-20',
-          name: 'Auditoría Financiera',
-          code: 'CON-401',
-          faculty: 'FACES',
-          semester: '6to Semestre',
-          credits: 4,
-          careerId: 'carrera-contaduria',
-          careerName: 'Contaduría Pública',
-          professorCount: 1,
-          professors: []
-        }
-      ]
-    },
-    {
-      id: 'carrera-psicologia',
-      name: 'Psicología',
-      shortName: 'Psicología',
-      faculty: 'Facultad de Humanidades',
-      facultyCategory: 'humanidades',
-      gradient: 'from-purple-600 via-purple-700 to-fuchsia-800',
-      badgeBg: 'bg-purple-400/20 text-purple-100',
-      textColor: 'text-purple-100',
-      previewBadge: 'Clínica • Social',
-      icon: 'heart',
-      description: 'Comportamiento humano, psicología clínica, evaluación psicométrica y bienestar.',
-      subjectsCount: 2,
-      subjects: [
-        {
-          id: 'sub-6',
-          name: 'Psicología General',
-          code: 'PSI-101',
-          faculty: 'Facultad de Humanidades',
-          semester: '1er Semestre',
-          credits: 3,
-          careerId: 'carrera-psicologia',
-          careerName: 'Psicología',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-22',
-          name: 'Psicología del Desarrollo',
-          code: 'PSI-201',
-          faculty: 'Facultad de Humanidades',
-          semester: '3er Semestre',
-          credits: 4,
-          careerId: 'carrera-psicologia',
-          careerName: 'Psicología',
-          professorCount: 1,
-          professors: []
-        }
-      ]
-    },
-    {
-      id: 'carrera-civil',
-      name: 'Ingeniería Civil',
-      shortName: 'Civil',
-      faculty: 'Facultad de Ingeniería',
-      facultyCategory: 'ingenieria',
-      gradient: 'from-sky-600 via-sky-700 to-blue-800',
-      badgeBg: 'bg-sky-400/20 text-sky-100',
-      textColor: 'text-sky-100',
-      previewBadge: 'Estructuras • Suelos',
-      icon: 'building',
-      description: 'Cálculo estructural, mecánica de suelos, topografía, obras hidráulicas e infraestructura urbana.',
-      subjectsCount: 3,
-      subjects: [
-        {
-          id: 'sub-1',
-          name: 'Cálculo I',
-          code: 'MAT-101',
-          faculty: 'Facultad de Ingeniería',
-          semester: '1er Semestre',
-          credits: 5,
-          careerId: 'carrera-civil',
-          careerName: 'Ingeniería Civil',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-5',
-          name: 'Física I (Mecánica)',
-          code: 'FIS-101',
-          faculty: 'Facultad de Ingeniería',
-          semester: '2do Semestre',
-          credits: 4,
-          careerId: 'carrera-civil',
-          careerName: 'Ingeniería Civil',
-          professorCount: 2,
-          professors: []
-        },
-        {
-          id: 'sub-23',
-          name: 'Resistencia de Materiales',
-          code: 'CIV-202',
-          faculty: 'Facultad de Ingeniería',
-          semester: '4to Semestre',
-          credits: 4,
-          careerId: 'carrera-civil',
-          careerName: 'Ingeniería Civil',
-          professorCount: 1,
-          professors: []
-        }
-      ]
-    }
-  ];
+  // Master catalog of Careers, Subjects, and their Professors (All 18 official UCAB careers)
+  private careersCatalog: Career[] = CAREERS_CATALOG;
 
   // Subject-Professor relationships mapping
   private subjectProfessorsMap: { [subjectId: string]: string[] } = {
@@ -817,14 +389,124 @@ export class ApiService {
     'sub-19': ['prof-18', 'prof-12'],
     'sub-20': ['prof-18'],
     'sub-22': ['prof-20'],
-    'sub-23': ['prof-22']
+    'sub-23': ['prof-22'],
+
+    // Informática Plan CU 23/06/2026 (52 Asignaturas)
+    'sub-info-1': ['prof-1', 'prof-5'],
+    'sub-info-2': ['prof-14'],
+    'sub-info-3': ['prof-15'],
+    'sub-info-4': ['prof-2', 'prof-6'],
+    'sub-info-5': ['prof-7'],
+    'sub-info-6': ['prof-10'],
+    'sub-info-7': ['prof-1', 'prof-5'],
+    'sub-info-8': ['prof-16'],
+    'sub-info-9': ['prof-15'],
+    'sub-info-10': ['prof-2', 'prof-6'],
+    'sub-info-11': ['prof-2', 'prof-6'],
+    'sub-info-12': ['prof-10'],
+    'sub-info-13': ['prof-1', 'prof-5'],
+    'sub-info-14': ['prof-16'],
+    'sub-info-15': ['prof-6'],
+    'sub-info-16': ['prof-18'],
+    'sub-info-17': ['prof-2', 'prof-6'],
+    'sub-info-18': ['prof-7'],
+    'sub-info-19': ['prof-1', 'prof-16'],
+    'sub-info-20': ['prof-1', 'prof-16'],
+    'sub-info-21': ['prof-8', 'prof-6'],
+    'sub-info-22': ['prof-4'],
+    'sub-info-23': ['prof-2', 'prof-7'],
+    'sub-info-24': ['prof-7'],
+    'sub-info-25': ['prof-15'],
+    'sub-info-26': ['prof-1', 'prof-16'],
+    'sub-info-27': ['prof-16'],
+    'sub-info-28': ['prof-8', 'prof-6'],
+    'sub-info-29': ['prof-7'],
+    'sub-info-30': ['prof-2', 'prof-6'],
+    'sub-info-31': ['prof-7'],
+    'sub-info-32': ['prof-8', 'prof-7'],
+    'sub-info-33': ['prof-1'],
+    'sub-info-34': ['prof-6'],
+    'sub-info-35': ['prof-8'],
+    'sub-info-36': ['prof-7'],
+    'sub-info-37': ['prof-7'],
+    'sub-info-38': ['prof-8'],
+    'sub-info-39': ['prof-8'],
+    'sub-info-40': ['prof-4'],
+    'sub-info-41': ['prof-17'],
+    'sub-info-42': ['prof-6', 'prof-2'],
+    'sub-info-43': ['prof-8'],
+    'sub-info-44': ['prof-8'],
+    'sub-info-45': ['prof-2', 'prof-7'],
+    'sub-info-46': ['prof-7'],
+    'sub-info-47': ['prof-6'],
+    'sub-info-48': ['prof-15'],
+    'sub-info-49': ['prof-7'],
+    'sub-info-50': ['prof-10'],
+    'sub-info-51': ['prof-7', 'prof-8'],
+    'sub-info-52': ['prof-7', 'prof-8', 'prof-2']
+  };
+
+  private subjectProfessorsByCode: { [code: string]: string[] } = {
+    'FING-02002': ['prof-1', 'prof-5'],
+    'FING-02101': ['prof-1'],
+    'FING-02003': ['prof-1'],
+    'FING-02004': ['prof-1'],
+    'FING-02008': ['prof-5', 'prof-2'],
+    'FING-02009': ['prof-5'],
+    'FING-02005': ['prof-16'],
+    'FING-02006': ['prof-16'],
+    'UCAB-00009': ['prof-5', 'prof-14'],
+    'INFO-02002': ['prof-2', 'prof-6'],
+    'INFO-02003': ['prof-2'],
+    'INFO-02104': ['prof-6'],
+    'INFO-02016': ['prof-7'],
+    'INFO-02025': ['prof-2'],
+    'INFO-02028': ['prof-2'],
+    'INFO-02102': ['prof-8'],
+    'INFO-02103': ['prof-8'],
+    'INFO-02020': ['prof-7'],
+    'INFO-IILTG': ['prof-2'],
+    'DERE-02003': ['prof-3'],
+    'DERE-00136': ['prof-3'],
+    'DERE-02001': ['prof-3'],
+    'DERE-00122': ['prof-9'],
+    'DERE-00128': ['prof-9'],
+    'DERE-02004': ['prof-9'],
+    'DERE-00134': ['prof-11'],
+    'DERE-02009': ['prof-11'],
+    'DERE-02017': ['prof-11'],
+    'ADCO-00350': ['prof-4', 'prof-13'],
+    'ADCO-00370': ['prof-13'],
+    'ADCO-00385': ['prof-13'],
+    'ADCO-00448': ['prof-4', 'prof-12'],
+    'ADCO-00443': ['prof-12'],
+    'ADCO-00424': ['prof-12'],
+    'FACE-00019': ['prof-4'],
+    'FACE-00024': ['prof-18'],
+    'ADCO-00379': ['prof-18'],
+    'ADCO-02013': ['prof-18'],
+    'COMU-00451': ['prof-14'],
+    'COMU-00452': ['prof-14'],
+    'COMU-02018': ['prof-14'],
+    'COMU-00450': ['prof-15'],
+    'COMU-00534': ['prof-15'],
+    'PSIC-00065': ['prof-20'],
+    'PSIC-02000': ['prof-20'],
+    'PSIC-00066': ['prof-20'],
+    'PSIC-02026': ['prof-21'],
+    'PSIC-02021': ['prof-21'],
+    'INDU-02001': ['prof-17'],
+    'INDU-02000': ['prof-17'],
+    'INDU-02032': ['prof-17'],
+    'INDU-02030': ['prof-17'],
+    'CIVI-02001': ['prof-22'],
   };
 
   constructor() {
     // Populate professor list and counts in catalog
     this.careersCatalog.forEach(career => {
       career.subjects.forEach(subject => {
-        const profIds = this.subjectProfessorsMap[subject.id] || [];
+        const profIds = this.subjectProfessorsMap[subject.id] || (subject.code ? this.subjectProfessorsByCode[subject.code] : []) || [];
         subject.professors = profIds.map(id => this.masterProfessors[id]).filter(Boolean);
         subject.professorCount = subject.professors.length;
       });
@@ -870,7 +552,16 @@ export class ApiService {
   }
 
   private getLocalProfessorsForSubject(subjectId: string): ProfessorSummary[] {
-    const profIds = this.subjectProfessorsMap[subjectId] || [];
+    let profIds = this.subjectProfessorsMap[subjectId] || [];
+    if (profIds.length === 0) {
+      for (const c of this.careersCatalog) {
+        const found = c.subjects.find(s => s.id === subjectId);
+        if (found && found.code && this.subjectProfessorsByCode[found.code]) {
+          profIds = this.subjectProfessorsByCode[found.code];
+          break;
+        }
+      }
+    }
     return profIds.map(id => this.masterProfessors[id]).filter(Boolean);
   }
 
