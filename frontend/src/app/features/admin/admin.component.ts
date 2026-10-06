@@ -143,7 +143,7 @@ export class AdminComponent {
     this.lastAction = null;
     this.dismissCard(`suggestion-${item.id}`, () => {
       this.pendingSuggestions = this.pendingSuggestions.filter(s => s.id !== item.id);
-      this.showToast(`"${item.name}" ha sido aprobado e incorporado al catálogo docente activo (D-004).`);
+      this.showToast(`"${item.name}" ya está en el catálogo.`);
     });
   }
 
@@ -163,7 +163,7 @@ export class AdminComponent {
     this.dismissCard(`report-${item.id}`, () => {
       this.lastAction = { type: 'report', item, index: idx, actionName: 'eliminada' };
       this.pendingReports = this.pendingReports.filter(r => r.id !== item.id);
-      this.showToast(`Contenido eliminado definitivamente por violar las normas comunitarias (D-010).`, 5000);
+      this.showToast(`Reseña eliminada.`, 5000);
     });
   }
 

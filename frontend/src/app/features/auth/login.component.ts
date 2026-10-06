@@ -90,7 +90,7 @@ export class LoginComponent implements OnInit {
     this.errorMessage = null;
     this.authService.clearAuthError();
     this.isAuthenticating = true;
-    this.authenticatingEmail = 'Conectando con Google Workspace UCAB...';
+    this.authenticatingEmail = 'Conectando con Google…';
 
     try {
       const res = await this.authService.signInWithGoogle();

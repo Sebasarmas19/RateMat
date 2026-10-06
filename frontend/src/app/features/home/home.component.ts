@@ -199,7 +199,7 @@ export class HomeComponent implements OnInit {
     this.reviewToReport.reportReason = this.selectedReportReason;
     const reasonText = this.selectedReportReason.split('(')[0].trim();
     this.showReportModal = false;
-    this.showToast(`Reseña reportada por: "${reasonText}". Enviada a moderación (D-010).`);
+    this.showToast(`Reportada por "${reasonText}". La revisará un moderador.`);
 
     this.apiService.reportItem(this.reviewToReport.id, 'review').subscribe();
     this.reviewToReport = null;
