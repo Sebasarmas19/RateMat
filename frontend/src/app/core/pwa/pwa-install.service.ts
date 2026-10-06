@@ -45,6 +45,16 @@ export class PwaInstallService {
     });
   }
 
+  // Botón "Descargar": un toque con el diálogo nativo cuando existe (Android/escritorio);
+  // si no (iPhone, Firefox, sin HTTPS), muestra los pasos manuales
+  requestInstall(): void {
+    if (this.canPrompt()) {
+      this.promptInstall();
+    } else {
+      this.openInstallSheet();
+    }
+  }
+
   openInstallSheet(): void {
     this.showInstallSheet.set(true);
   }
