@@ -276,7 +276,7 @@ export class ProfessorProfileComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.isSubmittingSuggestSubject = false;
-      this.suggestSubjectSuccessMessage = '¡Cátedra propuesta con éxito! Ha sido enviada a moderación.';
+      this.suggestSubjectSuccessMessage = 'Listo. Un moderador la revisa antes de publicarla.';
       const newSubj = this.suggestSubjectForm.value.subjectName;
       if (this.profile && !this.profile.subjects.includes(newSubj)) {
         this.profile.subjects.push(newSubj);
