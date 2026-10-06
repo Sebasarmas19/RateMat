@@ -2,6 +2,7 @@ import { Component, AfterViewInit, OnDestroy, ElementRef, QueryList, ViewChildre
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth/auth.service';
+import { PwaInstallService } from '../../core/pwa/pwa-install.service';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -16,6 +17,7 @@ gsap.registerPlugin(ScrollTrigger);
 })
 export class LandingComponent implements AfterViewInit, OnDestroy {
   private authService = inject(AuthService);
+  pwa = inject(PwaInstallService);
   private router = inject(Router);
 
   @ViewChildren('demoVideo') private demoVideos!: QueryList<ElementRef<HTMLVideoElement>>;

@@ -1,17 +1,21 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { InstallSheetComponent } from './core/pwa/install-sheet.component';
+import { PwaInstallService } from './core/pwa/pwa-install.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, InstallSheetComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'RateMat';
   private router = inject(Router);
+  // Se instancia al arrancar para no perder el evento beforeinstallprompt
+  private pwaInstall = inject(PwaInstallService);
 
   constructor() {
     this.router.events.pipe(

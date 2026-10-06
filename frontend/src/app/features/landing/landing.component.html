@@ -31,6 +31,18 @@
         Explorar catálogo
       </a>
 
+      <button
+        *ngIf="!pwa.isInstalled()"
+        type="button"
+        (click)="pwa.openInstallSheet()"
+        aria-label="Descargar la app"
+        class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 font-bold rounded-xl text-xs shadow-2xs active:scale-90 transition-all duration-150">
+        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>
+        </svg>
+        <span class="hidden sm:inline">Descargar</span>
+      </button>
+
       <button 
         (click)="login()" 
         class="inline-flex items-center space-x-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shadow-sm hover:shadow active:scale-95 transition-all">
